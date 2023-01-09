@@ -219,6 +219,66 @@ const sam: User = join("Sam", 30);
 const jane: string = join("Jane", "30");
 ```
 
+<br/>
+
+### 클래스
+
+```typescript
+// Javascript에는 없는 Access modifier(public, private, protected)가 생김
+
+class Car {
+  /*
+    public - 자식 클래스, 클래스 인스턴스 모두 접근 가능
+    protected - 자식 클래스에서 접근 가능
+    private - 해당 클래스 내부에서만 접근 가능 
+    */
+
+  name: string = "car";
+  color: string;
+  constructor(color: string) {
+    this.color = color;
+  }
+  start() {
+    console.log("start");
+  }
+}
+
+class Bmw extends Car {
+  constructor(color: string) {
+    super(color);
+  }
+  showName() {
+    console.log(super.name);
+  }
+}
+
+const z4 = new Bmw("black");
+
+// abstract class
+abstract class Car {
+  color: string;
+  constructor(color: string) {
+    this.color = color;
+  }
+  start() {
+    console.log("start");
+  }
+  abstract doSomething(): void;
+}
+
+class Bmw extends Car {
+  constructor(color: string) {
+    super(color);
+  }
+  doSomething() {
+    console.log("do something");
+  }
+}
+
+const z4 = new Bmw("red");
+z4.start();
+```
+
 ## 2주차
 
 ## 3주차
