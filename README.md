@@ -96,6 +96,75 @@ enum PrintMedia {
 // }
 ```
 
+<br/>
+
+### Interface
+
+주로 오브젝트를 나타내는데 사용된다
+
+```typescript
+type Score = "A" | "B" | "C" | "D"; // literal type
+
+interface User {
+  name: string;
+  age: number;
+  gender?: string; // optional 있어도 되고 없어도 됨
+  readonly birthday: number;
+  [grade: number]: Score; // Index Signatures / key가 숫자 value가 Score
+}
+
+let user: User = {
+  name: "xx",
+  age: 30,
+  birthday: 2000,
+  1: "A",
+  2: "B",
+};
+
+// 함수도 나타낼 수 있다
+interface Add {
+  (num1: number, num2: number): number;
+}
+
+const add: Add = (x, y) => {
+  return x + y;
+};
+
+// 클래스에서도 사용 가능하다
+interface Car {
+  color: string;
+  wheels: number;
+  start(): void;
+}
+
+interface SportsCar extends Car {
+  door: number;
+  stop(): void;
+}
+
+class McLaren implements SportsCar {
+  color;
+  wheels = 30;
+  door = 20;
+
+  constructor(c: string) {
+    this.color = c;
+  }
+
+  start() {
+    console.log("start");
+  }
+
+  stop() {
+    console.log("stop");
+  }
+}
+
+const myCar = new McLaren("red");
+console.log(myCar.color);
+myCar.start();
+```
+
 ## 2주차
 
 ## 3주차
