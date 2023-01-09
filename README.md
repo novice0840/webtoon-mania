@@ -77,6 +77,25 @@ function keepProcessing(): never {
 <br/>
 enum 상수값의 집합을 나타낼 수 있다
 
+```typescript
+enum PrintMedia {
+  Newspaper,
+  Newsletter,
+  Magazine,
+  Book,
+}
+// PrintMeida == {
+//   "0": "Newspaper",
+//   "1": "Newsletter",
+//   "2": "Magazine",
+//   "3": "Book",
+//   "Newspaper": 0,
+//   "Newsletter": 1,
+//   "Magazine": 2,
+//   "Book": 3
+// }
+```
+
 ## 2주차
 
 ## 3주차
