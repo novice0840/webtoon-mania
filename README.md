@@ -279,6 +279,62 @@ const z4 = new Bmw("red");
 z4.start();
 ```
 
+<br/>
+
+### Generics
+
+변수의 형태가 유동적일 경우 사용 가능하다
+
+```typescript
+// T에는 변수의 형태가 온다
+function getSize<T>(arr: T[]): number {
+  console.log(arr.length);
+  return arr.length;
+}
+
+const arr1 = [1, 2, 3];
+getSize<number>(arr1); // 3
+
+const arr2 = ["a", "b", "c"];
+getSize<string>(arr2); // 3
+
+const arr3 = [false, true, false];
+getSize<boolean>(arr3); // 3
+
+const arr4 = [{}, {}, { name: "Tim" }];
+getSize<Object>(arr4); // 3
+
+// T의 형태의 일부분을 미리 정할 수도 있다
+
+interface User {
+  name: string;
+  age: number;
+}
+
+interface Car {
+  name: string;
+  color: string;
+}
+
+interface Book {
+  price: number;
+}
+
+const user: User = { name: "a", age: 10 };
+const car: Car = { name: "bmw", color: "red" };
+const book: Book = { price: 3000 };
+
+// showName의 인수로 들어오는 data는 String 형태의 name을 포함해야한다는 의미
+function showName<T extends { name: string }>(data: T): string {
+  return data.name;
+}
+
+showName(user);
+showName(car);
+showName(book);
+// book에는 name이 없기 때문에 에러가 발생한다
+```
+
 ## 2주차
 
 ## 3주차
