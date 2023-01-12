@@ -2,7 +2,7 @@ module.exports = {
     settings: {
         "import/resolver": {
             node: {
-                extensions: [".js", ".jsx", ".ts", ".tsx"],
+                paths: ["src"], //절대경로 설정
             },
         },
     },
