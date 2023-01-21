@@ -2,6 +2,8 @@
 
 ## 1주차 - Typescript 학습
 
+- 후기: TS에 기초에 대해서 공부할 수 있었다. 이론적으로는 TS를 왜 쓰는지 이해가 되지만 생각보다 진입장벽이 있어서 고생중이다. JS로는 금방 끝나는 작업이 타입을 명시하느라 시간이 훨씬 많이 걸리고 있다. 물론 프로젝트의 크기가 커지면 그 때는 TS의 장점이 더욱 명확해 질 것이라고 생각한다. 다만 아직 익숙하지가 않아 좀 더 시간이 필요할 듯 하다.
+
 ### Typescript를 왜 사용할까?
 
 기존 Javascript는 타입을 표현하는게 불가능 함.  
@@ -55,7 +57,7 @@ void 함수에서 반환 값이 없는 경우
 
 ```typescript
 function sayHello() {
-	console.log("hello");
+  console.log("hello");
 }
 ```
 
@@ -64,13 +66,13 @@ never 절대 발생하지 않는 값을 가르키는 경우
 
 ```typescript
 function throwError(errorMsg: string): never {
-	throw new Error(errorMsg);
+  throw new Error(errorMsg);
 }
 
 function keepProcessing(): never {
-	while (true) {
-		console.log("I always does something and never ends.");
-	}
+  while (true) {
+    console.log("I always does something and never ends.");
+  }
 }
 ```
 
@@ -79,10 +81,10 @@ enum 상수값의 집합을 나타낼 수 있다
 
 ```typescript
 enum PrintMedia {
-	Newspaper,
-	Newsletter,
-	Magazine,
-	Book,
+  Newspaper,
+  Newsletter,
+  Magazine,
+  Book,
 }
 // PrintMeida == {
 //   "0": "Newspaper",
@@ -106,58 +108,58 @@ enum PrintMedia {
 type Score = "A" | "B" | "C" | "D"; // literal type
 
 interface User {
-	name: string;
-	age: number;
-	gender?: string; // optional 있어도 되고 없어도 됨
-	readonly birthday: number;
-	[grade: number]: Score; // Index Signatures / key가 숫자 value가 Score
+  name: string;
+  age: number;
+  gender?: string; // optional 있어도 되고 없어도 됨
+  readonly birthday: number;
+  [grade: number]: Score; // Index Signatures / key가 숫자 value가 Score
 }
 
 let user: User = {
-	name: "xx",
-	age: 30,
-	birthday: 2000,
-	1: "A",
-	2: "B",
+  name: "xx",
+  age: 30,
+  birthday: 2000,
+  1: "A",
+  2: "B",
 };
 
 // 함수도 나타낼 수 있다
 interface Add {
-	(num1: number, num2: number): number;
+  (num1: number, num2: number): number;
 }
 
 const add: Add = (x, y) => {
-	return x + y;
+  return x + y;
 };
 
 // 클래스에서도 사용 가능하다
 interface Car {
-	color: string;
-	wheels: number;
-	start(): void;
+  color: string;
+  wheels: number;
+  start(): void;
 }
 
 interface SportsCar extends Car {
-	door: number;
-	stop(): void;
+  door: number;
+  stop(): void;
 }
 
 class McLaren implements SportsCar {
-	color;
-	wheels = 30;
-	door = 20;
+  color;
+  wheels = 30;
+  door = 20;
 
-	constructor(c: string) {
-		this.color = c;
-	}
+  constructor(c: string) {
+    this.color = c;
+  }
 
-	start() {
-		console.log("start");
-	}
+  start() {
+    console.log("start");
+  }
 
-	stop() {
-		console.log("stop");
-	}
+  stop() {
+    console.log("stop");
+  }
 }
 
 const myCar = new McLaren("red");
@@ -172,11 +174,11 @@ myCar.start();
 ```typescript
 // 일반적인 형태의 함수
 function hello(name: string, age?: number): string {
-	if (age !== undefined) {
-		return `Hello, ${name}. You are ${age}`;
-	} else {
-		return `Hello, ${name}`;
-	}
+  if (age !== undefined) {
+    return `Hello, ${name}. You are ${age}`;
+  } else {
+    return `Hello, ${name}`;
+  }
 }
 
 console.log(hello("Sam"));
@@ -184,13 +186,13 @@ console.log(hello("Sam", 30));
 
 // 함수에서 this를 이용할 때
 interface User {
-	name: string;
+  name: string;
 }
 
 const Sam: User = { name: "Sam" };
 
 function showName(this: User, age: number, gender: "m" | "f") {
-	console.log(this.name, age, gender);
+  console.log(this.name, age, gender);
 }
 
 const a = showName.bind(Sam);
@@ -198,21 +200,21 @@ a(30, "m");
 
 // 함수 Overloading을 하는 경우
 interface User {
-	name: string;
-	age: number;
+  name: string;
+  age: number;
 }
 
 function join(name: string, age: string): string;
 function join(name: string, age: number): User;
 function join(name: string, age: number | string): User | string {
-	if (typeof age === "number") {
-		return {
-			name,
-			age,
-		};
-	} else {
-		return "나이는 숫자로 입력해주세요.";
-	}
+  if (typeof age === "number") {
+    return {
+      name,
+      age,
+    };
+  } else {
+    return "나이는 숫자로 입력해주세요.";
+  }
 }
 
 const sam: User = join("Sam", 30);
@@ -227,52 +229,52 @@ const jane: string = join("Jane", "30");
 // Javascript에는 없는 Access modifier(public, private, protected)가 생김
 
 class Car {
-	/*
+  /*
     public - 자식 클래스, 클래스 인스턴스 모두 접근 가능
     protected - 자식 클래스에서 접근 가능
     private - 해당 클래스 내부에서만 접근 가능 
     */
 
-	name: string = "car";
-	color: string;
-	constructor(color: string) {
-		this.color = color;
-	}
-	start() {
-		console.log("start");
-	}
+  name: string = "car";
+  color: string;
+  constructor(color: string) {
+    this.color = color;
+  }
+  start() {
+    console.log("start");
+  }
 }
 
 class Bmw extends Car {
-	constructor(color: string) {
-		super(color);
-	}
-	showName() {
-		console.log(super.name);
-	}
+  constructor(color: string) {
+    super(color);
+  }
+  showName() {
+    console.log(super.name);
+  }
 }
 
 const z4 = new Bmw("black");
 
 // abstract class
 abstract class Car {
-	color: string;
-	constructor(color: string) {
-		this.color = color;
-	}
-	start() {
-		console.log("start");
-	}
-	abstract doSomething(): void;
+  color: string;
+  constructor(color: string) {
+    this.color = color;
+  }
+  start() {
+    console.log("start");
+  }
+  abstract doSomething(): void;
 }
 
 class Bmw extends Car {
-	constructor(color: string) {
-		super(color);
-	}
-	doSomething() {
-		console.log("do something");
-	}
+  constructor(color: string) {
+    super(color);
+  }
+  doSomething() {
+    console.log("do something");
+  }
 }
 
 const z4 = new Bmw("red");
@@ -288,8 +290,8 @@ z4.start();
 ```typescript
 // T에는 변수의 형태가 온다
 function getSize<T>(arr: T[]): number {
-	console.log(arr.length);
-	return arr.length;
+  console.log(arr.length);
+  return arr.length;
 }
 
 const arr1 = [1, 2, 3];
@@ -307,17 +309,17 @@ getSize<Object>(arr4); // 3
 // T의 형태의 일부분을 미리 정할 수도 있다
 
 interface User {
-	name: string;
-	age: number;
+  name: string;
+  age: number;
 }
 
 interface Car {
-	name: string;
-	color: string;
+  name: string;
+  color: string;
 }
 
 interface Book {
-	price: number;
+  price: number;
 }
 
 const user: User = { name: "a", age: 10 };
@@ -326,7 +328,7 @@ const book: Book = { price: 3000 };
 
 // showName의 인수로 들어오는 data는 String 형태의 name을 포함해야한다는 의미
 function showName<T extends { name: string }>(data: T): string {
-	return data.name;
+  return data.name;
 }
 
 showName(user);
@@ -336,6 +338,8 @@ showName(book);
 ```
 
 ## 2주차 - React 학습
+
+- 후기: React를 왜 쓰는지 어떠한 상황에서 React가 빛을 발하는지 대략적으로 감을 잡게되었다. 하지만, 아직 익숙하지 않아 더 많은 예시 코드를 보면서 학습을 해야 할거 같다.
 
 ### Creating and nesting components
 
