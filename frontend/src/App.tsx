@@ -6,16 +6,23 @@ import { useQuery } from "react-query";
 import { getAllWebtoon } from "api/cralwer";
 import { useRecoilState } from "recoil";
 import { allwebtoonState } from "recoil/state";
+import Layout from "components/Layout";
+import { useEffect } from "react";
+
 const App = () => {
   const { status, data, error } = useQuery("allwebtoon", getAllWebtoon);
-  const [allwebtoon, setAllwentoon] = useRecoilState(allwebtoonState);
-  console.log(data);
+  const [allwebtoon, setAllwebtoon] = useRecoilState(allwebtoonState);
+  useEffect(() => {
+    setAllwebtoon(data);
+  }, []);
   return (
-    <Routes>
-      <Route path="/" element={<Main />} />
-      <Route path="/weekday/:weekday" element={<Weekday />} />
-      <Route path="/webtoon/:titleId" element={<Webtoon />} />
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/weekday/:weekday" element={<Weekday />} />
+        <Route path="/webtoon/:titleId" element={<Webtoon />} />
+      </Routes>
+    </Layout>
   );
 };
 

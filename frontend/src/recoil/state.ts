@@ -5,4 +5,9 @@ const allwebtoonState = atom({
   default: [],
 });
 
-export { allwebtoonState };
+const weekdayState = atom({
+  key: "weekdayState",
+  default: "all",
+});
+
+export { allwebtoonState, weekdayState };
