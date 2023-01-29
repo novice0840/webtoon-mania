@@ -85,7 +85,7 @@ const getBestComments = async (titleId, chapter) => {
   lists.each((index, list) => {
     const name = $(list).find("span.u_cbox_nick").text();
     const text = $(list).find("span.u_cbox_contents").text();
-    const like = $(list).find("em.u_cbox_ico_recomm").text();
+    const like = $(list).find("em.u_cbox_cnt_recomm").text();
     const dislike = $(list).find("em.u_cbox_cnt_unrecomm").text();
     const date = $(list).find("span.u_cbox_date").text();
 

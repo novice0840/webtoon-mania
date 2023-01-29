@@ -2,7 +2,7 @@ import { atom } from "recoil";
 
 const allwebtoonState = atom({
   key: "allwebtoonState",
-  default: [],
+  default: [1],
 });
 
 const weekdayState = atom({

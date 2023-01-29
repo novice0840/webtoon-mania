@@ -7,6 +7,14 @@ const MainWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const WeekdayColumn = styled.div``;
+const WeekdayColumn = styled.div`
+  text-align: center;
+
+  .day {
+    color: #222;
+    font-weight: normal;
+    margin-bottom: 30px;
+  }
+`;
 
 export { MainWrapper, WeekdayColumn };

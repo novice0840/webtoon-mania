@@ -1,11 +1,14 @@
-import React, { ReactElement } from "react";
+import React, { MouseEvent } from "react";
 import { LayoutWrapper } from "./style";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { weekdayState } from "recoil/state";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const weekday = useRecoilValue(weekdayState);
+  const [weekday, setWeekday] = useRecoilState(weekdayState);
+  const params = useParams();
+  const currentWeekday = params.weekday;
+  const navigate = useNavigate();
   const active = Array(8).fill(false);
   switch (weekday) {
     case "mon":
@@ -38,18 +41,42 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     default:
       active[0] = true;
   }
+  const handleClick = (e: MouseEvent) => {
+    setWeekday(e.currentTarget.classList[0]);
+    if (e.currentTarget.classList[0] == "all") {
+      navigate("/");
+      return;
+    }
+    navigate(`/weekday/${e.currentTarget.classList[0]}`);
+  };
   return (
     <LayoutWrapper>
       <header>NAVER 웹툰 베스트 댓글 크롤링</header>
       <nav>
-        <div className={`weekday ${active[0] ? "selected-weekday" : ""}`}>요일전체</div>
-        <div className={`weekday ${active[1] ? "selected-weekday" : ""}`}>월요웹툰</div>
-        <div className={`weekday ${active[2] ? "selected-weekday" : ""}`}>화요웹툰</div>
-        <div className={`weekday ${active[3] ? "selected-weekday" : ""}`}>수요웹툰</div>
-        <div className={`weekday ${active[4] ? "selected-weekday" : ""}`}>목요웹툰</div>
-        <div className={`weekday ${active[5] ? "selected-weekday" : ""}`}>금요웹툰</div>
-        <div className={`weekday ${active[6] ? "selected-weekday" : ""}`}>토요웹툰</div>
-        <div className={`weekday ${active[7] ? "selected-weekday" : ""}`}>일요웹툰</div>
+        <div onClick={handleClick} className={`all weekday ${active[0] ? "selected-weekday" : ""}`}>
+          요일전체
+        </div>
+        <div onClick={handleClick} className={`mon weekday ${active[1] ? "selected-weekday" : ""}`}>
+          월요웹툰
+        </div>
+        <div onClick={handleClick} className={`tue weekday ${active[2] ? "selected-weekday" : ""}`}>
+          화요웹툰
+        </div>
+        <div onClick={handleClick} className={`wed weekday ${active[3] ? "selected-weekday" : ""}`}>
+          수요웹툰
+        </div>
+        <div onClick={handleClick} className={`thu weekday ${active[4] ? "selected-weekday" : ""}`}>
+          목요웹툰
+        </div>
+        <div onClick={handleClick} className={`fri weekday ${active[5] ? "selected-weekday" : ""}`}>
+          금요웹툰
+        </div>
+        <div onClick={handleClick} className={`sat weekday ${active[6] ? "selected-weekday" : ""}`}>
+          토요웹툰
+        </div>
+        <div onClick={handleClick} className={`sun weekday ${active[7] ? "selected-weekday" : ""}`}>
+          일요웹툰
+        </div>
       </nav>
       {children}
     </LayoutWrapper>

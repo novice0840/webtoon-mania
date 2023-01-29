@@ -3,6 +3,11 @@ import styled from "styled-components";
 const LayoutWrapper = styled.div`
   margin-top: 50px;
 
+  a {
+    text-decoration: none;
+    color: black;
+  }
+
   header {
     width: 800px;
     text-align: center;

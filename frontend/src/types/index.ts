@@ -3,7 +3,7 @@ type weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type webtoon = {
   title: string;
   titleId: string;
-  weekday: weekday;
+  weekday: string;
   thumb: string;
 };
 

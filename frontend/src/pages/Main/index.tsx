@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil";
 import { MainWrapper, WeekdayColumn } from "./style";
 import WebtoonList from "components/WebtoonList";
 import { webtoon } from "types";
+import mock from "mock.json";
 
 const main = () => {
   const weekdayMatch = [
@@ -15,17 +16,16 @@ const main = () => {
     ["토", "sat"],
     ["일", "sun"],
   ];
-  const allwebtoon: webtoon[] = useRecoilValue(allwebtoonState);
-  console.log(allwebtoon?.filter((n) => n.weekday === "mon"));
+  const allwebtoon: webtoon[] = mock; // useRecoilValue(allwebtoonState);
 
   return (
     <MainWrapper>
-      {/* {weekdayMatch.map((element, i) => (
+      {weekdayMatch.map((element, i) => (
         <WeekdayColumn key={i}>
-          <div>{element[0]}요웹툰</div>
+          <div className="day">{element[0]}요웹툰</div>
           <WebtoonList webtoonList={allwebtoon.filter((n) => n.weekday === element[1])} />
         </WeekdayColumn>
-      ))} */}
+      ))}
     </MainWrapper>
   );
 };

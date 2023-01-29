@@ -12,6 +12,7 @@ import { useEffect } from "react";
 const App = () => {
   const { status, data, error } = useQuery("allwebtoon", getAllWebtoon);
   const [allwebtoon, setAllwebtoon] = useRecoilState(allwebtoonState);
+
   useEffect(() => {
     setAllwebtoon(data);
   }, []);

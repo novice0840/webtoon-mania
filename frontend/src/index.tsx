@@ -14,7 +14,7 @@ root.render(
     <BrowserRouter>
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={true} />
+          <ReactQueryDevtools initialIsOpen={false} />
           <App />
         </QueryClientProvider>
       </RecoilRoot>
