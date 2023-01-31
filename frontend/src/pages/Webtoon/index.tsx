@@ -38,10 +38,6 @@ const webtoon = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(bestComments);
-  }, [bestComments]);
-
   return (
     <WebtoonWrapper>
       <WebtoonInfo>
