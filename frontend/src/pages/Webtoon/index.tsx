@@ -49,8 +49,8 @@ const webtoon = () => {
         </section>
       </WebtoonInfo>
       <WebtoonContents>
-        {data.contents.map((content: WebtoonContent) => (
-          <div>
+        {data.contents.map((content: WebtoonContent, i: number) => (
+          <div key={i}>
             <div className="content">
               <img className="content-thumb" src={content.thumb} alt="" />
               <div>{content.title}</div>

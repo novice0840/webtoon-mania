@@ -1,8 +1,9 @@
 import { atom } from "recoil";
+import { webtoon, weekday } from "types";
 
-const allwebtoonState = atom({
+const allwebtoonState = atom<webtoon[]>({
   key: "allwebtoonState",
-  default: [1],
+  default: [],
 });
 
 const weekdayState = atom({
