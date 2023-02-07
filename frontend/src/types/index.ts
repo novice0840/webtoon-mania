@@ -7,4 +7,18 @@ type webtoon = {
   thumb: string;
 };
 
-export type { weekday, webtoon };
+type webtoonContent = {
+  chapter: number;
+  thumb: string;
+  title: string;
+};
+
+type bestComment = {
+  name: string;
+  text: string;
+  like: string;
+  dislike: string;
+  date: string;
+};
+
+export type { weekday, webtoon, webtoonContent, bestComment };
