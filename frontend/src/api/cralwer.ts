@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BaseURL = `https://${process.env.REACT_APP_ENV_BACKEND_IP}:3000`;
+const BaseURL = `http://${process.env.REACT_APP_ENV_BACKEND_IP}:3000`;
 
 const getAllWebtoon = async () => {
   const response = await axios.get(`${BaseURL}/allwebtoon`);
