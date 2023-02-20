@@ -1,7 +1,14 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+const cors = require("cors");
 const { getBestComments, getAllWebtoon, getWebtoon } = require("./crawler");
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.get("/allwebtoon", async (req, res) => {
   const data = await getAllWebtoon();

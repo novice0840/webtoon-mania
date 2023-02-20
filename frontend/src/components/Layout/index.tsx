@@ -72,7 +72,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }, []);
   return (
     <LayoutWrapper>
-      <ButtonToShowCurrentSubscriptions />
+      {/* <ButtonToShowCurrentSubscriptions /> */}
       <header>NAVER 웹툰 베스트 댓글 크롤링</header>
       <nav>
         <div onClick={handleClick} className={`all weekday ${active[0] ? "selected-weekday" : ""}`}>
