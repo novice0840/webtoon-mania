@@ -10,6 +10,10 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.json({ test: "sample" });
+});
+
 app.get("/allwebtoon", async (req, res) => {
   const data = await getAllWebtoon();
   res.json(data);
