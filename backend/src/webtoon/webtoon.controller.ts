@@ -1,10 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
+import { WebtoonService } from './webtoon.service';
 
 @Controller('webtoon')
 export class WebtoonController {
+  constructor(private readonly webtoonService: WebtoonService) {}
+
   @Get('/allwebtoon')
-  getAllWebtoon(): string {
-    return 'this is get all webtoons';
+  async getAllWebtoon() {
+    return await this.webtoonService.getAllWebtoon();
   }
 
   @Get('/onewebtoon/:id')
