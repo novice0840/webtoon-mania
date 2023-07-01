@@ -4,16 +4,18 @@ import { load } from 'cheerio';
 
 @Injectable()
 export class WebtoonService {
-  private async getHtmlSelector(url) {
+  // SPA인 경우 내부 컨텐츠를 불러오기까지 추가로 시간이 필요하기 때문에 wait을 해줘야 함. wait은 원하는 태그의 selector
+  private async getHtmlSelector(url, wait) {
     try {
-      const browser = await puppeteer.launch({ headless: true });
+      const browser = await puppeteer.launch({ headless: 'new' });
       const page = await browser.newPage();
       await page.goto(url);
+      await page.waitForSelector(wait);
       const content = await page.content();
-      console.log(content);
+      const $ = load(content);
       await page.close();
       await browser.close();
-      return load(content);
+      return $;
     } catch (error) {
       console.error(error);
     }
@@ -22,20 +24,26 @@ export class WebtoonService {
   getAllWebtoon = async () => {
     const $ = await this.getHtmlSelector(
       'https://comic.naver.com/webtoon/weekday',
+      'li.DailyListItem__item--LP6_T',
     );
-    console.log($);
     const webtoonDataList = [];
-    $('.thumb').each((i, element) => {
-      const webtoonURL = new URL(
-        'https://comic.naver.com/' + $(element).find('a').attr('href'),
-      ); // Ex) link  = '/webtoon/list?titleId=793283&weekday=tue'
-      const webtoonData = {
-        titleId: webtoonURL.searchParams.get('titleId') ?? '',
-        title: $(element).find('img').attr('title') ?? '',
-        thumb: $(element).find('img').attr('src') ?? '',
-        weekday: webtoonURL.searchParams.get('weekday') ?? '',
-      };
-      webtoonDataList.push(webtoonData);
+    $('li.DailyListItem__item--LP6_T').each((index, element) => {
+      const name = $(element).find('span.text').text();
+      webtoonDataList.push({ index, name });
+      console.log({
+        index,
+        name,
+      });
+      // const webtoonURL = new URL(
+      //   'https://comic.naver.com/' + $(element).find('a').attr('href'),
+      // ); // Ex) link  = '/webtoon/list?titleId=793283&weekday=tue'
+      // const webtoonData = {
+      //   titleId: webtoonURL.searchParams.get('titleId') ?? '',
+      //   title: $(element).find('img').attr('title') ?? '',
+      //   thumb: $(element).find('img').attr('src') ?? '',
+      //   weekday: webtoonURL.searchParams.get('weekday') ?? '',
+      // };
+      // webtoonDataList.push(webtoonData);
     });
     return webtoonDataList;
   };
