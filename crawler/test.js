@@ -1,19 +1,41 @@
-const cheerio = require("cheerio");
+const puppeteer = require("puppeteer");
 
-// 예시로 사용할 HTML 코드
-const html = `
-<img class="Poster__image--d9XTI" src="https://image-comic.pstatic.net/webtoon/648419/thumbnail/thumbnail_IMAG21_d9398229-cbfd-47dc-9208-0a6fb936f3a7.jpg" alt="뷰티풀 군바리">
-`;
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: false,
+  });
+  const page = await browser.newPage();
+  await page.goto("https://comic.naver.com/webtoon");
+  await page.setViewport({
+    width: 1200,
+    height: 800,
+  });
+  console.log("test1");
+  await scrollDownToBottom(page);
+  console.log("test2");
+  await page.screenshot({
+    path: "yoursite.png",
+    fullPage: true,
+  });
+  console.log("test3");
+  await browser.close();
+})();
 
-// HTML을 로드하여 $ 변수에 할당
-const $ = cheerio.load(html);
+async function scrollDownToBottom(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      const totalHeight = 0;
+      const distance = 1000;
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
 
-// img 태그 선택
-const imgTags = $("img");
-
-// img 태그를 순회하며 필요한 작업 수행
-imgTags.each((index, element) => {
-  const src = $(element).attr("src");
-  const alt = $(element).attr("alt");
-  console.log(`Image ${index + 1}: src=${src}, alt=${alt}`);
-});
+        if (totalHeight >= scrollHeight - window.innerHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
+  });
+}
