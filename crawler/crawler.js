@@ -1,9 +1,6 @@
-// puppeteer을 가져온다.
 const connection = require("./database");
 const puppeteer = require("puppeteer");
-// cheerio를 가져온다.
 const cheerio = require("cheerio");
-// get the client
 const mysql = require("mysql2/promise");
 const axios = require("axios");
 
@@ -228,5 +225,3 @@ const updateChapterStar = async () => {
   }
   connection.end();
 };
-
-updateChapterStar();
