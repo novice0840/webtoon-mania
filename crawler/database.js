@@ -1,17 +1,20 @@
 // get the client
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
-// create the connection to database
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "naverwebtoon_analyzer",
-  password: "password",
-});
+const init = async () => {
+  // create the connection to database
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    database: "naverwebtoon_analyzer",
+    password: "password",
+  });
+  return connection;
+};
 
-// simple query
-// connection.query("select version()", function (err, results, fields) {
-//   console.log(results);
-// });
-
-module.exports = connection;
+const test = async () => {
+  // simple query
+  const connection = await init();
+  const [rows, fields] = await connection.execute("select version()");
+  console.log(rows, fields);
+};
