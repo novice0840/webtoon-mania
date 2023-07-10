@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class WebtoonService {
@@ -7,8 +7,13 @@ export class WebtoonService {
 
   async getAllWebtoon() {
     const queryRunner = this.datasource.createQueryRunner();
-    const res = await queryRunner.manager.query('select version()');
-    console.log(res);
-    return process.env.DATABASE_USER;
+    return queryRunner.manager.query('select * from webtoon_base_info;');
+  }
+
+  async getOneWebtoon(id) {
+    const queryRunner = this.datasource.createQueryRunner();
+    return queryRunner.manager.query(
+      `select * from webtoon_chapter_info where webtoon_id=${id}`,
+    );
   }
 }

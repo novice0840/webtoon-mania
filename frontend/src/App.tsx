@@ -1,19 +1,18 @@
-import { Route, Routes } from "react-router-dom";
-import Main from "pages/Main";
-import Weekday from "pages/Weekday";
-import Webtoon from "pages/Webtoon";
-import Layout from "components/Layout";
+import { useState } from "react";
+import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Main from "@pages/Main";
 
-const App = () => {
+const queryClient = new QueryClient();
+
+function App() {
+  const [count, setCount] = useState(0);
+
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/weekday/:weekday" element={<Weekday />} />
-        <Route path="/webtoon/:titleId" element={<Webtoon />} />
-      </Routes>
-    </Layout>
+    <QueryClientProvider client={queryClient}>
+      <Main />
+    </QueryClientProvider>
   );
-};
+}
 
 export default App;

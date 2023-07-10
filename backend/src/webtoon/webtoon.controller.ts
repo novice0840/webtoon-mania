@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
 
 @Controller('webtoon')
@@ -7,13 +7,13 @@ export class WebtoonController {
 
   @Get('/allwebtoon')
   async getAllWebtoon() {
-    return await this.webtoonService.getAllWebtoon();
+    return this.webtoonService.getAllWebtoon();
   }
 
   @Get('/onewebtoon/:id')
-  getOneWebtoon(): string {
+  getOneWebtoon(@Param('id') id: string) {
     // 특정 웹툰의 기본 정보와 댓글 수, 좋아요 수, 별점을 그래프로 보여줌
-    return 'this is get one webtoon';
+    return this.webtoonService.getOneWebtoon(id);
   }
 
   @Get('/comments/:id/:chapter')
