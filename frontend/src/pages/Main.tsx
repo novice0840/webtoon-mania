@@ -12,29 +12,27 @@ interface WebtoonInfo {
 const Main = () => {
   // Access the client
   const queryClient = useQueryClient();
-  const getAllWebtoon = () => {
-    return axios.get("http://localhost:3001/webtoon/allwebtoon");
-  };
+  const getAllWebtoon = () =>
+    axios.get<WebtoonInfo[]>("http://localhost:3001/webtoon/allwebtoon").then((response) => response.data);
   // Queries
   const { isLoading, isError, data, error }: UseQueryResult<WebtoonInfo[], unknown> = useQuery({
-    queryKey: ["todos"],
+    queryKey: ["getAllWebtoon"],
     queryFn: getAllWebtoon,
   });
-  console.log(data);
   return (
     <div>
       <div>hello, world</div>
-      <ul>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
         {data?.map((webtoon: WebtoonInfo) => (
-          <li key={webtoon.id}>
+          <div key={webtoon.id}>
             <div>{webtoon.id}</div>
             <div>{webtoon.title}</div>
             <div>{webtoon.day}</div>
-            <div>{webtoon.thumbnail}</div>
+            <img src={webtoon.thumbnail} width={160} height={207} alt="" />
             <div>{webtoon.interest_count}</div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
