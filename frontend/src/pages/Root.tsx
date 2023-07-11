@@ -16,7 +16,7 @@ const Main = () => {
       </h1>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {data?.map((webtoon: WebtoonInfo) => (
-          <Link to={"/webtoon/" + webtoon.id.toString()}>
+          <Link key={webtoon.id} to={"/webtoon/" + webtoon.id.toString()}>
             <div key={webtoon.id}>
               <div>{webtoon.id}</div>
               <div>{webtoon.title}</div>
