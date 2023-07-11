@@ -7,7 +7,14 @@ export class WebtoonService {
 
   async getAllWebtoon() {
     const queryRunner = this.datasource.createQueryRunner();
-    return queryRunner.manager.query('select * from webtoon_base_info;');
+    await queryRunner.connect();
+    try {
+      return queryRunner.manager.query('select * from webtoon_base_info;');
+    } catch (err) {
+      console.log(err);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async getOneWebtoon(id) {
