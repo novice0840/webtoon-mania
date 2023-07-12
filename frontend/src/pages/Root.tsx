@@ -2,6 +2,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Webtoon } from "@src/types/webtoon";
 import { getAllWebtoon } from "@src/api/webtoon";
+import { Container, Typography, Box } from "@mui/material";
 
 const Main = () => {
   const { isLoading, isError, data }: UseQueryResult<Webtoon[], unknown> = useQuery({

@@ -2,6 +2,7 @@ import { getOneWebtoon } from "@src/api/webtoon";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { Chapter } from "@src/types/webtoon";
+import Button from "@mui/material/Button";
 
 const Webtoon = () => {
   const { id } = useParams(); // params;
@@ -20,6 +21,7 @@ const Webtoon = () => {
     <div>
       <h1>
         <Link to="/">네이버 웹툰 분석기</Link>
+        <Button variant="contained">Hello World</Button>
       </h1>
       <div>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
