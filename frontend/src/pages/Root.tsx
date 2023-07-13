@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
-import { Webtoon } from "@src/types/webtoon";
+import { Webtoon, Day, Sort } from "@src/types/webtoon";
 import { getAllWebtoon } from "@src/api/webtoon";
 import {
   Container,
-  Typography,
   Box,
   FormControl,
   RadioGroup,
@@ -11,18 +10,22 @@ import {
   FormControlLabel,
   Radio,
   TextField,
+  FormGroup,
+  Checkbox,
 } from "@mui/material";
 import { useState, ChangeEvent, useEffect } from "react";
 import { compareInterest, compareNew, compareOld, compareStar, compareTitle } from "@src/utils/compare";
+import Header from "@src/components/Header";
 
 const Main = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [webtoonList, setWebtoonList] = useState<Webtoon[]>();
-  const [sort, setSort] = useState<"title" | "old" | "new" | "interest" | "star">("title");
+  const [sort, setSort] = useState<Sort>("title");
   const [input, setInput] = useState<string>("");
+  const [days, setDays] = useState<Day[]>([]);
 
-  const compare = {
+  const compareConverter: Record<Sort, (a: Webtoon, b: Webtoon) => -1 | 0 | 1> = {
     title: compareTitle,
     old: compareOld,
     new: compareNew,
@@ -30,11 +33,28 @@ const Main = () => {
     star: compareStar,
   };
 
+  const dayConverter: Record<string, Day> = {
+    월요웹툰: "monday",
+    화요웹툰: "tuesday",
+    수요웹툰: "wednesday",
+    목요웹툰: "thusday",
+    금요웹툰: "friday",
+    토요웹툰: "saturday",
+    일요웹툰: "sunday",
+  };
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.name == "input-filter") {
+    if (event.target.name === "input-filter") {
       setInput(event.target.value);
-    } else if (event.target.name == "sort-group") {
-      setSort(event.target.value as "title" | "old" | "new" | "interest" | "star");
+    } else if (event.target.name === "sort-group") {
+      setSort(event.target.value as Sort);
+    } else if (event.target.name === "day") {
+      const newDay = event.target.value as Day;
+      if (days.includes(newDay)) {
+        setDays([...days.filter((day) => day != newDay)]);
+      } else {
+        setDays([...days, newDay]);
+      }
     }
   };
 
@@ -61,14 +81,7 @@ const Main = () => {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-        <Typography variant="h3">
-          <Link to="/" style={{ textDecoration: "none" }}>
-            네이버 웹툰 분석기
-          </Link>
-        </Typography>
-      </Box>
-
+      <Header />
       <Box component="form" sx={{ width: "100%", mt: 5 }} noValidate autoComplete="off">
         <TextField
           onChange={handleChange}
@@ -80,7 +93,16 @@ const Main = () => {
           value={input}
         />
       </Box>
-      <FormControl sx={{ mb: 5, mt: 5 }}>
+      <FormGroup onChange={handleChange} row>
+        <FormControlLabel name="day" value="monday" control={<Checkbox />} label="월요웹툰" />
+        <FormControlLabel name="day" value="tuesday" control={<Checkbox />} label="화요웹툰" />
+        <FormControlLabel name="day" value="wednesday" control={<Checkbox />} label="수요웹툰" />
+        <FormControlLabel name="day" value="thurday" control={<Checkbox />} label="목요웹툰" />
+        <FormControlLabel name="day" value="friday" control={<Checkbox />} label="금요웹툰" />
+        <FormControlLabel name="day" value="satursday" control={<Checkbox />} label="토요웹툰" />
+        <FormControlLabel name="day" value="sunday" control={<Checkbox />} label="일요웹툰" />
+      </FormGroup>
+      <FormControl sx={{ mb: 5 }}>
         <FormLabel id="demo-row-radio-buttons-group-label">정렬하기</FormLabel>
         <RadioGroup
           row
@@ -100,8 +122,9 @@ const Main = () => {
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {webtoonList
           ?.slice()
-          .filter((webtoon) => webtoon.title.includes(input) || input == "")
-          .sort(compare[sort])
+          .filter((webtoon) => webtoon.title.includes(input) || input === "")
+          .filter((webtoon) => days.includes(dayConverter[webtoon.day]) || days.length === 0)
+          .sort(compareConverter[sort])
           .map((webtoon: Webtoon) => (
             <Box sx={{ margin: 1 }} key={webtoon.id}>
               <Link style={{ textDecoration: "none" }} to={"/webtoon/" + webtoon.id.toString()}>
