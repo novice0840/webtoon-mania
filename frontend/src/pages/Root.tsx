@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
-import { Webtoon, Day, Sort } from "@src/types/webtoon";
-import { getAllWebtoon } from "@src/api/webtoon";
+import { Day, Sort } from "@src/types/webtoon";
 import {
   Container,
   Box,
@@ -12,38 +10,15 @@ import {
   TextField,
   FormGroup,
   Checkbox,
-  Grid,
-  Paper,
 } from "@mui/material";
-import { useState, ChangeEvent, useEffect } from "react";
-import { compareInterest, compareNew, compareOld, compareStar, compareTitle } from "@src/utils/compare";
+import { useState, ChangeEvent } from "react";
 import Header from "@src/components/Header";
+import WebtoonGrid from "@src/components/WebtoonGrid";
 
 const Main = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
-  const [webtoonList, setWebtoonList] = useState<Webtoon[]>();
   const [sort, setSort] = useState<Sort>("title");
   const [input, setInput] = useState<string>("");
   const [days, setDays] = useState<Day[]>([]);
-
-  const compareConverter: Record<Sort, (a: Webtoon, b: Webtoon) => -1 | 0 | 1> = {
-    title: compareTitle,
-    old: compareOld,
-    new: compareNew,
-    interest: compareInterest,
-    star: compareStar,
-  };
-
-  const dayConverter: Record<string, Day> = {
-    월요웹툰: "monday",
-    화요웹툰: "tuesday",
-    수요웹툰: "wednesday",
-    목요웹툰: "thusday",
-    금요웹툰: "friday",
-    토요웹툰: "saturday",
-    일요웹툰: "sunday",
-  };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "input-filter") {
@@ -59,27 +34,6 @@ const Main = () => {
       }
     }
   };
-
-  useEffect(() => {
-    setIsLoading(true);
-    getAllWebtoon()
-      .then((data) => {
-        setWebtoonList(data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setIsError(true);
-        console.error(error);
-      });
-  }, []);
-
-  if (isLoading) {
-    return <div>잠시만 기다려주세요 로딩중입니다</div>;
-  }
-
-  if (isError) {
-    return <div>에러가 발생했습니다</div>;
-  }
 
   return (
     <Container maxWidth="lg">
@@ -120,26 +74,7 @@ const Main = () => {
           <FormControlLabel value="star" control={<Radio />} label="별점순" />
         </RadioGroup>
       </FormControl>
-
-      <Grid container spacing={2}>
-        {webtoonList
-          ?.slice()
-          .filter((webtoon) => webtoon.title.includes(input) || input === "")
-          .filter((webtoon) => days.includes(dayConverter[webtoon.day]) || days.length === 0)
-          .sort(compareConverter[sort])
-          .map((webtoon: Webtoon) => (
-            <Grid item xs={2} key={webtoon.id}>
-              <Link style={{ textDecoration: "none" }} to={"/webtoon/" + webtoon.id.toString()}>
-                <Paper key={webtoon.id}>
-                  <img src={webtoon.thumbnail} width={160} height={207} alt="" />
-                  <div>{webtoon.title}</div>
-                  <div>{webtoon.day}</div>
-                  <div>관심웹툰: {webtoon.interest_count}</div>
-                </Paper>
-              </Link>
-            </Grid>
-          ))}
-      </Grid>
+      <WebtoonGrid input={input} days={days} sort={sort} />
     </Container>
   );
 };
