@@ -19,8 +19,15 @@ export class WebtoonService {
 
   async getOneWebtoon(id) {
     const queryRunner = this.datasource.createQueryRunner();
-    return queryRunner.manager.query(
-      `select * from webtoon_chapter_info where webtoon_id=${id}`,
-    );
+    await queryRunner.connect();
+    try {
+      return queryRunner.manager.query(
+        `select * from webtoon_chapter_info where webtoon_id=${id}`,
+      );
+    } catch (err) {
+      console.log(err);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

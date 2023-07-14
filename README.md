@@ -25,4 +25,10 @@ npm install
 npm run dev
 ```
 
+## ToDoList
+
+- [x] 별점순 기능
+- [x] 별점순 기능
+- [x] 별점순 기능
+
 <img src="./img/architecture.png">
