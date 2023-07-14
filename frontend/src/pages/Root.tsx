@@ -12,6 +12,8 @@ import {
   TextField,
   FormGroup,
   Checkbox,
+  Grid,
+  Paper,
 } from "@mui/material";
 import { useState, ChangeEvent, useEffect } from "react";
 import { compareInterest, compareNew, compareOld, compareStar, compareTitle } from "@src/utils/compare";
@@ -119,26 +121,25 @@ const Main = () => {
         </RadioGroup>
       </FormControl>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+      <Grid container spacing={2}>
         {webtoonList
           ?.slice()
           .filter((webtoon) => webtoon.title.includes(input) || input === "")
           .filter((webtoon) => days.includes(dayConverter[webtoon.day]) || days.length === 0)
           .sort(compareConverter[sort])
           .map((webtoon: Webtoon) => (
-            <Box sx={{ margin: 1 }} key={webtoon.id}>
+            <Grid item xs={2} key={webtoon.id}>
               <Link style={{ textDecoration: "none" }} to={"/webtoon/" + webtoon.id.toString()}>
-                <Box key={webtoon.id}>
+                <Paper key={webtoon.id}>
                   <img src={webtoon.thumbnail} width={160} height={207} alt="" />
                   <div>{webtoon.title}</div>
-                  <div>{webtoon.id}</div>
                   <div>{webtoon.day}</div>
                   <div>관심웹툰: {webtoon.interest_count}</div>
-                </Box>
+                </Paper>
               </Link>
-            </Box>
+            </Grid>
           ))}
-      </Box>
+      </Grid>
     </Container>
   );
 };
