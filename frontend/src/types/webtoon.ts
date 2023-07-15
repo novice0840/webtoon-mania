@@ -21,3 +21,5 @@ export type Chapter = {
 export type Day = "monday" | "tuesday" | "wednesday" | "thusday" | "friday" | "saturday" | "sunday";
 
 export type Sort = "title" | "old" | "new" | "interest" | "star";
+
+export type ChapterSort = "averageStar" | "totalStar" | "old" | "new";
