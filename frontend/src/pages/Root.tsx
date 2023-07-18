@@ -1,4 +1,4 @@
-import { Day, Sort } from "@src/types/webtoon";
+import { Day, WebtoonSort } from "@src/types/webtoon";
 import {
   Container,
   Box,
@@ -16,15 +16,15 @@ import Header from "@src/components/Header";
 import WebtoonGrid from "@src/components/WebtoonGrid";
 
 const Main = () => {
-  const [sort, setSort] = useState<Sort>("title");
-  const [input, setInput] = useState<string>("");
+  const [webtoonSort, setWebtoonSort] = useState<WebtoonSort>("title");
+  const [search, setSearch] = useState<string>("");
   const [days, setDays] = useState<Day[]>([]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "input-filter") {
-      setInput(event.target.value);
+      setSearch(event.target.value);
     } else if (event.target.name === "sort-group") {
-      setSort(event.target.value as Sort);
+      setWebtoonSort(event.target.value as WebtoonSort);
     } else if (event.target.name === "day") {
       const newDay = event.target.value as Day;
       if (days.includes(newDay)) {
@@ -46,17 +46,17 @@ const Main = () => {
           label="찾고싶은 웹툰의 제목을 입력하세요"
           variant="outlined"
           name="input-filter"
-          value={input}
+          value={search}
         />
       </Box>
       <FormGroup onChange={handleChange} row>
-        <FormControlLabel name="day" value="monday" control={<Checkbox />} label="월요웹툰" />
-        <FormControlLabel name="day" value="tuesday" control={<Checkbox />} label="화요웹툰" />
-        <FormControlLabel name="day" value="wednesday" control={<Checkbox />} label="수요웹툰" />
-        <FormControlLabel name="day" value="thurday" control={<Checkbox />} label="목요웹툰" />
-        <FormControlLabel name="day" value="friday" control={<Checkbox />} label="금요웹툰" />
-        <FormControlLabel name="day" value="satursday" control={<Checkbox />} label="토요웹툰" />
-        <FormControlLabel name="day" value="sunday" control={<Checkbox />} label="일요웹툰" />
+        <FormControlLabel name="day" value="MONDAY" control={<Checkbox />} label="월요웹툰" />
+        <FormControlLabel name="day" value="TUESDAY" control={<Checkbox />} label="화요웹툰" />
+        <FormControlLabel name="day" value="WEDNESDAY" control={<Checkbox />} label="수요웹툰" />
+        <FormControlLabel name="day" value="THURDAY" control={<Checkbox />} label="목요웹툰" />
+        <FormControlLabel name="day" value="FRIDAY" control={<Checkbox />} label="금요웹툰" />
+        <FormControlLabel name="day" value="SATURDAY" control={<Checkbox />} label="토요웹툰" />
+        <FormControlLabel name="day" value="SUNDAY" control={<Checkbox />} label="일요웹툰" />
       </FormGroup>
       <FormControl sx={{ mb: 5 }}>
         <FormLabel id="demo-row-radio-buttons-group-label">정렬하기</FormLabel>
@@ -74,7 +74,7 @@ const Main = () => {
           <FormControlLabel value="star" control={<Radio />} label="별점순" />
         </RadioGroup>
       </FormControl>
-      <WebtoonGrid input={input} days={days} sort={sort} />
+      <WebtoonGrid search={search} days={days} webtoonSort={webtoonSort} />
     </Container>
   );
 };

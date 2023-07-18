@@ -1,25 +1,27 @@
-export type Webtoon = {
+export type WebtoonBase = Omit<WebtoonDetail, "description" | "chapters">;
+
+export type WebtoonDetail = {
   id: number;
   title: string;
-  day: "월요웹툰" | "화요웹툰" | "수요웹툰" | "목요웹툰" | "금요웹툰" | "토요웹툰" | "일요웹툰";
+  dayOfWeek: Day[];
   thumbnail: string;
-  interest_count: number;
+  interestCount: number;
+  starScore: number;
+  description: string;
+  tags: string[];
+  chapters: Chapter[];
 };
 
 export type Chapter = {
   id: number;
-  webtoon_id: number;
   name: string;
-  upload_data: string;
+  averageStar: number;
   thumbnail: string;
-  comment_number: number;
-  like_count: number;
-  average_star: number;
-  total_star: number;
+  uploadDate: string;
 };
 
-export type Day = "monday" | "tuesday" | "wednesday" | "thusday" | "friday" | "saturday" | "sunday";
+export type Day = "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
 
-export type Sort = "title" | "old" | "new" | "interest" | "star";
+export type WebtoonSort = "title" | "old" | "new" | "interest" | "star";
 
 export type ChapterSort = "averageStar" | "totalStar" | "old" | "new";
