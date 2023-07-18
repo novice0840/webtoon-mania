@@ -21,6 +21,8 @@ const Main = () => {
   const [search, setSearch] = useState<string>("");
   const [days, setDays] = useState<Day[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [tagsOrAnd, setTagsOrAnd] = useState<"or" | "and">("or");
+  const [daysOrAnd, setDaysOrAnd] = useState<"or" | "and">("or");
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "input-filter") {
@@ -41,6 +43,18 @@ const Main = () => {
       } else {
         setTags([...tags, newTag]);
       }
+    } else if (event.target.name === "tagOrAnd") {
+      if (tagsOrAnd === "or") {
+        setTagsOrAnd("and");
+      } else {
+        setTagsOrAnd("or");
+      }
+    } else if (event.target.name === "daysOrAnd") {
+      if (daysOrAnd === "or") {
+        setDaysOrAnd("and");
+      } else {
+        setDaysOrAnd("or");
+      }
     }
   };
 
@@ -59,7 +73,19 @@ const Main = () => {
         />
       </Box>
       <FormGroup row onChange={handleChange}>
-        <FormLabel id="demo-row-radio-buttons-group-label">태그</FormLabel>
+        <FormLabel id="demo-row-radio-buttons-group-label">
+          태그
+          <RadioGroup
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="tagOrAnd"
+            onChange={handleChange}
+            row
+            value={tagsOrAnd}
+          >
+            <FormControlLabel value="or" control={<Radio />} label="OR" />
+            <FormControlLabel value="and" control={<Radio />} label="AND" />
+          </RadioGroup>
+        </FormLabel>
         <FormGroup row>
           {webtoonTags.map((tag) => (
             <FormControlLabel key={tag} name="tag" value={tag} control={<Checkbox />} label={tag} />
@@ -67,7 +93,19 @@ const Main = () => {
         </FormGroup>
       </FormGroup>
       <FormGroup onChange={handleChange}>
-        <FormLabel id="demo-row-radio-buttons-group-label">요일</FormLabel>
+        <FormLabel id="demo-row-radio-buttons-group-label">
+          요일
+          <RadioGroup
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="daysOrAnd"
+            onChange={handleChange}
+            row
+            value={daysOrAnd}
+          >
+            <FormControlLabel value="or" control={<Radio />} label="OR" />
+            <FormControlLabel value="and" control={<Radio />} label="AND" />
+          </RadioGroup>
+        </FormLabel>
         <FormGroup row>
           {webtoonDayOfWeeks.map((day) => (
             <FormControlLabel key={day.value} name="day" value={day.value} control={<Checkbox />} label={day.label} />
@@ -88,7 +126,14 @@ const Main = () => {
           ))}
         </RadioGroup>
       </FormControl>
-      <WebtoonGrid search={search} days={days} webtoonSort={webtoonSort} tags={tags} />
+      <WebtoonGrid
+        search={search}
+        days={days}
+        webtoonSort={webtoonSort}
+        tags={tags}
+        tagsOrAnd={tagsOrAnd}
+        daysOrAnd={daysOrAnd}
+      />
     </Container>
   );
 };

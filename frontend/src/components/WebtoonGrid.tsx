@@ -11,9 +11,11 @@ type PropTypes = {
   days: Day[];
   webtoonSort: WebtoonSort;
   tags: Tag[];
+  tagsOrAnd: "or" | "and";
+  daysOrAnd: "or" | "and";
 };
 
-const WebtoonGrid = ({ search, days, webtoonSort, tags }: PropTypes) => {
+const WebtoonGrid = ({ search, days, webtoonSort, tags, tagsOrAnd, daysOrAnd }: PropTypes) => {
   const { isLoading, isError, data }: UseQueryResult<WebtoonBase[], unknown> = useQuery({
     queryKey: ["getAllWebtoon"],
     queryFn: () => getAllWebtoon(),
@@ -31,9 +33,21 @@ const WebtoonGrid = ({ search, days, webtoonSort, tags }: PropTypes) => {
     <Grid container rowSpacing={1} spacing={1}>
       {data
         ?.slice()
-        .filter((webtoon) => webtoon.title.includes(search) || search === "")
-        .filter((webtoon) => tags.some((tag) => webtoon.tags.includes(tag)) || tags.length === 0)
-        .filter((webtoon) => days.some((day) => webtoon.dayOfWeek.includes(day)) || days.length === 0)
+        .filter((webtoon) => search === "" || webtoon.title.includes(search))
+        .filter(
+          (webtoon) =>
+            tags.length === 0 ||
+            (tagsOrAnd === "or"
+              ? tags.some((tag) => webtoon.tags.includes(tag))
+              : tags.every((tag) => webtoon.tags.includes(tag)))
+        )
+        .filter(
+          (webtoon) =>
+            days.length === 0 ||
+            (daysOrAnd === "or"
+              ? days.some((day) => webtoon.dayOfWeek.includes(day))
+              : days.every((day) => webtoon.dayOfWeek.includes(day)))
+        )
         .sort(compareConverter[webtoonSort])
         .map((webtoon: WebtoonBase) => (
           <Grid item xs={6} sm={3} md={2} key={webtoon.id}>
