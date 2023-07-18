@@ -1,17 +1,14 @@
 import { getOneWebtoon } from "@src/api/webtoon";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Chapter } from "@src/types/webtoon";
+import { Chapter, ChapterSort, WebtoonDetail } from "@src/types/webtoon";
 import { Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
-import Header from "@src/components/Header";
-import ChapterChart from "@src/components/ChapterChart";
-import ChapterGrid from "@src/components/ChapterGrid";
+import { Header, ChapterChart, ChapterGrid } from "@src/components";
 import { useState, ChangeEvent } from "react";
-import { ChapterSort } from "@src/types/webtoon";
 
 const Webtoon = () => {
   const { id } = useParams(); // params;
-  const { isLoading, isError, data }: UseQueryResult<Chapter[], unknown> = useQuery({
+  const { isLoading, isError, data }: UseQueryResult<WebtoonDetail, unknown> = useQuery({
     queryKey: ["getOneWebtoon", id],
     queryFn: () => getOneWebtoon(id ?? "783053"),
   });
@@ -34,7 +31,7 @@ const Webtoon = () => {
   return (
     <Container maxWidth="lg">
       <Header />
-      <ChapterChart data={data} />
+      <ChapterChart data={data.chapters} />
       <FormControl sx={{ mb: 5 }}>
         <FormLabel id="demo-row-radio-buttons-group-label">정렬하기</FormLabel>
         <RadioGroup
@@ -50,7 +47,7 @@ const Webtoon = () => {
           <FormControlLabel value="totalStar" control={<Radio />} label="총 별점순" />
         </RadioGroup>
       </FormControl>
-      <ChapterGrid data={data} sortType={sortType} />
+      <ChapterGrid data={data.chapters} sortType={sortType} />
     </Container>
   );
 };

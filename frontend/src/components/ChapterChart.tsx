@@ -7,8 +7,8 @@ const ChapterChart = ({ data }: { data: Chapter[] }) => {
       width={1000}
       height={300}
       series={[
-        { data: [...data.map((chapter) => chapter.total_star)], label: "총 별점", yAxisKey: "leftAxisId" },
-        { data: [...data.map((chapter) => chapter.average_star)], label: "평균 별점", yAxisKey: "rightAxisId" },
+        { data: [...data.map((chapter) => chapter.totalStar)], label: "총 별점", yAxisKey: "leftAxisId" },
+        { data: [...data.map((chapter) => chapter.averageStar)], label: "평균 별점", yAxisKey: "rightAxisId" },
       ]}
       sx={{
         ".MuiMarkElement-root": {

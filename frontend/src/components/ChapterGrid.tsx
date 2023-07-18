@@ -1,5 +1,5 @@
 import { Chapter, ChapterSort } from "@src/types/webtoon";
-import { Box, Grid, Paper } from "@mui/material";
+import { Grid, Paper } from "@mui/material";
 import { Link } from "react-router-dom";
 import { compareChapterConverter } from "@src/utils/compareChapter";
 
@@ -15,9 +15,9 @@ const ChapterGrid = ({ data, sortType }: { data: Chapter[]; sortType: ChapterSor
               <Link style={{ textDecoration: "none" }} key={chapter.id} to={"/chapter/" + chapter.id.toString()}>
                 <img src={chapter.thumbnail} width={106} height={62} alt="" />
                 <div>{chapter.name}</div>
-                <div>{chapter.upload_data.split("T")[0]}</div>
-                <div>평균 별점{chapter.average_star}</div>
-                <div>별점 총합{chapter.total_star}</div>
+                <div>{chapter.uploadDate}</div>
+                <div>평균 별점{chapter.averageStar}</div>
+                <div>별점 총합{chapter.totalStar}</div>
               </Link>
             </Paper>
           </Grid>

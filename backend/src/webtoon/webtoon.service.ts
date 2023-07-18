@@ -58,7 +58,7 @@ export class WebtoonService {
         id: chapter.id,
         name: chapter.name,
         averageStar: chapter.average_star,
-        totalStar: chapter.totalStar,
+        totalStar: chapter.total_star,
         thumbnail: chapter.thumbnail,
         uploadDate: new Date(chapter.upload_date).toISOString().split('T')[0],
       }));

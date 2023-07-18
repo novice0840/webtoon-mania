@@ -19,18 +19,18 @@ const compareNew = (a: Chapter, b: Chapter) => {
 };
 
 const compareAverageStar = (a: Chapter, b: Chapter) => {
-  if (a.average_star < b.average_star) {
+  if (a.averageStar < b.averageStar) {
     return 1;
-  } else if (a.average_star > b.average_star) {
+  } else if (a.averageStar > b.averageStar) {
     return -1;
   }
   return 0;
 };
 
 const compareTotalStar = (a: Chapter, b: Chapter) => {
-  if (a.total_star < b.total_star) {
+  if (a.totalStar < b.totalStar) {
     return 1;
-  } else if (a.total_star > b.total_star) {
+  } else if (a.totalStar > b.totalStar) {
     return -1;
   }
   return 0;
