@@ -1,4 +1,5 @@
-﻿use naverwebtoon_analyzer;
+﻿create database naverwebtoon_analyzer;
+use naverwebtoon_analyzer;
 drop table if exists webtoon_base_info, webtoon_chapter_info, webtoon_bestcomment_info;
 CREATE TABLE `webtoon_base_info` (
 	`id`	int	NOT NULL	COMMENT '각 웹툰고유의 숫자코드',

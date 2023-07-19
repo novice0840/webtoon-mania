@@ -4,10 +4,11 @@ import { AppService } from './app.service';
 import { WebtoonModule } from './webtoon/webtoon.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronjobModule } from './cronjob/cronjob.module';
 
 @Module({
   imports: [
-    WebtoonModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -19,6 +20,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [],
       synchronize: true,
     }),
+    ScheduleModule.forRoot(),
+    WebtoonModule,
+    CronjobModule,
   ],
   controllers: [AppController],
   providers: [AppService],

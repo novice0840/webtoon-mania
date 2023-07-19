@@ -1,7 +1,7 @@
 import { getOneWebtoon } from "@src/api/webtoon";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Chapter, ChapterSort, WebtoonDetail } from "@src/types/webtoon";
+import { ChapterSort, WebtoonDetail } from "@src/types/webtoon";
 import { Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { Header, ChapterChart, ChapterGrid } from "@src/components";
 import { useState, ChangeEvent } from "react";

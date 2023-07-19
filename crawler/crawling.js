@@ -83,7 +83,7 @@ const crawlingChapter = async (dayOfWeek) => {
   for await (const row of rows) {
     let response = await axios.get(`https://comic.naver.com/api/article/list?titleId=${row.id}&page=1
     `);
-    const { totalPages: pageNumber, totalRows: chapterNumber } = response.data.pageInfo;
+    const { totalPages: pageNumber } = response.data.pageInfo;
     const pageList = Array.from({ length: pageNumber }, (_, index) => index + 1);
     for await (const page of pageList) {
       try {
