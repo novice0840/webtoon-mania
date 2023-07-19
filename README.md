@@ -29,7 +29,7 @@ npm run dev
 
 - [ ] AWS에 배포
 - [ ] CI/CD 구축
-- [ ] scheduler로 crawling 자동화
+- [x] scheduler로 crawling 자동화
 
 ## 완료된 기능
 
