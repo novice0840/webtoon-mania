@@ -27,9 +27,7 @@ npm run dev
 
 ## ToDoList
 
-- [ ] AWS에 배포
 - [ ] CI/CD 구축
-- [x] scheduler로 crawling 자동화
 
 ## 완료된 기능
 
@@ -42,3 +40,6 @@ npm run dev
 - [x] 챕터 정렬 기능 추가 (총 별점 순, 평균 별점 순, 최신순, 오래된순)
 - [x] 태그 검색 기능 추가
 - [x] 필터링 기능에 or 또는 and 선택지 추가 - 현재는 무조건 or 로 처리중
+- [x] scheduler로 crawling 자동화
+- [x] AWS에 배포
+- [x] backend api 서버에 ssl 적용시키기
