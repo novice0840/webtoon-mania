@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronjobModule } from './cronjob/cronjob.module';
+import { Webtoon } from './entity/webtoon.entity';
+import { Chapter } from './entity/chapter.entity';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { CronjobModule } from './cronjob/cronjob.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [],
+      entities: [Webtoon, Chapter],
       synchronize: true,
     }),
     ScheduleModule.forRoot(),

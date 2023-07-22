@@ -11,7 +11,7 @@ export class WebtoonService {
     let webtoonList;
     try {
       const data = await queryRunner.manager.query(
-        'select id,title,author,day_of_week,thumbnail,interest_count,star_score,tags from webtoon_base_info;',
+        'select id,title,author,day_of_week,thumbnail,interest_count,star_score,tags from webtoon;',
       );
       webtoonList = data.map((webtoon) => ({
         id: webtoon.id,
@@ -37,7 +37,7 @@ export class WebtoonService {
     let webtoon;
     try {
       let data = await queryRunner.manager.query(
-        `select * from webtoon_base_info where id=${id}`,
+        `select * from webtoon where id=${id}`,
       );
       webtoon = {
         id: data[0].id,
@@ -52,7 +52,7 @@ export class WebtoonService {
         chapters: [],
       };
       data = await queryRunner.manager.query(
-        `select id,name,average_star,total_star,thumbnail,upload_date from webtoon_chapter_info where webtoon_id=${id}`,
+        `select id,name,average_star,total_star,thumbnail,upload_date from chapter where webtoon_id=${id}`,
       );
       webtoon.chapters = data.map((chapter) => ({
         id: chapter.id,
