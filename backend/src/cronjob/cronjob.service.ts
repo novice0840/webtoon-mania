@@ -1,16 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
-import { crawlingWebtoon, crawlingChapter } from './crawler';
+import {
+  crawlingWebtoon,
+  crawlingChapter,
+  crawlingRecentChapter,
+} from './crawler';
 @Injectable()
 export class CronjobService {
   constructor(private readonly datasource: DataSource) {}
 
-  async test() {
-    const webtoons = await crawlingWebtoon('WEDNESDAY');
+  async initAll() {
+    await this.initDayOfWeek('MONDAY');
+    await this.initDayOfWeek('TUESDAY');
+    await this.initDayOfWeek('WEDNESDAY');
+    await this.initDayOfWeek('THURSDAY');
+    await this.initDayOfWeek('FRIDAY');
+    await this.initDayOfWeek('SATURDAY');
+    await this.initDayOfWeek('SUNDAY');
+  }
+
+  async initDayOfWeek(dayOfWeek) {
+    const webtoons = await crawlingWebtoon(dayOfWeek);
     await this.updateWebtoons(webtoons);
     const chapters = await crawlingChapter(webtoons);
     await this.updateChapters(chapters);
+  }
+
+  async initWebtoon(webtoonId) {
+    return webtoonId;
   }
 
   private updateWebtoons = async (webtoons) => {
@@ -71,29 +89,27 @@ export class CronjobService {
   };
 
   @Cron('0 30 11 * * *')
-  async handleCron() {
-    const queryRunner = this.datasource.createQueryRunner();
-    await queryRunner.connect();
+  async crawlingScheduler() {
     const date = new Date();
     const today = date.getDay();
     let webtoons;
     if (today === 0) {
-      webtoons = crawlingWebtoon('SUNDAY');
+      webtoons = await crawlingWebtoon('SUNDAY');
     } else if (today === 1) {
-      webtoons = crawlingWebtoon('MONDAY');
+      webtoons = await crawlingWebtoon('MONDAY');
     } else if (today === 2) {
-      webtoons = crawlingWebtoon('TUESDAY');
+      webtoons = await crawlingWebtoon('TUESDAY');
     } else if (today === 3) {
-      webtoons = crawlingWebtoon('WEDNESDAY');
+      webtoons = await crawlingWebtoon('WEDNESDAY');
     } else if (today === 4) {
-      webtoons = crawlingWebtoon('THURSDAY');
+      webtoons = await crawlingWebtoon('THURSDAY');
     } else if (today === 5) {
-      webtoons = crawlingWebtoon('FRIDAY');
+      webtoons = await crawlingWebtoon('FRIDAY');
     } else if (today === 6) {
-      webtoons = crawlingWebtoon('SATURDAY');
+      webtoons = await crawlingWebtoon('SATURDAY');
     }
     await this.updateWebtoons(webtoons);
-    const chapters = await crawlingChapter(webtoons);
+    const chapters = await crawlingRecentChapter(webtoons);
     await this.updateChapters(chapters);
   }
 }

@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import axios from 'axios';
 
 type Webtoon = {
@@ -14,6 +14,7 @@ type Webtoon = {
   interestCount: number;
 };
 
+// 메인페이지에서 모든 웹툰을 크롤링하는 함수
 export const crawlingWebtoon = async (day) => {
   const browser = await puppeteer.launch({
     headless: 'new',
@@ -34,12 +35,12 @@ export const crawlingWebtoon = async (day) => {
         });
       } else {
         webtoons.push({
-          id: newWebtoon.titleId,
-          title: newWebtoon.titleName,
-          author: newWebtoon.author,
-          thumbnail: newWebtoon.thumbnailUrl,
+          id: newWebtoon.titleId ?? 0,
+          title: newWebtoon.titleName ?? '',
+          author: newWebtoon.author ?? '',
+          thumbnail: newWebtoon.thumbnailUrl ?? '',
           dayOfWeek: [day],
-          starScore: newWebtoon.starScore,
+          starScore: newWebtoon.starScore ?? 0,
           tags: [],
           description: '',
           interestCount: 0,
@@ -54,7 +55,7 @@ export const crawlingWebtoon = async (day) => {
     );
     await page.waitForSelector('p.EpisodeListInfo__summary--Jd1WG');
     const content = await page.content();
-    const $ = cheerio.load(content);
+    const $ = load(content);
     const tags: string[] = [];
     $('a.TagGroup__tag--xu0OH')?.each((i, element) => {
       tags.push($(element).text());
@@ -76,6 +77,7 @@ export const crawlingWebtoon = async (day) => {
   return webtoons;
 };
 
+// 모든 page를 돌며 모든 chapter를 크롤링하는 함수
 export const crawlingChapter = async (webtoons) => {
   const chapters = [];
 
@@ -95,11 +97,12 @@ export const crawlingChapter = async (webtoons) => {
         );
         res.data.articleList.forEach((article) => {
           chapters.push({
-            id: article.no,
-            webtoonId: webtoon.id,
-            name: article.subtitle.replaceAll("'", ' ').replaceAll('"', ' '),
-            uploadDate: article.serviceDateDescription,
-            thumbnail: article.thumbnailUrl,
+            id: article.no ?? 0,
+            webtoonId: webtoon.id ?? 0,
+            name:
+              article.subtitle.replaceAll("'", ' ').replaceAll('"', ' ') ?? '',
+            uploadDate: article.serviceDateDescription ?? '2000-01-01',
+            thumbnail: article.thumbnailUrl ?? '',
           });
         });
       } catch (error) {
@@ -114,8 +117,49 @@ export const crawlingChapter = async (webtoons) => {
         `https://comic.naver.com/api/userAction/info?titleId=${chapter.webtoonId}&no=${chapter.id}`,
       );
       const { starScore, averageStarScore } = response?.data?.starInfo;
-      chapter.totalStar = starScore;
-      chapter.averageStar = averageStarScore;
+      chapter.totalStar = starScore ?? 0;
+      chapter.averageStar = averageStarScore ?? 0;
+      console.log(`${i}번째 Chapter 크롤링 완료`);
+      i += 1;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  return chapters;
+};
+
+// 가장 최근 페이지만 크롤링
+export const crawlingRecentChapter = async (webtoons) => {
+  const chapters = [];
+  for await (const webtoon of webtoons) {
+    try {
+      const res = await axios.get(
+        `https://comic.naver.com/api/article/list?titleId=${webtoon.id}`,
+      );
+      res.data.articleList.forEach((article) => {
+        chapters.push({
+          id: article.no ?? 0,
+          webtoonId: webtoon.id ?? 0,
+          name:
+            article.subtitle.replaceAll("'", ' ').replaceAll('"', ' ') ?? '',
+          uploadDate: article.serviceDateDescription ?? '2000-01-01',
+          thumbnail: article.thumbnailUrl ?? '',
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  let i = 1;
+  for await (const chapter of chapters) {
+    try {
+      const response = await axios.get(
+        `https://comic.naver.com/api/userAction/info?titleId=${chapter.webtoonId}&no=${chapter.id}`,
+      );
+      const { starScore, averageStarScore } = response?.data?.starInfo;
+      chapter.totalStar = starScore ?? 0;
+      chapter.averageStar = averageStarScore ?? 0;
       console.log(`${i}번째 Chapter 크롤링 완료`);
       i += 1;
     } catch (error) {
