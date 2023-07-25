@@ -1,0 +1,23 @@
+name: integration to EC2
+on:
+  push:
+    branches:
+      - main
+jobs:
+  cd-to-ec2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run cd scripts in server
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.EC2_PEM_KEY }}
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USER }}
+          script: |
+            sudo su
+            cd ./naverwebtoon-analyzer/backend/
+            git pull
+            npm install 
+            npm run build 
+            pm2 restart main
