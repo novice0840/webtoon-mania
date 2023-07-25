@@ -18,6 +18,7 @@ type Webtoon = {
 export const crawlingWebtoon = async (day) => {
   const browser = await puppeteer.launch({
     headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
   const webtoons: Webtoon[] = [];
