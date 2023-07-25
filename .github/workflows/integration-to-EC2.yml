@@ -7,13 +7,13 @@ jobs:
   cd-to-ec2:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - name: Run cd scripts in server
         uses: appleboy/ssh-action@master
         with:
           key: ${{ secrets.EC2_PEM_KEY }}
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
+          port: ${{ secrets.EC2_SSH_PORT }}
           script: |
             sudo su
             cd ./naverwebtoon-analyzer/backend/
