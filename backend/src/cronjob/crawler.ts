@@ -51,28 +51,32 @@ export const crawlingWebtoon = async (day) => {
 
   let i = 1;
   for await (const webtoon of webtoons) {
-    await page.goto(
-      `https://comic.naver.com/webtoon/list?titleId=${webtoon.id}`,
-    );
-    await page.waitForSelector('p.EpisodeListInfo__summary--Jd1WG');
-    const content = await page.content();
-    const $ = load(content);
-    const tags: string[] = [];
-    $('a.TagGroup__tag--xu0OH')?.each((i, element) => {
-      tags.push($(element).text());
-    });
-    webtoon.tags = tags;
-    webtoon.description =
-      $('p.EpisodeListInfo__summary--Jd1WG')
-        ?.text()
-        .replaceAll("'", ' ')
-        .replaceAll('"', ' ') ?? '';
-    webtoon.interestCount =
-      parseInt(
-        $('span.EpisodeListUser__count--fNEWK')?.text().replaceAll(',', ''),
-      ) ?? 0;
-    console.log(`웹툰 크롤링 ${i}개 완료`);
-    i = i + 1;
+    try {
+      await page.goto(
+        `https://comic.naver.com/webtoon/list?titleId=${webtoon.id}`,
+      );
+      await page.waitForSelector('p.EpisodeListInfo__summary--Jd1WG');
+      const content = await page.content();
+      const $ = load(content);
+      const tags: string[] = [];
+      $('a.TagGroup__tag--xu0OH')?.each((i, element) => {
+        tags.push($(element).text());
+      });
+      webtoon.tags = tags;
+      webtoon.description =
+        $('p.EpisodeListInfo__summary--Jd1WG')
+          ?.text()
+          .replaceAll("'", ' ')
+          .replaceAll('"', ' ') ?? '';
+      webtoon.interestCount =
+        parseInt(
+          $('span.EpisodeListUser__count--fNEWK')?.text().replaceAll(',', ''),
+        ) ?? 0;
+      console.log(`웹툰 크롤링 ${i}개 완료 - ${webtoon.title}`);
+      i = i + 1;
+    } catch (error) {
+      console.log(error);
+    }
   }
   await browser.close();
   return webtoons;
