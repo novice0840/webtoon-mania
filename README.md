@@ -27,7 +27,12 @@ npm run dev
 
 ## ToDoList
 
-- [ ] CI/CD 구축
+- [ ] 회원가입 기능 추가
+- [ ] 로그인 기능 추가
+- [ ] 로그인 시 데이터를 엑셀로 다운받을 수 있는 기능 추가
+- [ ] 각 웹툰 별 댓글 기능 추가
+- [ ] 각 웹툰 별 실시간 채팅방 추가
+- [ ] Jest 사용하여 테스트 코드 짜기
 
 ## 완료된 기능
 
@@ -43,3 +48,4 @@ npm run dev
 - [x] scheduler로 crawling 자동화
 - [x] AWS에 배포
 - [x] backend api 서버에 ssl 적용시키기
+- [x] CI/CD 구축
