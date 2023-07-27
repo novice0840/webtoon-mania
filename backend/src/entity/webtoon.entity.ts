@@ -1,8 +1,9 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-import { Chapter } from './chapter.entity';
+import Chapter from './chapter.entity';
+import Comment from './comment.entity';
 
 @Entity()
-export class Webtoon {
+export default class Webtoon {
   @PrimaryColumn()
   id: number;
 
@@ -30,6 +31,9 @@ export class Webtoon {
   @Column({ nullable: true })
   tags: string;
 
-  @OneToMany((type) => Chapter, (chapter) => chapter.id)
+  @OneToMany(() => Chapter, (chapter) => chapter.webtoon)
   chapters: Chapter[];
+
+  @OneToMany(() => Comment, (comment) => comment.webtoon)
+  comments: Comment[];
 }

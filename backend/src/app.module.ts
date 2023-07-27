@@ -6,8 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronjobModule } from './cronjob/cronjob.module';
-import { Webtoon } from './entity/webtoon.entity';
-import { Chapter } from './entity/chapter.entity';
+import { AuthModule } from './auth/auth.module';
+import { ChattingModule } from './chatting/chatting.module';
+import { UserModule } from './user/user.module';
+import { CommentModule } from './comment/comment.module';
+import { Chapter, Chatting, Comment, User, Webtoon } from './entity';
 
 @Module({
   imports: [
@@ -19,12 +22,16 @@ import { Chapter } from './entity/chapter.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Webtoon, Chapter],
+      entities: [Chapter, Chatting, Comment, User, Webtoon],
       synchronize: true,
     }),
     ScheduleModule.forRoot(),
     WebtoonModule,
     CronjobModule,
+    AuthModule,
+    ChattingModule,
+    UserModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

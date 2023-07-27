@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Webtoon } from './webtoon.entity';
+import Webtoon from './webtoon.entity';
 
 @Entity()
-export class Chapter {
+export default class Chapter {
   @PrimaryColumn()
   id: number;
 
@@ -33,7 +33,7 @@ export class Chapter {
   @Column({ nullable: true })
   like_count: number;
 
-  @ManyToOne((type) => Webtoon, (webtoon) => webtoon.id)
+  @ManyToOne(() => Webtoon, (webtoon) => webtoon.id)
   @JoinColumn({ name: 'webtoon_id' })
   webtoon: Webtoon;
 }
