@@ -1,34 +1,34 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-import Chapter from './chapter.entity';
-import Comment from './comment.entity';
+import { Chapter } from './chapter.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
-export default class Webtoon {
+export class Webtoon {
   @PrimaryColumn()
   id: number;
 
-  @Column({ nullable: true })
-  title?: string;
+  @Column()
+  title: string;
 
-  @Column({ nullable: true })
+  @Column()
   author: string;
 
-  @Column({ nullable: true })
-  day_of_week: string;
+  @Column({ name: 'day_of_week' })
+  dayOfWeek: string;
 
-  @Column({ nullable: true })
+  @Column()
   thumbnail: string;
 
-  @Column({ default: 0 })
-  interest_count: number;
+  @Column({ name: 'interest_count' })
+  interestCount: number;
 
-  @Column({ default: 0 })
-  star_score: number;
+  @Column({ name: 'star_score' })
+  starScore: number;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   description: string;
 
-  @Column({ nullable: true })
+  @Column()
   tags: string;
 
   @OneToMany(() => Chapter, (chapter) => chapter.webtoon)

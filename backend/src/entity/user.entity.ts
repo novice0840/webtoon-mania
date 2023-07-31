@@ -7,11 +7,11 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
-import Comment from './comment.entity';
-import Chatting from './chatting.entity';
+import { Comment } from './comment.entity';
+import { Chatting } from './chatting.entity';
 
 @Entity()
-export default class User {
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,18 +24,18 @@ export default class User {
   @Column()
   hashed_password: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @DeleteDateColumn()
-  deleted_at: Date;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
   @OneToMany(() => Chatting, (chatting) => chatting.user)
-  chatting: Chatting[];
+  chattings: Chatting[];
 }

@@ -17,9 +17,10 @@ export class AuthService {
     await queryRunner.connect();
     const hashedPassword = await hash(createUserDto.password, 10);
     try {
-      await queryRunner.manager.query(
+      const user = await queryRunner.manager.query(
         `insert into user (email, name, hashed_password) values (${createUserDto.email}, ${createUserDto.name}, ${hashedPassword})`,
       );
+      return user;
     } catch (error) {
       console.log(error);
     } finally {

@@ -1,37 +1,31 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
-import Webtoon from './webtoon.entity';
+import { Webtoon } from './webtoon.entity';
 
 @Entity()
-export default class Chapter {
+export class Chapter {
   @PrimaryColumn()
   id: number;
 
   @PrimaryColumn()
   webtoon_id: number;
 
-  @Column({ nullable: true })
+  @Column()
   name: string;
 
-  @Column({ default: 0 })
-  average_star: number;
+  @Column({ name: 'average_star', type: 'float' })
+  averageStar: number;
 
-  @Column({ default: 0 })
-  total_star: number;
+  @Column({ name: 'total_star', type: 'float' })
+  totalStar: number;
 
-  @Column({ type: 'date', nullable: true })
-  upload_date: string;
+  @Column({ type: 'date', name: 'upload_date' })
+  uploadDate: string;
 
-  @Column({ default: 0 })
-  star_score: number;
-
-  @Column({ nullable: true })
+  @Column()
   thumbnail: string;
 
-  @Column({ nullable: true })
-  comment_number: number;
-
-  @Column({ nullable: true })
-  like_count: number;
+  @Column({ name: 'like_count' })
+  likeCount: number;
 
   @ManyToOne(() => Webtoon, (webtoon) => webtoon.id)
   @JoinColumn({ name: 'webtoon_id' })

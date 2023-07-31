@@ -6,9 +6,32 @@ import {
   crawlingChapter,
   crawlingRecentChapter,
 } from './crawler';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Webtoon } from 'src/entity/webtoon.entity';
+import { Chapter } from 'src/entity/chapter.entity';
 @Injectable()
 export class CronjobService {
-  constructor(private readonly datasource: DataSource) {}
+  constructor(
+    private readonly datasource: DataSource,
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
+  ) {}
+
+  test() {
+    const sample = {
+      id: 1,
+      title: 'sample',
+      author: 'sample',
+      thumbnail: 'sample',
+      dayOfWeek: 'das',
+      starScore: 1,
+      tags: 'sample',
+      description: 'sample',
+      interestCount: 1,
+    };
+    return this.webtoonRepository.save([sample]);
+  }
 
   async initAll() {
     await this.initDayOfWeek('MONDAY');
@@ -35,29 +58,35 @@ export class CronjobService {
     const queryRunner = this.datasource.createQueryRunner();
     await queryRunner.connect();
     try {
-      let i = 1;
-      for await (const webtoon of webtoons) {
-        await queryRunner.manager.query(`
-            INSERT INTO webtoon (id, title, author, day_of_week, thumbnail, interest_count, star_score, description, tags)
-            VALUES (${webtoon.id},"${webtoon.title}", "${
-          webtoon.author
-        }", '${JSON.stringify(webtoon.dayOfWeek)}', "${webtoon.thumbnail}", 
-            ${webtoon.interestCount}, ${webtoon.starScore}, '${
-          webtoon.description
-        }', '${JSON.stringify(webtoon.tags)}')
-            ON DUPLICATE KEY UPDATE title="${webtoon.title}", author="${
-          webtoon.author
-        }", day_of_week='${JSON.stringify(webtoon.dayOfWeek)}', thumbnail="${
-          webtoon.thumbnail
-        }", interest_count=${webtoon.interestCount}, star_score=${
-          webtoon.starScore
-        }, description="${webtoon.description}", tags='${JSON.stringify(
-          webtoon.tags,
-        )}';
-            `);
-        console.log(`웹툰 ${i}개 update 완료`);
-        i += 1;
-      }
+      // let i = 1;
+      const changedWebtoon = webtoons.map((webtoon) => ({
+        ...webtoon,
+        tags: JSON.stringify(webtoon.tags),
+        dayOfWeek: JSON.stringify(webtoon.dayOfWeek),
+      }));
+      return this.webtoonRepository.save([changedWebtoon]);
+      // for await (const webtoon of webtoons) {
+      //   await queryRunner.manager.query(`
+      //       INSERT INTO webtoon (id, title, author, day_of_week, thumbnail, interest_count, star_score, description, tags)
+      //       VALUES (${webtoon.id},"${webtoon.title}", "${
+      //     webtoon.author
+      //   }", '${JSON.stringify(webtoon.dayOfWeek)}', "${webtoon.thumbnail}",
+      //       ${webtoon.interestCount}, ${webtoon.starScore}, '${
+      //     webtoon.description
+      //   }', '${JSON.stringify(webtoon.tags)}')
+      //       ON DUPLICATE KEY UPDATE title="${webtoon.title}", author="${
+      //     webtoon.author
+      //   }", day_of_week='${JSON.stringify(webtoon.dayOfWeek)}', thumbnail="${
+      //     webtoon.thumbnail
+      //   }", interest_count=${webtoon.interestCount}, star_score=${
+      //     webtoon.starScore
+      //   }, description="${webtoon.description}", tags='${JSON.stringify(
+      //     webtoon.tags,
+      //   )}';
+      //       `);
+      //   console.log(`웹툰 ${i}개 update 완료`);
+      //   i += 1;
+      // }
     } catch (err) {
       console.log(err);
     } finally {

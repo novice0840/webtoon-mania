@@ -7,11 +7,11 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import User from './user.entity';
-import Webtoon from './webtoon.entity';
+import { User } from './user.entity';
+import { Webtoon } from './webtoon.entity';
 
 @Entity()
-export default class Comment {
+export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -30,11 +30,11 @@ export default class Comment {
   @Column({ default: 0 })
   dislike: number;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @DeleteDateColumn()
-  deleted_at: Date;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
 
   @ManyToOne(() => User, (user) => user.comments)
   @JoinColumn({ name: 'writer_id' })

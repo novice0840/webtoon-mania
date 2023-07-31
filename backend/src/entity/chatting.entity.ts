@@ -7,10 +7,10 @@ import {
   DeleteDateColumn,
   JoinColumn,
 } from 'typeorm';
-import User from './user.entity';
+import { User } from './user.entity';
 
 @Entity()
-export default class Chatting {
+export class Chatting {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,13 +20,13 @@ export default class Chatting {
   @Column()
   content: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @DeleteDateColumn()
-  deleted_at: Date;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.chatting)
+  @ManyToOne(() => User, (user) => user.chattings)
   @JoinColumn({ name: 'writer_id' })
   user: User;
 }

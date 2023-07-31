@@ -78,6 +78,7 @@ export const crawlingWebtoon = async (day) => {
       console.log(error);
     }
   }
+
   await browser.close();
   return webtoons;
 };
