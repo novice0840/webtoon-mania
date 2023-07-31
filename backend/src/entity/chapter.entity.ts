@@ -6,8 +6,8 @@ export class Chapter {
   @PrimaryColumn()
   id: number;
 
-  @PrimaryColumn()
-  webtoon_id: number;
+  @PrimaryColumn({ name: 'webtoon_id' })
+  webtoonId: number;
 
   @Column()
   name: string;
@@ -23,9 +23,6 @@ export class Chapter {
 
   @Column()
   thumbnail: string;
-
-  @Column({ name: 'like_count' })
-  likeCount: number;
 
   @ManyToOne(() => Webtoon, (webtoon) => webtoon.id)
   @JoinColumn({ name: 'webtoon_id' })
