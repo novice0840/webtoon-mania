@@ -42,13 +42,15 @@ export class UserController {
     return req.user;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put()
-  updateUser(@Body() updateUserDto: UpdateUserDto) {
-    return updateUserDto;
+  updateUser(@Body() updateUserDto: UpdateUserDto, @Request() req) {
+    return this.userService.updateUser(req.user, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete()
-  deleteUser() {
-    return 'delete user';
+  deleteUser(@Request() req) {
+    return this.userService.deleteUser(req.user);
   }
 }

@@ -10,12 +10,15 @@ import { AuthModule } from './auth/auth.module';
 import { ChattingModule } from './chatting/chatting.module';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
-import { Chapter } from './entity/chapter.entity';
-import { Webtoon } from './entity/webtoon.entity';
-import { Chatting } from './entity/chatting.entity';
-import { Comment } from './entity/comment.entity';
-import { User } from './entity/user.entity';
-
+import {
+  Chapter,
+  Chatting,
+  Comment,
+  User,
+  Webtoon,
+  Like,
+  Dislike,
+} from 'src/entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -26,7 +29,7 @@ import { User } from './entity/user.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Webtoon, Chapter, Comment, User, Chatting],
+      entities: [Webtoon, Chapter, Comment, User, Chatting, Like, Dislike],
       autoLoadEntities: true,
       synchronize: true,
     }),

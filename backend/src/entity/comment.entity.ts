@@ -6,9 +6,12 @@ import {
   DeleteDateColumn,
   JoinColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Webtoon } from './webtoon.entity';
+import { Like } from './like.entity';
+import { Dislike } from './dislike.entity';
 
 @Entity()
 export class Comment {
@@ -43,4 +46,10 @@ export class Comment {
   @ManyToOne(() => Webtoon, (webtoon) => webtoon.comments)
   @JoinColumn({ name: 'webtoon_id' })
   webtoon: Webtoon;
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
+
+  @OneToMany(() => Dislike, (DisLike) => DisLike.user)
+  dislikes: Dislike[];
 }

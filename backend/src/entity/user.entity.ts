@@ -6,9 +6,12 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Chatting } from './chatting.entity';
+import { Like } from './like.entity';
+import { Dislike } from './dislike.entity';
 
 @Entity()
 export class User {
@@ -38,4 +41,10 @@ export class User {
 
   @OneToMany(() => Chatting, (chatting) => chatting.user)
   chattings: Chatting[];
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
+
+  @OneToMany(() => Dislike, (DisLike) => DisLike.user)
+  dislikes: Dislike[];
 }
