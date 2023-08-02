@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
 import { Webtoon } from 'src/entity/webtoon.entity';
-import { Chapter } from 'src/entity/chapter.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -9,7 +7,6 @@ import { Repository } from 'typeorm';
 export class WebtoonService {
   constructor(
     @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
-    @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
   ) {}
 
   async getAllWebtoon() {

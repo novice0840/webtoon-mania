@@ -1,47 +1,41 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  ForbiddenException,
+} from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { hash, compare } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/entity/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly datasource: DataSource) {}
-  async login(loginUserDto: LoginUserDto) {
-    const isMatch = await compare(loginUserDto.password, 'plain');
-    return loginUserDto;
+  constructor(
+    @InjectRepository(User) private webtoonRepository: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
+  loginJwt(loginUser: LoginUserDto) {
+    const payload = {
+      email: loginUser.email,
+    };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
-  async signUp(createUserDto: CreateUserDto) {
-    const queryRunner = this.datasource.createQueryRunner();
-    await queryRunner.connect();
-    const hashedPassword = await hash(createUserDto.password, 10);
-    try {
-      const user = await queryRunner.manager.query(
-        `insert into user (email, name, hashed_password) values (${createUserDto.email}, ${createUserDto.name}, ${hashedPassword})`,
-      );
-      return user;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      queryRunner.release();
+  async validateUser(email: string, password: string) {
+    const user = await this.webtoonRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new ForbiddenException('이메일이 등록되지 않았습니다');
     }
-    return createUserDto;
-  }
-
-  private async getUserByEmail(email: string): Promise<boolean> {
-    const queryRunner = this.datasource.createQueryRunner();
-    await queryRunner.connect();
-    const user = await queryRunner.manager.query(
-      `select email, name from user where email = ${email}`,
-    );
-    await queryRunner.release();
-    if (user) {
-      return user;
+    if (!(await bcrypt.compare(password, user.hashed_password))) {
+      throw new ForbiddenException('비밀번호가 일치하지 않습니다');
     }
-    throw new HttpException(
-      '해당 이메일의 사용자가 존재하지 않습니다',
-      HttpStatus.NOT_FOUND,
-    );
+    const { hashed_password, ...result } = user;
+    return result;
   }
 }
