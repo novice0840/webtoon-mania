@@ -15,12 +15,16 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private webtoonRepository: Repository<User>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
-  loginJwt(loginUser: LoginUserDto) {
+  async loginJwt(loginUser: LoginUserDto) {
+    const user = await this.userRepository.findOne({
+      where: { email: loginUser.email },
+    });
     const payload = {
-      email: loginUser.email,
+      email: user.email,
+      name: user.name,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -28,7 +32,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string) {
-    const user = await this.webtoonRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new ForbiddenException('이메일이 등록되지 않았습니다');
     }

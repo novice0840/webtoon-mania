@@ -28,7 +28,6 @@ export class UserController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   login(@Request() req) {
-    console.log(req.user);
     return this.authService.loginJwt(req.user);
   }
 
