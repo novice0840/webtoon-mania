@@ -1,39 +1,42 @@
-import { Controller, Get, Post, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  UseGuards,
+  Request,
+  Body,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
+import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { CreateCommentDto } from './dto/create-dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  // 댓글 쓰기
   @Post()
-  createComment() {
+  createComment(@Body() createCommentDto: CreateCommentDto, @Request() req) {
     return 'get user information';
   }
 
-  // 특정 웹툰의 댓글을 보는 기능
-  @Get('webtoon/:webtoonId')
-  getWebtoonComments() {
-    return 'geting comments';
-  }
-
-  // 자신이 쓴 댓글 목록을 보는 기능
-  @Get('user/:userId')
-  getUserComments() {
-    return 'reading comments';
-  }
-
-  @Post('like')
-  clickLike() {
-    return 'click like';
-  }
-
-  @Post('dislike')
-  clickDislike() {
-    return 'click like';
-  }
-
+  // 댓글을 삭제하는 기능 자기 자신의 댓글만 삭제 가능
   @Delete(':commentId')
   deleteComment() {
     return 'delete comment';
+  }
+
+  // 좋아요 버튼을 눌렀을 때
+  @Get('like/:commentId')
+  clickLikeButton() {
+    return 'click like button';
+  }
+
+  // 싫어요 버튼을 눌렀을 때
+  @Get('dislike/:commentId')
+  clickDislikeButton() {
+    return 'click dislike button';
   }
 }

@@ -5,15 +5,12 @@ import {
   Delete,
   Body,
   Post,
-  Req,
   UseGuards,
   Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { AuthModule } from './../auth/auth.module';
 import { AuthService } from './../auth/auth.service';
 import { LocalAuthGuard } from 'src/auth/guard/local.gurad';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
