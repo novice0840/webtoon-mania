@@ -21,6 +21,7 @@ export class CommentService {
   async getUserComments(userId) {
     return await this.commentRepository.find({
       where: { writerId: userId },
+      relations: ['webtoon'],
     });
   }
 
