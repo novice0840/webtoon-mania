@@ -1,8 +1,8 @@
-import { IsString } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 
 export class CreateCommentDto {
-  @IsString()
-  webtoonId: string;
+  @IsNumber()
+  webtoonId: number;
 
   @IsString()
   content: string;

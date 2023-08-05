@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment, User, Like, Dislike } from 'src/entity';
 import { Repository } from 'typeorm';
@@ -16,7 +16,22 @@ export class CommentService {
   }
 
   async createComment(user, webtoonId, content) {
-    const user_id;
-    return 'create comment';
+    const userId = await this.userRepository.findOne({
+      select: ['id'],
+      where: { email: user.email },
+    });
+    return await this.commentRepository.save({
+      writerId: userId.id,
+      webtoonId,
+      content,
+    });
+  }
+
+  async deleteComment(commentId) {
+    const comment = await this.commentRepository.find(commentId);
+    if (!comment) {
+      throw new ForbiddenException('삭제하려는 댓글이 존재하지 않습니다');
+    }
+    return await this.commentRepository.remove(comment);
   }
 }

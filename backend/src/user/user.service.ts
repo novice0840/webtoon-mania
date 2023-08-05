@@ -12,9 +12,9 @@ export class UserService {
   ) {}
 
   async signUp(createUserDto: CreateUserDto) {
-    const hashed_password = await bcrypt.hash(createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     return this.webtoonRepository.save([
-      { name: createUserDto.name, email: createUserDto.email, hashed_password },
+      { name: createUserDto.name, email: createUserDto.email, hashedPassword },
     ]);
   }
 
@@ -23,8 +23,8 @@ export class UserService {
       where: { email: oldUser.email },
     });
     if (newUser.password) {
-      const hashed_password = await bcrypt.hash(newUser.password, 10);
-      newUser.hashed_password = hashed_password;
+      const hashedPassword = await bcrypt.hash(newUser.password, 10);
+      newUser.hashedPassword = hashedPassword;
     }
     Object.assign(user, newUser);
     const updatedUser = await this.webtoonRepository.save(user);
@@ -36,7 +36,6 @@ export class UserService {
     const userInfo = await this.webtoonRepository.findOne({
       where: { email: user.email },
     });
-    console.log(userInfo);
     const deletedUser = await this.webtoonRepository.save({
       ...userInfo,
       deletedAt: new Date(),

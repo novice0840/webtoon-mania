@@ -36,10 +36,10 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException('이메일이 등록되지 않았습니다');
     }
-    if (!(await bcrypt.compare(password, user.hashed_password))) {
+    if (!(await bcrypt.compare(password, user.hashedPassword))) {
       throw new ForbiddenException('비밀번호가 일치하지 않습니다');
     }
-    const { hashed_password, ...result } = user;
+    const { hashedPassword, ...result } = user;
     return result;
   }
 }

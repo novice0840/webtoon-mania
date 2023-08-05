@@ -18,11 +18,11 @@ export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  writer_id: string;
+  @Column({ name: 'writer_id' })
+  writerId: string;
 
-  @Column()
-  webtoon_id: number;
+  @Column({ name: 'webtoon_id' })
+  webtoonId: number;
 
   @Column()
   content: string;
