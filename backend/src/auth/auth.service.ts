@@ -23,6 +23,7 @@ export class AuthService {
       where: { email: loginUser.email },
     });
     const payload = {
+      id: user.id,
       email: user.email,
       name: user.name,
     };
