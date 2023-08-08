@@ -15,6 +15,11 @@ export class CronjobController {
     return this.cronjobService.initAll();
   }
 
+  @Get('init/webtoons')
+  initWebtoons() {
+    return 'init all webtoon';
+  }
+
   @Get('/init/dayofweek/:dayofweek')
   initDayOfWeek(@Param('dayofweek') dayofweek: string) {
     return this.cronjobService.initDayOfWeek(dayofweek);

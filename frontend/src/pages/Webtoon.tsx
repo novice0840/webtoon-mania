@@ -3,7 +3,7 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { ChapterSort, WebtoonDetail } from "@src/types/webtoon";
 import { Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
-import { Header, ChapterChart, ChapterGrid } from "@src/components";
+import { Header, ChapterChart, ChapterGrid, ChatRoom } from "@src/components";
 import { useState, ChangeEvent } from "react";
 
 const Webtoon = () => {
@@ -30,6 +30,7 @@ const Webtoon = () => {
 
   return (
     <Container maxWidth="lg">
+      <ChatRoom />
       <Header />
       <ChapterChart data={data.chapters} />
       <FormControl sx={{ mb: 5 }}>

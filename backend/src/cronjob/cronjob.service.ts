@@ -42,8 +42,6 @@ export class CronjobService {
   }
 
   async initDayOfWeek(dayOfWeek) {
-    const webtoons = await this.crawlerService.crawlingWebtoon(dayOfWeek);
-    await this.updateWebtoons(webtoons);
     const savedWebtoons = await this.webtoonRepository.find({
       select: ['id'],
       where: { dayOfWeek: Like(`%${dayOfWeek}%`) },

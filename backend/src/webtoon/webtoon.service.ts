@@ -23,7 +23,6 @@ export class WebtoonService {
       where: { id },
       relations: ['chapters'],
     });
-    console.log(webtoon);
     return {
       ...webtoon,
       tags: JSON.parse(webtoon.tags),
