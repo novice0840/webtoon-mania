@@ -7,6 +7,15 @@
 React(Vite), MUI, React-query, React-Router-Dom <br/>
 Nestjs, Typeorm, MySQL
 
+## Demo
+
+<img src="./img/mainpage.PNG">
+<img src="./img/webtoonpage.PNG">
+
+## Architecture
+
+<img src="./img/Architecture.PNG">
+
 ## 실행 방법
 
 Backend

@@ -16,21 +16,6 @@ export class CronjobService {
   @Inject(CrawlerService)
   private readonly crawlerService: CrawlerService;
 
-  test() {
-    const sample = {
-      id: 1,
-      title: 'sample',
-      author: 'sample',
-      thumbnail: 'sample',
-      dayOfWeek: 'das',
-      starScore: 1,
-      tags: 'sample',
-      description: 'sample',
-      interestCount: 1,
-    };
-    return this.webtoonRepository.save([sample]);
-  }
-
   async initAll() {
     await this.initDayOfWeek('MONDAY');
     await this.initDayOfWeek('TUESDAY');

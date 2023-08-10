@@ -5,11 +5,6 @@ import { CronjobService } from './cronjob.service';
 export class CronjobController {
   constructor(private readonly cronjobService: CronjobService) {}
 
-  @Get('test')
-  test() {
-    return this.cronjobService.test();
-  }
-
   @Get('/init/all')
   initAll() {
     return this.cronjobService.initAll();
