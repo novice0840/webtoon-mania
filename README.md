@@ -14,7 +14,7 @@ Nestjs, Typeorm, MySQL
 
 ## Architecture
 
-<img src="./img/Architecture.PNG">
+<img src="./img/architecture.PNG">
 
 ## 실행 방법
 
