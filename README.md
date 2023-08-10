@@ -9,12 +9,12 @@ Nestjs, Typeorm, MySQL
 
 ## Demo
 
-<img src="./img/mainpage.PNG">
-<img src="./img/webtoonpage.PNG">
+<img src="./img/mainpage.png">
+<img src="./img/webtoonpage.png">
 
 ## Architecture
 
-<img src="./img/architecture.PNG">
+<img src="./img/architecture.png">
 
 ## 실행 방법
 
