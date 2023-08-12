@@ -19,6 +19,7 @@ import {
   Like,
   Dislike,
 } from 'src/entity';
+import { CrawlerModule } from './crawler/crawler.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -40,6 +41,7 @@ import {
     ChattingModule,
     UserModule,
     CommentModule,
+    CrawlerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

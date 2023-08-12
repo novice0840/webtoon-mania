@@ -1,35 +1,61 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Chapter } from './chapter.entity';
 import { Comment } from './comment.entity';
 
 @Entity()
+@Unique(['code', 'platform'])
 export class Webtoon {
-  @PrimaryColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  code: string;
 
   @Column()
   title: string;
 
-  @Column()
-  author: string;
+  @Column('json')
+  author: string[];
 
-  @Column({ name: 'day_of_week' })
-  dayOfWeek: string;
+  @Column('json', { name: 'day_of_week', nullable: true })
+  dayOfWeek: string[];
 
-  @Column()
+  @Column({ nullable: true })
   thumbnail: string;
 
-  @Column({ name: 'interest_count' })
+  @Column({ name: 'interest_count', nullable: true })
   interestCount: number;
 
-  @Column({ name: 'star_score' })
+  @Column({ name: 'star_score', nullable: true })
   starScore: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column('json', { nullable: true })
+  tags: string[];
+
   @Column()
-  tags: string;
+  platform: string;
+
+  @Column({ name: 'view_count', nullable: true })
+  viewCount: string;
+
+  @Column({ name: 'like_count', nullable: true })
+  likeCount: number;
+
+  @Column({ name: 'is_end' })
+  isEnd: boolean;
+
+  @Column()
+  link: string;
 
   @OneToMany(() => Chapter, (chapter) => chapter.webtoon)
   chapters: Chapter[];

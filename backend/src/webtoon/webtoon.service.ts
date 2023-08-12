@@ -9,24 +9,14 @@ export class WebtoonService {
     @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
   ) {}
 
-  async getAllWebtoon() {
-    const allWebtoon = await this.webtoonRepository.find();
-    return allWebtoon.map((webtoon) => ({
-      ...webtoon,
-      tags: JSON.parse(webtoon.tags),
-      dayOfWeek: JSON.parse(webtoon.dayOfWeek),
-    }));
+  getAllWebtoon() {
+    return this.webtoonRepository.find();
   }
 
-  async getOneWebtoon(id) {
-    const webtoon = await this.webtoonRepository.findOne({
+  getOneWebtoon(id) {
+    return this.webtoonRepository.findOne({
       where: { id },
       relations: ['chapters'],
     });
-    return {
-      ...webtoon,
-      tags: JSON.parse(webtoon.tags),
-      dayOfWeek: JSON.parse(webtoon.dayOfWeek),
-    };
   }
 }
