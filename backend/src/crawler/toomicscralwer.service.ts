@@ -4,4 +4,4 @@ import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class KakaoCrawlerService {}
+export class ToomicsCrawlerService {}

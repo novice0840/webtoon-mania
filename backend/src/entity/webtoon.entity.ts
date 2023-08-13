@@ -57,6 +57,9 @@ export class Webtoon {
   @Column()
   link: string;
 
+  @Column({ type: 'date', name: 'start_date' })
+  startDate: string;
+
   @OneToMany(() => Chapter, (chapter) => chapter.webtoon)
   chapters: Chapter[];
 

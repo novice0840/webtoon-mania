@@ -4,11 +4,11 @@ import { CronjobController } from './cronjob.controller';
 import { Webtoon } from 'src/entity/webtoon.entity';
 import { Chapter } from 'src/entity/chapter.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CrawlerService } from './crawler.service';
+import { CrawlerModule } from 'src/crawler/crawler.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Webtoon, Chapter])],
-  providers: [CronjobService, CrawlerService],
+  imports: [TypeOrmModule.forFeature([Webtoon, Chapter]), CrawlerModule],
+  providers: [CronjobService],
   controllers: [CronjobController],
 })
 export class CronjobModule {}
