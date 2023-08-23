@@ -1,31 +1,20 @@
-import {
-  Entity,
-  Column,
-  PrimaryColumn,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Chapter } from './chapter.entity';
 import { Comment } from './comment.entity';
 
 @Entity()
-@Unique(['code', 'platform'])
 export class Webtoon {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
-
-  @Column()
-  code: string;
 
   @Column()
   title: string;
 
   @Column('json')
-  author: string[];
+  authors: string[];
 
-  @Column('json', { name: 'day_of_week', nullable: true })
-  dayOfWeek: string[];
+  @Column('json', { name: 'day_of_weeks', nullable: true })
+  dayOfWeeks: string[];
 
   @Column({ nullable: true })
   thumbnail: string;
@@ -56,9 +45,6 @@ export class Webtoon {
 
   @Column()
   link: string;
-
-  @Column({ type: 'date', name: 'start_date' })
-  startDate: string;
 
   @OneToMany(() => Chapter, (chapter) => chapter.webtoon)
   chapters: Chapter[];
