@@ -6,7 +6,6 @@ import { Webtoon } from 'src/entity/webtoon.entity';
 import { Chapter } from 'src/entity/chapter.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { KakaoCrawlerService } from './../crawler/kakaocrawler.service';
 
 @Controller('cronjob')
 export class CronjobController {
@@ -25,6 +24,25 @@ export class CronjobController {
     await this.webtoonRepository.save([...currentWebtoons, ...endWebtoons]);
   }
 
+  // 새로 생긴 웹툰 추가 및 완결된 웹툰 수정
+  @Get('naver/webtoon/update')
+  async naverWebtoonUpdate() {
+    const currentWebtoons = await this.naverCrawlerService.cralwingCurrentWebtoonBase();
+    const storedCurrentWebtoons = await this.webtoonRepository.find({
+      select: ['id', 'titleId'],
+    });
+    // 연재 종료된 웹툰
+    const endWebtoons = storedCurrentWebtoons
+      .filter((webtoon) => !currentWebtoons.map((currentWebtoon) => currentWebtoon.titleId).includes(webtoon.titleId))
+      .map((webtoon) => ({ ...webtoon, isEnd: true }));
+    // 새롭게 연재 시작한 웹툰
+    const newWebtoons = currentWebtoons.filter(
+      (webtoon) => !storedCurrentWebtoons.map((storedWebtoon) => storedWebtoon.titleId).includes(webtoon.titleId),
+    );
+    const updateWebtoons = [...endWebtoons, ...newWebtoons];
+    await this.webtoonRepository.save(updateWebtoons);
+  }
+
   @Get('init/naver/webtoon')
   async initAllNaverWebtoon() {
     const currentWebtoons = await this.naverCrawlerService.cralwingCurrentWebtoonBase();
@@ -34,12 +52,11 @@ export class CronjobController {
 
   @Get('init/naver/chapter')
   async initAllNaverWebtoonChapter() {
-    const webtoons = await this.webtoonRepository.find({ select: ['id'] });
-    const webtoonIds = webtoons.map((webtoon) => webtoon.id);
+    const webtoons = await this.webtoonRepository.find({ select: ['titleId', 'id'] });
     let i = 1;
-    for await (const webtoonId of webtoonIds) {
-      const chapters = await this.naverCrawlerService.crawlingChapters(webtoonId);
-      await this.chapterRepository.save(chapters);
+    for await (const webtoon of webtoons) {
+      const chapters = await this.naverCrawlerService.crawlingChapters(webtoon.titleId);
+      await this.chapterRepository.save(chapters.map((chapter) => ({ ...chapter, webtoonId: webtoon.id })));
       console.log(`${i}째 웹툰 Chapters save 완료`);
       i += 1;
     }
@@ -47,7 +64,7 @@ export class CronjobController {
 
   @Get('init/kakao/webtoon')
   async initAllKakaoWebtoon() {
-    return this.kakaoCrawlerService;
+    return this.kakaoCrawlerService.crawlingWebtoons();
   }
 
   // @Get('init/webtoon/:webtoonId')

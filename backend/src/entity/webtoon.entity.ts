@@ -3,12 +3,19 @@ import { Chapter } from './chapter.entity';
 import { Comment } from './comment.entity';
 
 @Entity()
+@Unique(['titleId', 'platform'])
 export class Webtoon {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ name: 'title_id' })
+  titleId: string;
+
   @Column()
-  title: string;
+  platform: string;
+
+  @Column({ name: 'title_name' })
+  titleName: string;
 
   @Column('json')
   authors: string[];
@@ -22,7 +29,7 @@ export class Webtoon {
   @Column({ name: 'interest_count', nullable: true })
   interestCount: number;
 
-  @Column({ name: 'star_score', nullable: true })
+  @Column({ type: 'float', name: 'star_score', nullable: true })
   starScore: number;
 
   @Column({ type: 'text', nullable: true })
@@ -31,10 +38,7 @@ export class Webtoon {
   @Column('json', { nullable: true })
   tags: string[];
 
-  @Column()
-  platform: string;
-
-  @Column({ name: 'view_count', nullable: true })
+  @Column({ name: 'view_count', nullable: true, default: 0 })
   viewCount: string;
 
   @Column({ name: 'like_count', nullable: true })

@@ -38,8 +38,8 @@ export class NaverCrawlerService {
         }
       })
       .map((webtoon) => ({
-        id: String(webtoon.titleId),
-        title: webtoon.titleName,
+        titleId: String(webtoon.titleId),
+        titleName: webtoon.titleName,
         thumbnail: webtoon.thumbnailUrl,
         starScore: webtoon.starScore,
         platform: 'naver',
@@ -49,7 +49,7 @@ export class NaverCrawlerService {
     const webtoons = [];
     let i = 1;
     for await (const webtoonBase of webtoonBases) {
-      const detail = await this.cralwingWebtoonDetail(webtoonBase.id);
+      const detail = await this.cralwingWebtoonDetail(webtoonBase.titleId);
       const webtoon = { ...webtoonBase, ...detail };
       webtoons.push(webtoon);
       console.log(`naver webtoon ${i}개 크롤링 완료`);
@@ -68,8 +68,8 @@ export class NaverCrawlerService {
       const pageWebtoons = res.data.titleList
         .filter((webtoon) => !webtoon.adult)
         .map((webtoon) => ({
-          id: String(webtoon.titleId),
-          title: webtoon.titleName,
+          titleId: String(webtoon.titleId),
+          titleName: webtoon.titleName,
           author: webtoon.author,
           starScore: webtoon.starScore,
           name: webtoon.titleName,
@@ -85,7 +85,7 @@ export class NaverCrawlerService {
     const webtoons = [];
     let i = 1;
     for await (const webtoonBase of webtoonBases) {
-      const detail = await this.cralwingWebtoonDetail(webtoonBase.id);
+      const detail = await this.cralwingWebtoonDetail(webtoonBase.titleId);
       const webtoon = { ...webtoonBase, ...detail };
       webtoons.push(webtoon);
       console.log(`네이버 완결 웹툰 ${i}개 크롤링 완료`);
@@ -94,9 +94,9 @@ export class NaverCrawlerService {
     return webtoons;
   }
 
-  async cralwingWebtoonDetail(webtoonId) {
+  async cralwingWebtoonDetail(titleId) {
     const response = await axios.get(`
-      https://comic.naver.com/api/article/list/info?titleId=${webtoonId}`);
+      https://comic.naver.com/api/article/list/info?titleId=${titleId}`);
     const dayOfWeeks = response.data.publishDayOfWeekList.map(
       (day) => day.charAt(0).toUpperCase() + day.slice(1).toLowerCase(),
     );
@@ -109,21 +109,21 @@ export class NaverCrawlerService {
   }
 
   // 모든 page를 돌며 모든 chapter를 크롤링하는 함수
-  async crawlingChapters(webtoonId) {
+  async crawlingChapters(titleId) {
     let chapters = [];
-    const totalPageNumber = await this.getTotalPage(webtoonId);
+    const totalPageNumber = await this.getTotalPage(titleId);
     const pageList = Array.from({ length: totalPageNumber }, (_, index) => index + 1);
     for await (const page of pageList) {
-      const articles = await this.crawlingPage(webtoonId, page);
+      const articles = await this.crawlingPage(titleId, page);
       chapters = chapters.concat(articles);
     }
     return chapters;
   }
 
   // 가장 최근 페이지만 크롤링
-  async crawlingRecentPage(webtoonId) {
+  async crawlingRecentPage(titleId) {
     let chapters = [];
-    const articles = await this.crawlingPage(webtoonId, 1);
+    const articles = await this.crawlingPage(titleId, 1);
     chapters = chapters.concat(articles);
     return chapters;
   }
