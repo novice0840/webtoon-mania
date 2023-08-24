@@ -13,7 +13,7 @@ export class NaverCrawlerService {
       name: article.subtitle.replaceAll(/['"]/g, ' '),
       uploadDate: article.serviceDateDescription,
       thumbnail: article.thumbnailUrl,
-      startScore: article.starScore,
+      starScore: article.starScore,
     }));
   }
 
@@ -109,26 +109,22 @@ export class NaverCrawlerService {
   }
 
   // 모든 page를 돌며 모든 chapter를 크롤링하는 함수
-  async crawlingPages(webtoons) {
+  async crawlingChapters(webtoonId) {
     let chapters = [];
-    for await (const webtoon of webtoons) {
-      const totalPageNumber = await this.getTotalPage(webtoon.id);
-      const pageList = Array.from({ length: totalPageNumber }, (_, index) => index + 1);
-      for await (const page of pageList) {
-        const articles = await this.crawlingPage(webtoon.id, page);
-        chapters = chapters.concat(articles);
-      }
+    const totalPageNumber = await this.getTotalPage(webtoonId);
+    const pageList = Array.from({ length: totalPageNumber }, (_, index) => index + 1);
+    for await (const page of pageList) {
+      const articles = await this.crawlingPage(webtoonId, page);
+      chapters = chapters.concat(articles);
     }
     return chapters;
   }
 
   // 가장 최근 페이지만 크롤링
-  async crawlingRecentPage(webtoons) {
+  async crawlingRecentPage(webtoonId) {
     let chapters = [];
-    for await (const webtoon of webtoons) {
-      const articles = await this.crawlingPage(webtoon.id, 1);
-      chapters = chapters.concat(articles);
-    }
+    const articles = await this.crawlingPage(webtoonId, 1);
+    chapters = chapters.concat(articles);
     return chapters;
   }
 }

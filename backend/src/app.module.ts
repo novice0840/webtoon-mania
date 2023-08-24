@@ -10,15 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChattingModule } from './chatting/chatting.module';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
-import {
-  Chapter,
-  Chatting,
-  Comment,
-  User,
-  Webtoon,
-  Like,
-  Dislike,
-} from 'src/entity';
+import { Chapter, Chatting, Comment, User, Webtoon, Like, Dislike } from 'src/entity';
 import { CrawlerModule } from './crawler/crawler.module';
 @Module({
   imports: [
@@ -33,6 +25,7 @@ import { CrawlerModule } from './crawler/crawler.module';
       entities: [Webtoon, Chapter, Comment, User, Chatting, Like, Dislike],
       autoLoadEntities: true,
       synchronize: true,
+      // logging: true,
     }),
     ScheduleModule.forRoot(),
     WebtoonModule,
