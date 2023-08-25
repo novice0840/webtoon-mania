@@ -64,11 +64,13 @@ export class CronjobController {
 
   @Get('init/kakao/webtoon')
   async initAllKakaoWebtoon() {
-    return this.kakaoCrawlerService.crawlingWebtoons();
+    const webtoons = await this.kakaoCrawlerService.crawlingWebtoons();
+    await this.webtoonRepository.save(webtoons);
+    return webtoons;
   }
 
-  // @Get('init/webtoon/:webtoonId')
-  // testWebtoon(@Param('webtoonId') webtoonId) {
-  //   return this.cronjobService.initWebtoon(webtoonId);
-  // }
+  @Get('init/kakao/chapter')
+  async initAllKakaoWebtoon2() {
+    return this.kakaoCrawlerService.crawlingWebtoonDetail('강호표사', '1931');
+  }
 }
