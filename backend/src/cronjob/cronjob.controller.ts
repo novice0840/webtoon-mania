@@ -63,13 +63,6 @@ export class CronjobController {
 
   @Get('init/kakao/webtoon')
   async initAllKakaoWebtoon() {
-    const webtoons = await this.kakaoCrawlerService.crawlingWebtoons();
-    // await this.webtoonRepository.save(webtoons);
-    return webtoons;
-  }
-
-  @Get('init/kakao/chapter')
-  async initAllKakaoWebtoon2() {
-    return this.kakaoCrawlerService.crawlingWebtoonDetail('강호표사', '1931');
+    this.kakaoCrawlerService.crawlingWebtoons();
   }
 }
