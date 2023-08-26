@@ -2,9 +2,16 @@ import puppeteer, { Browser } from 'puppeteer';
 import { load } from 'cheerio';
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
+import { Webtoon, Chapter } from 'src/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class KakaoCrawlerService {
+  constructor(
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
+  ) {}
   private async autoScroll(page): Promise<void> {
     await page.evaluate(async () => {
       await new Promise<void>((resolve) => {
@@ -58,10 +65,16 @@ export class KakaoCrawlerService {
     return { authors, tags, likeCount, viewCount };
   }
 
+  sleep(ms) {
+    const wakeUpTime = Date.now() + ms;
+    while (Date.now() < wakeUpTime) {}
+  }
+
   async crawlingWebtoons() {
-    const webtoons = [];
+    const storedWebtoons = await this.webtoonRepository.find({ select: ['titleId'], where: { platform: 'kakao' } });
+    const storedTitleIds = storedWebtoons.map((webtoon) => webtoon.titleId);
     const webtoonBases = [];
-    const browser = await puppeteer.launch({ headless: 'new' });
+    const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     const webtoonKinds = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'complete'];
     const dayConverter = {
@@ -108,16 +121,19 @@ export class KakaoCrawlerService {
           });
         }
       });
+      console.log(`${webtoonKind} 웹툰 크롤링 완료`);
     }
     let i = 1;
     for await (const webtoonBase of webtoonBases) {
-      const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId);
-      webtoons.push({ ...webtoonBase, ...details });
-      console.log(`Webtoon ${i}개 크롤링 완료`);
-      console.log({ ...webtoonBase, ...details });
-      i = i + 1;
+      if (!storedTitleIds.includes(webtoonBase.titleId)) {
+        const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId);
+        await this.webtoonRepository.save({ ...webtoonBase, ...details });
+        this.sleep(5000);
+        console.log({ ...webtoonBase, ...details });
+        console.log(`Webtoon ${i}개 크롤링 완료`);
+        i = i + 1;
+      }
     }
     await browser.close();
-    return webtoons;
   }
 }

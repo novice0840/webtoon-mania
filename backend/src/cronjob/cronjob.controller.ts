@@ -2,8 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { CronjobService } from './cronjob.service';
 import { NaverCrawlerService } from 'src/crawler/navercrawler.service';
 import { KakaoCrawlerService } from 'src/crawler/kakaocrawler.service';
-import { Webtoon } from 'src/entity/webtoon.entity';
-import { Chapter } from 'src/entity/chapter.entity';
+import { Webtoon, Chapter } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -65,7 +64,7 @@ export class CronjobController {
   @Get('init/kakao/webtoon')
   async initAllKakaoWebtoon() {
     const webtoons = await this.kakaoCrawlerService.crawlingWebtoons();
-    await this.webtoonRepository.save(webtoons);
+    // await this.webtoonRepository.save(webtoons);
     return webtoons;
   }
 
