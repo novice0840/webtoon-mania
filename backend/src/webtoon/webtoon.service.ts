@@ -5,17 +5,30 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class WebtoonService {
-  constructor(
-    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
-  ) {}
+  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
 
-  getAllWebtoon() {
-    return this.webtoonRepository.find();
+  async getWebtoonAll(page: number, platform: string) {
+    const limit = 100;
+    let totalPage;
+    let webtoons;
+    if (platform === 'all') {
+      totalPage = Math.ceil((await this.webtoonRepository.count()) / 50);
+      webtoons = await this.webtoonRepository.find({ order: { id: 'ASC' }, take: limit, skip: (page - 1) * limit });
+    } else {
+      totalPage = Math.ceil((await this.webtoonRepository.count({ where: { platform } })) / 50);
+      webtoons = await this.webtoonRepository.find({
+        order: { id: 'ASC' },
+        take: limit,
+        skip: (page - 1) * limit,
+        where: { platform },
+      });
+    }
+    return { info: { totalPage, page }, data: webtoons };
   }
 
-  getOneWebtoon(id) {
+  getOneWebtoon(titleId, platform) {
     return this.webtoonRepository.findOne({
-      where: { id },
+      where: { titleId, platform },
       relations: ['chapters'],
     });
   }

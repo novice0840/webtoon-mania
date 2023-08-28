@@ -1,17 +1,13 @@
-import puppeteer, { Browser } from 'puppeteer';
+import puppeteer from 'puppeteer';
 import { load } from 'cheerio';
-import axios from 'axios';
 import { Injectable } from '@nestjs/common';
-import { Webtoon, Chapter } from 'src/entity';
+import { Webtoon } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class KakaoCrawlerService {
-  constructor(
-    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
-    @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
-  ) {}
+  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
   private async autoScroll(page): Promise<void> {
     await page.evaluate(async () => {
       await new Promise<void>((resolve) => {
@@ -44,7 +40,7 @@ export class KakaoCrawlerService {
     return !isNaN(number) ? number : 0;
   }
 
-  async crawlingWebtoonDetail(titleName, titleId) {
+  async crawlingWebtoonDetail(titleName: string, titleId: string) {
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
     await page.goto(`https://webtoon.kakao.com/content/${titleName}/${titleId}`);
@@ -65,14 +61,14 @@ export class KakaoCrawlerService {
     return { authors, tags, likeCount, viewCount };
   }
 
-  sleep(ms) {
+  sleep(ms): void {
     const wakeUpTime = Date.now() + ms;
     while (Date.now() < wakeUpTime) {}
   }
 
   async crawlingWebtoons() {
-    const storedWebtoons = await this.webtoonRepository.find({ select: ['titleId'], where: { platform: 'kakao' } });
-    const storedTitleIds = storedWebtoons.map((webtoon) => webtoon.titleId);
+    let storedWebtoons;
+    let storedTitleIds;
     const webtoonBases = [];
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
@@ -87,6 +83,8 @@ export class KakaoCrawlerService {
       sun: 'Sunday',
     };
     for await (const webtoonKind of webtoonKinds) {
+      storedWebtoons = await this.webtoonRepository.find({ select: ['titleId'], where: { platform: 'kakao' } });
+      storedTitleIds = storedWebtoons.map((webtoon) => webtoon.titleId);
       await page.goto(`https://webtoon.kakao.com/original-webtoon?tab=${webtoonKind}`);
       await this.autoScroll(page);
       const content = await page.content();
