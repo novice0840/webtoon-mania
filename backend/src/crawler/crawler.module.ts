@@ -3,7 +3,7 @@ import { NaverCrawlerService } from './navercrawler.service';
 import { KakaoCrawlerService } from './kakaocrawler.service';
 import { ToptoonCrawlerService } from './toptooncrawler.service';
 import { ToomicsCrawlerService } from './toomicscralwer.service';
-import { LezinCrawlerService } from './lezincrawler.service';
+import { LezhinCrawlerService } from './lezhincrawler.service';
 import { Webtoon, Chapter } from 'src/entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -15,14 +15,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     KakaoCrawlerService,
     ToptoonCrawlerService,
     ToomicsCrawlerService,
-    LezinCrawlerService,
+    LezhinCrawlerService,
   ],
   exports: [
     NaverCrawlerService,
     KakaoCrawlerService,
     ToptoonCrawlerService,
     ToomicsCrawlerService,
-    LezinCrawlerService,
+    LezhinCrawlerService,
   ],
 })
 export class CrawlerModule {}

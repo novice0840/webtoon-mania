@@ -4,4 +4,8 @@ import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ToptoonCrawlerService {}
+export class ToptoonCrawlerService {
+  crawlingWebtoons() {
+    return 'toptoon';
+  }
+}

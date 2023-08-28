@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Put,
-  Delete,
-  Body,
-  Post,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Controller, Get, Put, Delete, Body, Post, UseGuards, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,10 +8,7 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')

@@ -2,6 +2,9 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { CronjobService } from './cronjob.service';
 import { NaverCrawlerService } from 'src/crawler/navercrawler.service';
 import { KakaoCrawlerService } from 'src/crawler/kakaocrawler.service';
+import { LezhinCrawlerService } from 'src/crawler/lezhincrawler.service';
+import { ToptoonCrawlerService } from 'src/crawler/toptooncrawler.service';
+import { ToomicsCrawlerService } from 'src/crawler/toomicscralwer.service';
 import { Webtoon, Chapter } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,7 +12,9 @@ import { Repository } from 'typeorm';
 @Controller('cronjob')
 export class CronjobController {
   constructor(
-    private readonly cronjobService: CronjobService,
+    private readonly lezhinCrawlerService: LezhinCrawlerService,
+    private readonly toptoonCrawlerService: ToptoonCrawlerService,
+    private readonly toomicsCrawlerService: ToomicsCrawlerService,
     private readonly naverCrawlerService: NaverCrawlerService,
     private readonly kakaoCrawlerService: KakaoCrawlerService,
     @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
@@ -63,6 +68,11 @@ export class CronjobController {
 
   @Get('init/kakao/webtoon')
   async initAllKakaoWebtoon() {
-    this.kakaoCrawlerService.crawlingWebtoons();
+    return this.kakaoCrawlerService.crawlingWebtoons();
+  }
+
+  @Get('init/lezin/webtoon')
+  async initAllLezinWebtoon() {
+    return this.lezhinCrawlerService.crawlingWebtoonDetail('baquimentary');
   }
 }
