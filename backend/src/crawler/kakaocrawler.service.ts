@@ -58,6 +58,7 @@ export class KakaoCrawlerService {
     const tags = info.find('p').eq(0).text().split(/\s|\//);
     const likeCount = this.convertToNumber(info.find('p').eq(1).text());
     const viewCount = this.convertToNumber(info.find('p').eq(2).text());
+    await browser.close();
     return { authors, tags, likeCount, viewCount };
   }
 

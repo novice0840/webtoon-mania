@@ -88,6 +88,20 @@ export class LezhinCrawlerService {
   }
 
   async crawlingWebtoonDetail(titleId: string) {
-    return titleId;
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    await page.goto(`https://www.lezhin.com/ko/comic/${titleId}`);
+    await page.click('button.comicInfo__btnShowExtend');
+    await page.waitForSelector('.comicInfoExtend__synopsis');
+    const content = await page.content();
+    const $ = load(content);
+    const description = $('.comicInfoExtend__synopsis p').text();
+    const thumbnail = $('picture.comicInfo_cover img').attr('src');
+    const tags = [];
+    $('.a.comicInfoExtend__tag').each((index, element) => {
+      tags.push($(element).text());
+    });
+    await browser.close();
+    return { titleId, description, tags, thumbnail };
   }
 }
