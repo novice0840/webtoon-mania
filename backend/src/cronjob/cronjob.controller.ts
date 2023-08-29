@@ -73,6 +73,6 @@ export class CronjobController {
 
   @Get('init/lezin/webtoon')
   async initAllLezinWebtoon() {
-    return this.lezhinCrawlerService.crawlingWebtoonDetail('baquimentary');
+    return this.lezhinCrawlerService.crawlingWebtoons();
   }
 }
