@@ -75,4 +75,9 @@ export class CronjobController {
   async initAllLezinWebtoon() {
     return this.lezhinCrawlerService.crawlingWebtoons();
   }
+
+  @Get('init/toptoon/webtoon')
+  async initAllToptoonWebtoon() {
+    return this.toptoonCrawlerService.crawlingEndWebtoons();
+  }
 }
