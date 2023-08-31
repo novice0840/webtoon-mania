@@ -81,8 +81,8 @@ export class ToptoonCrawlerService {
           .find('.thumbbox')
           .attr('style')
           ?.split('url')[1]
-          .replace(/^"|"$/g, '')
-          .slice(1, -2);
+          .slice(1, -2)
+          .replace(/^"|"$/g, '');
         const titleId = $(element).find('a').attr('href')?.split('/')[3];
         const titleName = $(element).find('span.thumb_tit_text').text();
         const viewCount = this.convertToNumber($(element).find('span.viewCountTxt').text());
@@ -96,17 +96,17 @@ export class ToptoonCrawlerService {
   }
 
   async crawlingEndWebtoons() {
-    const years = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
+    const years = [2023]; //[2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
     const webtoons = [];
-    const browser = await puppeteer.launch({ headless: 'new' });
+    const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     for await (const year of years) {
       await page.goto(`https://toptoon.com/complete#complete3`);
-      await page.waitForSelector('p.jsSelectYearText');
+      await page.waitForSelector('.thumbbox');
       await this.autoScroll(page);
       await page.click('.select_box.clearfix');
       await page.click(`li[data-url="/complete/getYearHtml/${year}"]`);
-      await page.waitForSelector('p.jsSelectYearText');
+      await page.waitForSelector('.thumbbox');
       const content = await page.content();
       const $ = load(content);
       $('li.jsComicObj').each((index, element) => {
@@ -114,8 +114,8 @@ export class ToptoonCrawlerService {
           .find('.thumbbox')
           .attr('style')
           ?.split('url')[1]
-          .replace(/^"|"$/g, '')
-          .slice(1, -2);
+          .slice(1, -2)
+          .replace(/^"|"$/g, '');
         const titleId = $(element).find('a').attr('href')?.split('/')[3];
         const titleName = $(element).find('span.thumb_tit_text').text();
         const viewCount = this.convertToNumber($(element).find('span.viewCountTxt').text());

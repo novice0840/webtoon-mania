@@ -78,6 +78,6 @@ export class CronjobController {
 
   @Get('init/toptoon/webtoon')
   async initAllToptoonWebtoon() {
-    return this.toptoonCrawlerService.crawlingWebtoons();
+    return this.toptoonCrawlerService.crawlingEndWebtoons();
   }
 }
