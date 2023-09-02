@@ -68,7 +68,6 @@ export class ToomicsCrawlerService {
     const webtoons = [];
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
-
     await page.goto(`https://www.toomics.com/webtoon/finish/ord/famous`);
     await page.waitForSelector('li.grid__li img');
     await this.autoScroll(page);
@@ -84,5 +83,21 @@ export class ToomicsCrawlerService {
     console.log(`완결 웹툰 크롤링 완료`);
     await browser.close();
     return webtoons;
+  }
+
+  async crawlingWebtoonDetail(titleId: string) {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    await page.goto(`https://www.toomics.com/webtoon/episode/toon/${titleId}`);
+    const content = await page.content();
+    const $ = load(content);
+    const description = $('.episode__summary').text();
+    const tags = [];
+    const authors = $('dl.episode__author dd').text().split(/,|\//);
+    $('a.tag').each((index, element) => {
+      tags.push($(element).text());
+    });
+    await browser.close();
+    return { description, tags, authors };
   }
 }

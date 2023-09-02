@@ -83,6 +83,6 @@ export class CronjobController {
 
   @Get('init/toomics/webtoon')
   async initAllToomicsWebtoon() {
-    return this.toomicsCrawlerService.crawlingEndWebtoons();
+    return this.toomicsCrawlerService.crawlingWebtoonDetail('7167');
   }
 }
