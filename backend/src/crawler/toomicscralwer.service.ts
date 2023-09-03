@@ -2,9 +2,14 @@ import puppeteer from 'puppeteer';
 import { load } from 'cheerio';
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
+import { Webtoon } from 'src/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ToomicsCrawlerService {
+  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
+
   private async autoScroll(page): Promise<void> {
     await page.evaluate(async () => {
       await new Promise<void>((resolve) => {
@@ -23,9 +28,33 @@ export class ToomicsCrawlerService {
     });
   }
 
-  async crawlingCurrentWebtoons() {
+  async crawlingWebtoons(): Promise<void> {
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
+    const endWebtoons = await this.crawlingEndWebtoons(page);
+    const currentWebtoons = await this.crawlingCurrentWebtoons(page);
+    const webtoons = [...endWebtoons, ...currentWebtoons];
+    let i = 1;
+    for await (const webtoon of webtoons) {
+      const IsExist = await this.webtoonRepository.find({ where: { titleId: webtoon.titleId, platform: 'toomics' } });
+      if (IsExist.length === 0) {
+        try {
+          const details = await this.crawlingWebtoonDetail(page, webtoon.titleId);
+          console.log(`웹툰 ${i}개 크롤링 완료`);
+          console.log({ ...webtoon, ...details });
+          this.webtoonRepository.save({ ...webtoon, ...details });
+          i += 1;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    await browser.close();
+  }
+
+  async crawlingCurrentWebtoons(page) {
     const webtoons = [];
-    const days = [1]; // [1, 2, 3, 4, 5, 6, 7];
+    const days = [1, 2, 3, 4, 5, 6, 7];
     const dayConverter = {
       1: 'Monday',
       2: 'Tuesday',
@@ -35,8 +64,6 @@ export class ToomicsCrawlerService {
       6: 'Saturday',
       7: 'Sunday',
     };
-    const browser = await puppeteer.launch({ headless: false });
-    const page = await browser.newPage();
     for await (const day of days) {
       await page.goto(`https://www.toomics.com/webtoon/weekly/dow/${day}`);
       await page.waitForSelector('li.grid__li img');
@@ -60,14 +87,11 @@ export class ToomicsCrawlerService {
       });
       console.log(`${day} 연재 웹툰 크롤링 완료`);
     }
-    await browser.close();
     return webtoons;
   }
 
-  async crawlingEndWebtoons() {
+  async crawlingEndWebtoons(page) {
     const webtoons = [];
-    const browser = await puppeteer.launch({ headless: false });
-    const page = await browser.newPage();
     await page.goto(`https://www.toomics.com/webtoon/finish/ord/famous`);
     await page.waitForSelector('li.grid__li img');
     await this.autoScroll(page);
@@ -81,23 +105,40 @@ export class ToomicsCrawlerService {
       webtoons.push({ thumbnail, titleId, titleName, link, isEnd: true, platform: 'toomics', day_of_weeks: [] });
     });
     console.log(`완결 웹툰 크롤링 완료`);
-    await browser.close();
     return webtoons;
   }
 
-  async crawlingWebtoonDetail(titleId: string) {
-    const browser = await puppeteer.launch({ headless: false });
-    const page = await browser.newPage();
+  async crawlingWebtoonDetail(page, titleId: string) {
     await page.goto(`https://www.toomics.com/webtoon/episode/toon/${titleId}`);
     const content = await page.content();
     const $ = load(content);
     const description = $('.episode__summary').text();
     const tags = [];
+    const day_of_weeks = [];
     const authors = $('dl.episode__author dd').text().split(/,|\//);
+    // 연재 요일이 tag에 포함되어 있음
     $('a.tag').each((index, element) => {
-      tags.push($(element).text());
+      const tag = $(element).text().slice(1);
+      if (tag.includes('/')) {
+        tags.push(...tag.split('/'));
+      } else if (tag.includes('월')) {
+        day_of_weeks.push('Monday');
+      } else if (tag.includes('화')) {
+        day_of_weeks.push('Tuesday');
+      } else if (tag.includes('수')) {
+        day_of_weeks.push('Wednesday');
+      } else if (tag.includes('목')) {
+        day_of_weeks.push('Thurday');
+      } else if (tag.includes('금')) {
+        day_of_weeks.push('Friday');
+      } else if (tag.includes('토')) {
+        day_of_weeks.push('Saturday');
+      } else if (tag.includes('일')) {
+        day_of_weeks.push('Sunday');
+      } else {
+        tags.push(tag);
+      }
     });
-    await browser.close();
-    return { description, tags, authors };
+    return { description, tags, authors, day_of_weeks };
   }
 }
