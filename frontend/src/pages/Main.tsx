@@ -1,23 +1,64 @@
 import React, { useState } from "react";
-import { Container, Box, TextField, Stack, Button, Link, Tabs, Tab } from "@mui/material";
+import {
+  Container,
+  Box,
+  Paper,
+  InputBase,
+  IconButton,
+  Stack,
+  Button,
+  Link,
+  Tabs,
+  Tab,
+  List,
+  ListItem,
+  ListSubheader,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+  Checkbox,
+  FormLabel,
+  FormGroup,
+  FormControl,
+  FormControlLabel,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import logo from "@src/assets/logo.jpg";
-import { Platform } from "@src/types";
+import { Platform, DayOfWeek } from "@src/types";
 
 const Main = () => {
-  const [platform, setPlaform] = useState<Platform>("all");
+  const [platform, setPlatform] = useState<Platform>("all");
+  const [dayOfWeeks, setDayOfWeeks] = useState<DayOfWeek[]>([]);
 
   const handleChange = (event: React.SyntheticEvent, value: Platform) => {
-    setPlaform(value);
+    setPlatform(value);
+  };
+
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDayOfWeeks([...dayOfWeeks, event.target.name as DayOfWeek]);
   };
 
   return (
     <Container maxWidth="xl">
-      <Box sx={{ mt: 3 }}>
+      <Box component="header" sx={{ mt: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Link href="/">
             <Box component="img" sx={{ height: 80, width: 120, borderRadius: "10%" }} src={logo} />
           </Link>
-          <TextField sx={{ width: 500 }}></TextField>
+          <Paper
+            elevation={5}
+            component="form"
+            sx={{ display: "flex", alignItems: "center", width: 600 }}
+          >
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder="검색어를 입력해주세요"
+              inputProps={{ "aria-label": "search google maps" }}
+            />
+            <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
           <Stack spacing={2} direction="row">
             <Button variant="contained" color="info">
               Sign up
@@ -29,7 +70,7 @@ const Main = () => {
         </Stack>
       </Box>
       <Container maxWidth="lg">
-        <Box>
+        <Box component="nav">
           <Tabs value={platform} onChange={handleChange} aria-label="webtoon platform tabs">
             <Tab label="전체" value="all" />
             <Tab label="네이버" value="naver" />
@@ -38,6 +79,45 @@ const Main = () => {
             <Tab label="탑툰" value="toptoon" />
             <Tab label="투믹스" value="toomics" />
           </Tabs>
+        </Box>
+        <Box component="section" sx={{ mt: 3 }}>
+          <FormControl component="fieldset" variant="standard">
+            <FormLabel>요일</FormLabel>
+            <FormGroup row>
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Monday" />}
+                label="월요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Thuesday" />}
+                label="화요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Wednesday" />}
+                label="수요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Thursday" />}
+                label="목요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Friday" />}
+                label="금요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Saturday" />}
+                label="토요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="Sunday" />}
+                label="일요웹툰"
+              />
+              <FormControlLabel
+                control={<Checkbox onChange={handleToggle} name="End" />}
+                label="완결웹툰"
+              />
+            </FormGroup>
+          </FormControl>
         </Box>
       </Container>
     </Container>
