@@ -16,7 +16,7 @@ import Header from "@src/components/Header";
 import WebtoonGrid from "@src/components/WebtoonGrid";
 import { webtoonSorts, webtoonDayOfWeeks, webtoonTags } from "@src/utils/transform";
 
-const Main = () => {
+const Root = () => {
   const [webtoonSort, setWebtoonSort] = useState<WebtoonSort>("title");
   const [search, setSearch] = useState<string>("");
   const [days, setDays] = useState<Day[]>([]);
@@ -108,7 +108,13 @@ const Main = () => {
         </FormLabel>
         <FormGroup row>
           {webtoonDayOfWeeks.map((day) => (
-            <FormControlLabel key={day.value} name="day" value={day.value} control={<Checkbox />} label={day.label} />
+            <FormControlLabel
+              key={day.value}
+              name="day"
+              value={day.value}
+              control={<Checkbox />}
+              label={day.label}
+            />
           ))}
         </FormGroup>
       </FormGroup>
@@ -122,7 +128,12 @@ const Main = () => {
           onChange={handleChange}
         >
           {webtoonSorts.map((sort) => (
-            <FormControlLabel key={sort.value} value={sort.value} control={<Radio />} label={sort.label} />
+            <FormControlLabel
+              key={sort.value}
+              value={sort.value}
+              control={<Radio />}
+              label={sort.label}
+            />
           ))}
         </RadioGroup>
       </FormControl>
@@ -138,4 +149,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Root;
