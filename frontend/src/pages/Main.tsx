@@ -169,6 +169,7 @@ const Main = () => {
                 <FormGroup row>
                   {tags.map((tag) => (
                     <FormControlLabel
+                      key={tag}
                       control={<Checkbox onChange={handleToggle} name={tag} />}
                       label={tag}
                     />
