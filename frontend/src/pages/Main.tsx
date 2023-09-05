@@ -24,44 +24,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import logo from "@src/assets/logo.jpg";
 import { Platform, DayOfWeek } from "@src/types";
+import { tags, webtoons } from "@src/utils/constants";
+import { WebtoonList } from "@src/components";
 
-const tags = [
-  "판타지",
-  "드라마",
-  "코믹",
-  "일상",
-  "완결",
-  "로맨스",
-  "BL",
-  "소설원작",
-  "현대물",
-  "완결로맨스",
-  "완결판타지",
-  "시대극",
-  "짝사랑",
-  "액션",
-  "달달물",
-  "학원",
-  "완결드라마",
-  "복수",
-  "스릴러",
-  "먼치킨",
-  "성장물",
-  "개그",
-  "완결스릴러",
-  "재벌",
-  "삼각관계",
-  "연애",
-  "완결무료",
-  "무협",
-  "완결개그",
-  "스포츠",
-  "고등학교",
-  "공포",
-  "완결일상",
-  "완결액션",
-  "귀여움",
-];
 const Main = () => {
   const [platform, setPlatform] = useState<Platform>("all");
   const [dayOfWeeks, setDayOfWeeks] = useState<DayOfWeek[]>([]);
@@ -178,6 +143,9 @@ const Main = () => {
               </FormControl>
             </AccordionDetails>
           </Accordion>
+        </Box>
+        <Box>
+          <WebtoonList webtoons={webtoons} />
         </Box>
       </Container>
     </Container>
