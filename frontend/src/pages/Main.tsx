@@ -10,12 +10,10 @@ import {
   Link,
   Tabs,
   Tab,
-  List,
-  ListItem,
-  ListSubheader,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
+  Accordion,
+  AccordionSummary,
+  Typography,
+  AccordionDetails,
   Checkbox,
   FormLabel,
   FormGroup,
@@ -23,9 +21,47 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import logo from "@src/assets/logo.jpg";
 import { Platform, DayOfWeek } from "@src/types";
 
+const tags = [
+  "판타지",
+  "드라마",
+  "코믹",
+  "일상",
+  "완결",
+  "로맨스",
+  "BL",
+  "소설원작",
+  "현대물",
+  "완결로맨스",
+  "완결판타지",
+  "시대극",
+  "짝사랑",
+  "액션",
+  "달달물",
+  "학원",
+  "완결드라마",
+  "복수",
+  "스릴러",
+  "먼치킨",
+  "성장물",
+  "개그",
+  "완결스릴러",
+  "재벌",
+  "삼각관계",
+  "연애",
+  "완결무료",
+  "무협",
+  "완결개그",
+  "스포츠",
+  "고등학교",
+  "공포",
+  "완결일상",
+  "완결액션",
+  "귀여움",
+];
 const Main = () => {
   const [platform, setPlatform] = useState<Platform>("all");
   const [dayOfWeeks, setDayOfWeeks] = useState<DayOfWeek[]>([]);
@@ -80,7 +116,7 @@ const Main = () => {
             <Tab label="투믹스" value="toomics" />
           </Tabs>
         </Box>
-        <Box component="section" sx={{ mt: 3 }}>
+        <Box sx={{ mt: 3 }}>
           <FormControl component="fieldset" variant="standard">
             <FormLabel>요일</FormLabel>
             <FormGroup row>
@@ -118,6 +154,29 @@ const Main = () => {
               />
             </FormGroup>
           </FormControl>
+        </Box>
+        <Box>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>태그</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormControl component="fieldset" variant="standard">
+                <FormGroup row>
+                  {tags.map((tag) => (
+                    <FormControlLabel
+                      control={<Checkbox onChange={handleToggle} name={tag} />}
+                      label={tag}
+                    />
+                  ))}
+                </FormGroup>
+              </FormControl>
+            </AccordionDetails>
+          </Accordion>
         </Box>
       </Container>
     </Container>

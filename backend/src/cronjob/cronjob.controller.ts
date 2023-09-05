@@ -23,9 +23,19 @@ export class CronjobController {
 
   @Get('test')
   async test() {
-    const currentWebtoons = await this.naverCrawlerService.cralwingCurrentWebtoonBase();
-    const endWebtoons = await this.naverCrawlerService.crawlingEndWebtoonBase();
-    await this.webtoonRepository.save([...currentWebtoons, ...endWebtoons]);
+    const data = await this.webtoonRepository.find({ select: ['tags'] });
+    const tagCount = {};
+    data
+      .flatMap((element) => element.tags)
+      .forEach((element, index) => {
+        if (element in tagCount) {
+          tagCount[element] += 1;
+        } else {
+          tagCount[element] = 0;
+        }
+      });
+    return Object.keys(tagCount).filter((element) => tagCount[element] > 50);
+    //.map((element) => ({ element: tagCount[element] }));
   }
 
   // 새로 생긴 웹툰 추가 및 완결된 웹툰 수정
