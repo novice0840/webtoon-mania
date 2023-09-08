@@ -19,17 +19,24 @@ import {
   FormGroup,
   FormControl,
   FormControlLabel,
+  Modal,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import logo from "@src/assets/logo.jpg";
 import { Platform, DayOfWeek } from "@src/types";
 import { tags, webtoons } from "@src/utils/constants";
-import { WebtoonList } from "@src/components";
+import { WebtoonList, SignUp, SignIn } from "@src/components";
 
 const Main = () => {
   const [platform, setPlatform] = useState<Platform>("all");
   const [dayOfWeeks, setDayOfWeeks] = useState<DayOfWeek[]>([]);
+  const [signInOpen, setSignInOpen] = useState<boolean>(false);
+  const [signUpOpen, setSignUpOpen] = useState<boolean>(false);
+  const handleSignInOpen = () => setSignInOpen(true);
+  const handleSignInClose = () => setSignInOpen(false);
+  const handleSignUpOpen = () => setSignUpOpen(true);
+  const handleSignUpClose = () => setSignUpOpen(false);
 
   const handleChange = (event: React.SyntheticEvent, value: Platform) => {
     setPlatform(value);
@@ -61,11 +68,27 @@ const Main = () => {
             </IconButton>
           </Paper>
           <Stack spacing={2} direction="row">
-            <Button variant="contained" color="info">
-              Sign up
-            </Button>
-            <Button variant="contained" color="primary">
+            <Modal
+              open={signInOpen}
+              onClose={handleSignInClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <SignIn />
+            </Modal>
+            <Modal
+              open={signUpOpen}
+              onClose={handleSignUpClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <SignUp />
+            </Modal>
+            <Button variant="contained" color="primary" onClick={handleSignInOpen}>
               Sign in
+            </Button>
+            <Button variant="contained" color="info" onClick={handleSignUpOpen}>
+              Sign up
             </Button>
           </Stack>
         </Stack>
