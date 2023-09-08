@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Paper, Typography, Link } from "@mui/material";
+import { Grid, Paper, Typography, Link, Box, Stack } from "@mui/material";
 
 const WebtoonList = ({
   webtoons,
@@ -12,13 +12,16 @@ const WebtoonList = ({
   }[];
 }) => {
   return (
-    <Grid container rowSpacing={1} spacing={1}>
+    <Grid container rowSpacing={5} spacing={3}>
       {webtoons.map((webtoon) => (
         <Grid item xs={6} sm={3} md={2} key={webtoon.id}>
-          <Link>
+          <Link style={{ textDecoration: "none" }}>
             <Paper elevation={5}>
-              <img src={webtoon.thumbnail} width={160} height={207} alt="" />
-              <Typography color="primary">{webtoon.titleId}</Typography>
+              <Box component="img" sx={{ width: "100%", height: 180 }} src={webtoon.thumbnail} />
+              <Typography variant="h6">{webtoon.titleId}</Typography>
+              <Typography variant="subtitle1">
+                {webtoon.authors.map((author) => `${author} / `)}
+              </Typography>
             </Paper>
           </Link>
         </Grid>

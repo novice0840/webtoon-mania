@@ -120,7 +120,7 @@ const Main = () => {
             </FormGroup>
           </FormControl>
         </Box>
-        <Box>
+        <Box sx={{ mt: 3, mb: 3 }}>
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
