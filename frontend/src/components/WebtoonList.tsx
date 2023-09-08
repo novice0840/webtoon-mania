@@ -13,8 +13,8 @@ const WebtoonList = ({
 }) => {
   return (
     <Grid container rowSpacing={5} spacing={3}>
-      {webtoons.map((webtoon) => (
-        <Grid item xs={6} sm={3} md={2} key={webtoon.id}>
+      {webtoons.map((webtoon, index) => (
+        <Grid item xs={6} sm={3} md={2} key={index}>
           <Link style={{ textDecoration: "none" }}>
             <Paper elevation={5}>
               <Box component="img" sx={{ width: "100%", height: 180 }} src={webtoon.thumbnail} />

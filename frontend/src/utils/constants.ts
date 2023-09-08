@@ -1,4 +1,4 @@
-export const tags = [
+export const genres = [
   "판타지",
   "드라마",
   "코믹",

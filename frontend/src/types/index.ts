@@ -1,5 +1,5 @@
-export type Platform = "all" | "naver" | "kakao" | "lezhin" | "toptoon" | "toomics";
-export type DayOfWeek =
+export type PlatformKind = "all" | "naver" | "kakao" | "lezhin" | "toptoon" | "toomics";
+export type DayOfWeekKind =
   | "Monday"
   | "Thuesday"
   | "Wednesday"
