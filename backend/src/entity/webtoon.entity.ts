@@ -1,6 +1,8 @@
-import { Entity, Column, PrimaryColumn, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { Chapter } from './chapter.entity';
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Comment } from './comment.entity';
+import { Genre } from './Genre.entity';
+import { Author } from './Author.entity';
+import { DayOfWeek } from './DayOfWeek.entity';
 
 @Entity()
 @Unique(['titleId', 'platform'])
@@ -17,12 +19,6 @@ export class Webtoon {
   @Column({ name: 'title_name' })
   titleName: string;
 
-  @Column('json')
-  authors: string[];
-
-  @Column('json', { name: 'day_of_weeks', nullable: true })
-  dayOfWeeks: string[];
-
   @Column({ nullable: true })
   thumbnail: string;
 
@@ -34,9 +30,6 @@ export class Webtoon {
 
   @Column({ type: 'text', nullable: true })
   description: string;
-
-  @Column('json', { nullable: true })
-  tags: string[];
 
   @Column({ name: 'view_count', nullable: true, default: 0 })
   viewCount: string;
@@ -50,9 +43,15 @@ export class Webtoon {
   @Column()
   link: string;
 
-  @OneToMany(() => Chapter, (chapter) => chapter.webtoon)
-  chapters: Chapter[];
-
   @OneToMany(() => Comment, (comment) => comment.webtoon)
   comments: Comment[];
+
+  @OneToMany(() => Genre, (genre) => genre.webtoon)
+  genres: Genre[];
+
+  @OneToMany(() => Author, (author) => author.webtoon)
+  authors: Author[];
+
+  @OneToMany(() => DayOfWeek, (dayOfweek) => dayOfweek.webtoon)
+  dayOfWeeks: DayOfWeek[];
 }

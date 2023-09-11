@@ -10,7 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChattingModule } from './chatting/chatting.module';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
-import { Chapter, Chatting, Comment, User, Webtoon, Like, Dislike } from 'src/entity';
+import { Chatting, Comment, User, Webtoon, Like, Dislike, Author, DayOfWeek, Genre } from 'src/entity';
 import { CrawlerModule } from './crawler/crawler.module';
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { CrawlerModule } from './crawler/crawler.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Webtoon, Chapter, Comment, User, Chatting, Like, Dislike],
+      entities: [Chatting, Comment, User, Webtoon, Like, Dislike, Author, DayOfWeek, Genre],
       autoLoadEntities: true,
       synchronize: true,
       // logging: true,
