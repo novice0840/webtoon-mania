@@ -18,7 +18,7 @@ export class CronjobController {
 
   @Get('test')
   async test() {
-    return this.naverCrawlerService.crawlingEndWebtoons();
+    return this.naverCrawlerService.cralwingWebtoonDetail('811721');
   }
 
   // 새로 생긴 웹툰 추가 및 완결된 웹툰 수정

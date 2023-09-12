@@ -1,15 +1,12 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn, PrimaryColumn } from 'typeorm';
 import { Webtoon } from './webtoon.entity';
 
 @Entity()
 export class Author {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
+  @PrimaryColumn()
   name: string;
 
-  @Column({ name: 'webtoon_id' })
+  @PrimaryColumn({ name: 'webtoon_id' })
   webtoonId: string;
 
   @ManyToOne(() => Webtoon, (webtoon) => webtoon.authors)
