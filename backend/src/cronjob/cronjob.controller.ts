@@ -1,5 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { CronjobService } from './cronjob.service';
+import { Controller, Get } from '@nestjs/common';
 import { NaverCrawlerService } from 'src/crawler/navercrawler.service';
 import { KakaoCrawlerService } from 'src/crawler/kakaocrawler.service';
 import { LezhinCrawlerService } from 'src/crawler/lezhincrawler.service';
@@ -18,34 +17,12 @@ export class CronjobController {
 
   @Get('test')
   async test() {
-    return this.naverCrawlerService.cralwingWebtoonDetail('811721');
-  }
-
-  // 새로 생긴 웹툰 추가 및 완결된 웹툰 수정
-  @Get('naver/webtoon/update')
-  async naverWebtoonUpdate() {
-    // const currentWebtoons = await this.naverCrawlerService.cralwingCurrentWebtoonBase();
-    // const storedCurrentWebtoons = await this.webtoonRepository.find({
-    //   select: ['id', 'titleId'],
-    // });
-    // // 연재 종료된 웹툰
-    // const endWebtoons = storedCurrentWebtoons
-    //   .filter((webtoon) => !currentWebtoons.map((currentWebtoon) =>
-    // currentWebtoon.titleId).includes(webtoon.titleId))
-    //   .map((webtoon) => ({ ...webtoon, isEnd: true }));
-    // // 새롭게 연재 시작한 웹툰
-    // const newWebtoons = currentWebtoons.filter(
-    //   (webtoon) => !storedCurrentWebtoons.map((storedWebtoon) => storedWebtoon.titleId).includes(webtoon.titleId),
-    // );
-    // const updateWebtoons = [...endWebtoons, ...newWebtoons];
-    //await this.webtoonRepository.save(updateWebtoons);
+    return this.naverCrawlerService.crawlingWebtoons();
   }
 
   @Get('init/naver/webtoon')
   async initAllNaverWebtoon() {
-    // const currentWebtoons = await this.naverCrawlerService.cralwingCurrentWebtoonBase();
-    // const endWebtoons = await this.naverCrawlerService.crawlingEndWebtoonBase();
-    //await this.webtoonRepository.save([...currentWebtoons, ...endWebtoons]);
+    return this.naverCrawlerService.crawlingWebtoons();
   }
 
   @Get('init/kakao/webtoon')

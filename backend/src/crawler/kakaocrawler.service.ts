@@ -1,70 +1,36 @@
 import puppeteer from 'puppeteer';
 import { load } from 'cheerio';
 import { Injectable } from '@nestjs/common';
-import { Webtoon } from 'src/entity';
+import { Author, DayOfWeek, Genre, Webtoon } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { autoScroll, sleep, convertToNumber } from 'src/util/crawling';
 
 @Injectable()
 export class KakaoCrawlerService {
-  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
-  private async autoScroll(page): Promise<void> {
-    await page.evaluate(async () => {
-      await new Promise<void>((resolve) => {
-        let totalHeight = 0;
-        const distance = 100;
-        const timer = setInterval(() => {
-          const scrollHeight = document.body.scrollHeight;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-          if (totalHeight >= scrollHeight - window.innerHeight) {
-            clearInterval(timer);
-            resolve();
-          }
-        }, 10);
-      });
-    });
-  }
+  constructor(
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Author) private authorRepository: Repository<Author>,
+    @InjectRepository(DayOfWeek) private dayOfWeekRepository: Repository<DayOfWeek>,
+    @InjectRepository(Genre) private genreRepository: Repository<Genre>,
+  ) {}
 
-  private convertToNumber(str): number {
-    const tenThousand = 10000; // 1만의 값
-    const tenMillion = 100000000;
-    let number;
-    if (str.endsWith('만')) {
-      number = parseFloat(str) * tenThousand; // 문자열에서 숫자 부분 추출
-    } else if (str.endsWith('억')) {
-      number = parseFloat(str) * tenMillion; // 문자열에서 숫자 부분 추출
-    } else {
-      number = parseFloat(str); // 문자열에서 숫자 부분 추출
-    }
-    return !isNaN(number) ? number : 0;
-  }
-
-  async crawlingWebtoonDetail(titleName: string, titleId: string) {
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
+  async crawlingWebtoonDetail(titleName: string, titleId: string, page) {
     await page.goto(`https://webtoon.kakao.com/content/${titleName}/${titleId}`);
     await page.waitForSelector(
       'p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis',
     );
     const content = await page.content();
     const $ = load(content);
-    await browser.close();
     const authors = $('p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis')
       .eq(1)
       .text()
       .split(', ');
     const info = $('.flex.justify-center.items-start.h-14.mt-8.leading-14');
     const tags = info.find('p').eq(0).text().split(/\s|\//);
-    const likeCount = this.convertToNumber(info.find('p').eq(1).text());
-    const viewCount = this.convertToNumber(info.find('p').eq(2).text());
-    await browser.close();
+    const likeCount = convertToNumber(info.find('p').eq(1).text());
+    const viewCount = convertToNumber(info.find('p').eq(2).text());
     return { authors, tags, likeCount, viewCount };
-  }
-
-  sleep(ms): void {
-    const wakeUpTime = Date.now() + ms;
-    while (Date.now() < wakeUpTime) {}
   }
 
   async crawlingWebtoons() {
@@ -87,7 +53,7 @@ export class KakaoCrawlerService {
       storedWebtoons = await this.webtoonRepository.find({ select: ['titleId'], where: { platform: 'kakao' } });
       storedTitleIds = storedWebtoons.map((webtoon) => webtoon.titleId);
       await page.goto(`https://webtoon.kakao.com/original-webtoon?tab=${webtoonKind}`);
-      await this.autoScroll(page);
+      await autoScroll(page);
       const content = await page.content();
       const $ = load(content);
       let crawled = $('.relative.w-full.h-full.overflow-hidden > a.cursor-pointer').attr('href');
@@ -125,9 +91,9 @@ export class KakaoCrawlerService {
     let i = 1;
     for await (const webtoonBase of webtoonBases) {
       if (!storedTitleIds.includes(webtoonBase.titleId)) {
-        const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId);
+        const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId, page);
         await this.webtoonRepository.save({ ...webtoonBase, ...details });
-        this.sleep(5000);
+        sleep(5000);
         console.log({ ...webtoonBase, ...details });
         console.log(`Webtoon ${i}개 크롤링 완료`);
         i = i + 1;
