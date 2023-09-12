@@ -17,7 +17,7 @@ export class CronjobController {
 
   @Get('test')
   async test() {
-    return this.kakaoCrawlerService.crawlingDayWebtoon();
+    return this.kakaoCrawlerService.crawlingWebtoons();
   }
 
   @Get('init/naver/webtoon')

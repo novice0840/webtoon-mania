@@ -32,7 +32,7 @@ export class Webtoon {
   description: string;
 
   @Column({ name: 'view_count', default: 0 })
-  viewCount: string;
+  viewCount: number;
 
   @Column({ name: 'like_count', default: 0 })
   likeCount: number;

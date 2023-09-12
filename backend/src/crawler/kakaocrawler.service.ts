@@ -44,12 +44,21 @@ export class KakaoCrawlerService {
     const tags = info.find('p').eq(0).text().split(/\s|\//);
     const likeCount = convertToNumber(info.find('p').eq(1).text());
     const viewCount = convertToNumber(info.find('p').eq(2).text());
-    return { authors, tags, likeCount, viewCount };
+    await this.webtoonRepository.save({ id, likeCount, viewCount });
+    await this.authorRepository.save(authors.map((element) => ({ webtoonId: id, name: element })));
+    await this.genreRepository.save(tags.map((element) => ({ webtoonId: id, tag: element })));
   }
 
-  async crawlingDayWebtoon(day = 'mon') {
-    const browser = await puppeteer.launch({ headless: false });
+  async crawlingWebtoons() {
+    const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
+    for await (const day of this.days) {
+      await this.crawlingDayWebtoon(day, page);
+    }
+    await browser.close();
+  }
+
+  async crawlingDayWebtoon(day, page) {
     const webtoons = [];
     await page.goto(`https://webtoon.kakao.com/original-webtoon?tab=${day}`);
     await autoScroll(page);
@@ -72,95 +81,38 @@ export class KakaoCrawlerService {
         });
       }
     });
+    console.log('check');
     let i = 1;
     for await (const webtoon of webtoons) {
-      const check = await this.webtoonRepository.findOne({
-        select: ['id', 'isEnd'],
-        where: { titleId: webtoon.titleId, platform: 'kakao' },
-      });
-      if (check?.id && check.isEnd === webtoon.isEnd) {
-        // 이미 저장되어 있고 연재여부도 그대로
-        continue;
-      } else if (check?.id && check.isEnd !== webtoon.isEnd) {
-        // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
-        await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
-      } else {
-        // DB에 없는 새로운 웹툰
-        const savedWebtoon = await this.webtoonRepository.save(webtoon);
-        await this.crawlingWebtoonDetail(savedWebtoon.id, page);
-      }
-      console.log(`Kakao 웹툰 ${i}개 크롤링 완료`);
-      console.log(webtoon);
-      i += 1;
-    }
-  }
-
-  async crawlingWebtoons() {
-    let storedWebtoons;
-    let storedTitleIds;
-    const webtoonBases = [];
-    const browser = await puppeteer.launch({ headless: false });
-    const page = await browser.newPage();
-    const webtoonKinds = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'complete'];
-    const dayConverter = {
-      mon: 'Monday',
-      tue: 'Tuesday',
-      wed: 'Wednesday',
-      thu: 'Thursday',
-      fri: 'Friday',
-      sat: 'Saturday',
-      sun: 'Sunday',
-    };
-    for await (const webtoonKind of webtoonKinds) {
-      storedWebtoons = await this.webtoonRepository.find({ select: ['titleId'], where: { platform: 'kakao' } });
-      storedTitleIds = storedWebtoons.map((webtoon) => webtoon.titleId);
-      await page.goto(`https://webtoon.kakao.com/original-webtoon?tab=${webtoonKind}`);
-      await autoScroll(page);
-      const content = await page.content();
-      const $ = load(content);
-      let crawled = $('.relative.w-full.h-full.overflow-hidden > a.cursor-pointer').attr('href');
-      if (crawled != null) {
-        const info = crawled.split('/');
-        const thumbnail = $('img.absolute.bottom-0').attr('src');
-        webtoonBases.push({
-          titleName: info[2],
-          titleId: info[3],
-          thumbnail,
-          isEnd: webtoonKind === 'complete' ? true : false,
-          dayOfWeeks: webtoonKind !== 'complete' ? [dayConverter[webtoonKind]] : null,
-          platform: 'kakao',
-          link: `https://webtoon.kakao.com/content/${info[2]}/${info[3]}`,
+      try {
+        const check = await this.webtoonRepository.findOne({
+          select: ['id', 'isEnd'],
+          where: { titleId: webtoon.titleId, platform: 'kakao' },
         });
-      }
-      $('.flex-grow-0.overflow-hidden').each((index, element) => {
-        crawled = $(element).find('a.w-full.h-full.relative.overflow-hidden').attr('href');
-        if (crawled != null) {
-          const info = crawled.split('/');
-          const thumbnail = $(element).find('img.w-full.h-full.object-cover.object-top').attr('src');
-          webtoonBases.push({
-            titleName: info[2],
-            titleId: info[3],
-            thumbnail,
-            isEnd: webtoonKind === 'complete' ? true : false,
-            dayOfWeeks: webtoonKind !== 'complete' ? [dayConverter[webtoonKind]] : null,
-            platform: 'kakao',
-            link: `https://webtoon.kakao.com/content/${info[2]}/${info[3]}`,
-          });
+        if (check?.id && check.isEnd === webtoon.isEnd) {
+          // 이미 저장되어 있고 연재여부도 그대로
+          continue;
+        } else if (check?.id && check.isEnd !== webtoon.isEnd) {
+          // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
+          await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
+          if (webtoon.isEnd) {
+            await this.dayOfWeekRepository.delete({ webtoonId: check.id });
+          } else {
+            await this.dayOfWeekRepository.save({ webtoonId: webtoon.id, day: this.dayConverter[day] });
+          }
+        } else {
+          // DB에 없는 새로운 웹툰
+          const savedWebtoon = await this.webtoonRepository.save(webtoon);
+          await this.dayOfWeekRepository.save({ webtoonId: webtoon.id, day: this.dayConverter[day] });
+          await this.crawlingWebtoonDetail(savedWebtoon.id, page);
         }
-      });
-      console.log(`${webtoonKind} 웹툰 크롤링 완료`);
+        console.log(`Kakao 웹툰 ${i}개 크롤링 완료`);
+        console.log(webtoon);
+        i += 1;
+        sleep(3000);
+      } catch (error) {
+        console.log(error);
+      }
     }
-    // let i = 1;
-    // for await (const webtoonBase of webtoonBases) {
-    //   if (!storedTitleIds.includes(webtoonBase.titleId)) {
-    //     const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId, page);
-    //     await this.webtoonRepository.save({ ...webtoonBase, ...details });
-    //     sleep(5000);
-    //     console.log({ ...webtoonBase, ...details });
-    //     console.log(`Webtoon ${i}개 크롤링 완료`);
-    //     i = i + 1;
-    //   }
-    // }
-    await browser.close();
   }
 }
