@@ -4,11 +4,11 @@ import { KakaoCrawlerService } from './kakaocrawler.service';
 import { ToptoonCrawlerService } from './toptooncrawler.service';
 import { ToomicsCrawlerService } from './toomicscralwer.service';
 import { LezhinCrawlerService } from './lezhincrawler.service';
-import { Webtoon } from 'src/entity';
+import { Webtoon, DayOfWeek, Author, Genre } from 'src/entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Webtoon]), CrawlerModule],
+  imports: [TypeOrmModule.forFeature([Webtoon, DayOfWeek, Author, Genre]), CrawlerModule],
 
   providers: [
     NaverCrawlerService,

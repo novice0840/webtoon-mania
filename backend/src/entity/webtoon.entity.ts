@@ -19,22 +19,22 @@ export class Webtoon {
   @Column({ name: 'title_name' })
   titleName: string;
 
-  @Column({ nullable: true })
+  @Column()
   thumbnail: string;
 
-  @Column({ name: 'interest_count', nullable: true })
+  @Column({ name: 'interest_count', default: 0 })
   interestCount: number;
 
-  @Column({ type: 'float', name: 'star_score', nullable: true })
+  @Column({ type: 'float', name: 'star_score', default: 0 })
   starScore: number;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ name: 'view_count', nullable: true, default: 0 })
+  @Column({ name: 'view_count', default: 0 })
   viewCount: string;
 
-  @Column({ name: 'like_count', nullable: true })
+  @Column({ name: 'like_count', default: 0 })
   likeCount: number;
 
   @Column({ name: 'is_end' })

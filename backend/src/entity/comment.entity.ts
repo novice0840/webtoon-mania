@@ -22,7 +22,7 @@ export class Comment {
   writerId: string;
 
   @Column({ name: 'webtoon_id' })
-  webtoonId: number;
+  webtoonId: string;
 
   @Column()
   content: string;

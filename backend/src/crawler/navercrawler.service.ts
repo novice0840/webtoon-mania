@@ -1,64 +1,49 @@
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 import { naverCurrentWebtoonsURL } from 'src/constants';
+import { Webtoon, Author, DayOfWeek, Genre } from 'src/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 @Injectable()
 export class NaverCrawlerService {
-  private async crawlingPage(webtoonId, pageNumber) {
-    const response = await axios.get(
-      `https://comic.naver.com/api/article/list?titleId=${webtoonId}&page=${pageNumber}`,
-    );
-    return response.data.articleList.map((article) => ({
-      id: article.no,
-      webtoonId,
-      name: article.subtitle.replaceAll(/['"]/g, ' '),
-      uploadDate: article.serviceDateDescription,
-      thumbnail: article.thumbnailUrl,
-      starScore: article.starScore,
-    }));
-  }
+  constructor(
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Author) private authorRepository: Repository<Author>,
+    @InjectRepository(DayOfWeek) private dayOfWeekRepository: Repository<DayOfWeek>,
+    @InjectRepository(Genre) private genreRepository: Repository<Genre>,
+  ) {}
 
-  private async getTotalPage(webtoonId: string): Promise<number> {
-    const response = await axios.get(`https://comic.naver.com/api/article/list?titleId=${webtoonId}
-      `);
-    const { totalPages: pageNumber } = response.data.pageInfo;
-    return pageNumber;
-  }
-
-  async cralwingCurrentWebtoonBase() {
-    const overlapCheckList = [];
+  async cralwingCurrentWebtoons() {
     const response = await axios.get(naverCurrentWebtoonsURL);
-    const webtoonBases = Object.values(response.data.titleListMap)
-      .flatMap((webtoon) => webtoon as any[])
-      .filter((webtoon) => {
-        if (overlapCheckList.includes(webtoon.titleId) || webtoon.adult) {
-          return false;
-        } else {
-          overlapCheckList.push(webtoon.titleId);
-          return true;
-        }
-      })
-      .map((webtoon) => ({
-        titleId: String(webtoon.titleId),
-        titleName: webtoon.titleName,
-        thumbnail: webtoon.thumbnailUrl,
-        starScore: webtoon.starScore,
+    const webtoons = Object.values(response.data.titleListMap)
+      .flatMap((element) => element as any[])
+      .filter((element) => !element.adult)
+      .map((element) => ({
+        titleId: String(element.titleId),
+        titleName: element.titleName,
+        thumbnail: element.thumbnailUrl,
+        starScore: element.starScore,
+        viewCount: element.viewCount,
         platform: 'naver',
         isEnd: false,
-        link: `https://comic.naver.com/webtoon/list?titleId=${webtoon.titleId}`,
+        link: `https://comic.naver.com/webtoon/list?titleId=${element.titleId}`,
       }));
-    const webtoons = [];
     let i = 1;
-    for await (const webtoonBase of webtoonBases) {
-      const detail = await this.cralwingWebtoonDetail(webtoonBase.titleId);
-      const webtoon = { ...webtoonBase, ...detail };
-      webtoons.push(webtoon);
-      console.log(`naver webtoon ${i}개 크롤링 완료`);
-      i = i + 1;
+    for await (const webtoon of webtoons) {
+      const check = await this.webtoonRepository.find({ where: { titleId: webtoon.titleId, platform: 'naver' } });
+      if (check.length != 0) {
+        continue;
+      }
+      await this.webtoonRepository.save(webtoon);
+      console.log(`Naver 연재 웹툰 ${i}개 크롤링 완료`);
+      console.log(webtoon);
+      i += 1;
     }
     return webtoons;
   }
 
-  async crawlingEndWebtoonBase() {
+  async crawlingEndWebtoons() {
     const response = await axios.get(`https://comic.naver.com/api/webtoon/titlelist/finished`);
     const totalPageNumber = response.data.pageInfo.totalPages;
     let webtoonBases = [];
@@ -106,25 +91,5 @@ export class NaverCrawlerService {
     const authorInfo: any[] = Object.values(response.data.author).flatMap((author) => author);
     const authorName = authorInfo.map((author) => author.name);
     return { dayOfWeeks, tags, description, interestCount, authors: authorName };
-  }
-
-  // 모든 page를 돌며 모든 chapter를 크롤링하는 함수
-  async crawlingChapters(titleId) {
-    let chapters = [];
-    const totalPageNumber = await this.getTotalPage(titleId);
-    const pageList = Array.from({ length: totalPageNumber }, (_, index) => index + 1);
-    for await (const page of pageList) {
-      const articles = await this.crawlingPage(titleId, page);
-      chapters = chapters.concat(articles);
-    }
-    return chapters;
-  }
-
-  // 가장 최근 페이지만 크롤링
-  async crawlingRecentPage(titleId) {
-    let chapters = [];
-    const articles = await this.crawlingPage(titleId, 1);
-    chapters = chapters.concat(articles);
-    return chapters;
   }
 }

@@ -1,14 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { Repository, Like } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Webtoon } from 'src/entity/webtoon.entity';
 import { NaverCrawlerService } from 'src/crawler/navercrawler.service';
 
 @Injectable()
 export class CronjobService {
   constructor(
-    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
     @Inject(NaverCrawlerService)
     private readonly naverCrawlerService: NaverCrawlerService,
   ) {}

@@ -1,14 +1,18 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 import { Webtoon } from './webtoon.entity';
 
-@Entity({ name: 'Day_Of_Week' })
+@Entity()
 export class DayOfWeek {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  tag: string;
+  day: string;
 
-  @ManyToOne(() => Webtoon, (webtoon) => webtoon.genres)
+  @Column({ name: 'webtoon_id' })
+  webtoonId: string;
+
+  @ManyToOne(() => Webtoon, (webtoon) => webtoon.dayOfWeeks)
+  @JoinColumn({ name: 'webtoon_id' })
   webtoon: Webtoon;
 }
