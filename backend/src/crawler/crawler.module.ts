@@ -8,7 +8,7 @@ import { Webtoon, DayOfWeek, Author, Genre } from 'src/entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Webtoon, DayOfWeek, Author, Genre]), CrawlerModule],
+  imports: [TypeOrmModule.forFeature([Webtoon, DayOfWeek, Author, Genre])],
 
   providers: [
     NaverCrawlerService,

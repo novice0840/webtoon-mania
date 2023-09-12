@@ -15,11 +15,11 @@ export class NaverCrawlerService {
   ) {}
 
   async crawlingWebtoons() {
-    await this.cralwingCurrentWebtoons();
+    await this.crawlingCurrentWebtoons();
     await this.crawlingEndWebtoons();
   }
 
-  async cralwingCurrentWebtoons() {
+  async crawlingCurrentWebtoons() {
     const response = await axios.get(naverCurrentWebtoonsURL);
     const webtoons = Object.values(response.data.titleListMap)
       .flatMap((element) => element as any[])
@@ -44,11 +44,11 @@ export class NaverCrawlerService {
         continue;
       } else if (check?.id && check.isEnd) {
         // 연재완료된 웹툰이 다시 시작한 경우
-        await this.webtoonRepository.save({ id: check.id, ...webtoon });
+        await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
       } else {
         // DB에 없는 새로운 웹툰
         const savedWebtoon = await this.webtoonRepository.save(webtoon);
-        await this.cralwingWebtoonDetail(savedWebtoon.id);
+        await this.crawlingWebtoonDetail(savedWebtoon.id);
       }
       console.log(`Naver 연재 웹툰 ${i}개 크롤링 완료`);
       console.log(webtoon);
@@ -92,7 +92,7 @@ export class NaverCrawlerService {
       } else {
         // DB에 없는 새로운 웹툰
         const savedWebtoon = await this.webtoonRepository.save(webtoon);
-        await this.cralwingWebtoonDetail(savedWebtoon.id);
+        await this.crawlingWebtoonDetail(savedWebtoon.id);
       }
       console.log(`Naver 완결 웹툰 ${i}개 크롤링 완료`);
       console.log(webtoon);
@@ -100,7 +100,7 @@ export class NaverCrawlerService {
     }
   }
 
-  async cralwingWebtoonDetail(id) {
+  async crawlingWebtoonDetail(id) {
     const webtoon = await this.webtoonRepository.findOne({ select: ['titleId'], where: { id } });
     const response = await axios.get(`
       https://comic.naver.com/api/article/list/info?titleId=${webtoon.titleId}`);

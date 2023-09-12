@@ -8,15 +8,29 @@ import { autoScroll, sleep, convertToNumber } from 'src/util/crawling';
 
 @Injectable()
 export class KakaoCrawlerService {
+  private days;
+  private dayConverter;
   constructor(
     @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
     @InjectRepository(Author) private authorRepository: Repository<Author>,
     @InjectRepository(DayOfWeek) private dayOfWeekRepository: Repository<DayOfWeek>,
     @InjectRepository(Genre) private genreRepository: Repository<Genre>,
-  ) {}
+  ) {
+    this.days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'complete'];
+    this.dayConverter = {
+      mon: 'Monday',
+      tue: 'Tuesday',
+      wed: 'Wednesday',
+      thu: 'Thursday',
+      fri: 'Friday',
+      sat: 'Saturday',
+      sun: 'Sunday',
+    };
+  }
 
-  async crawlingWebtoonDetail(titleName: string, titleId: string, page) {
-    await page.goto(`https://webtoon.kakao.com/content/${titleName}/${titleId}`);
+  async crawlingWebtoonDetail(id, page) {
+    const webtoon = await this.webtoonRepository.findOne({ select: ['titleName', 'titleId'], where: { id } });
+    await page.goto(`https://webtoon.kakao.com/content/${webtoon.titleName}/${webtoon.titleId}`);
     await page.waitForSelector(
       'p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis',
     );
@@ -31,6 +45,54 @@ export class KakaoCrawlerService {
     const likeCount = convertToNumber(info.find('p').eq(1).text());
     const viewCount = convertToNumber(info.find('p').eq(2).text());
     return { authors, tags, likeCount, viewCount };
+  }
+
+  async crawlingDayWebtoon(day = 'mon') {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    const webtoons = [];
+    await page.goto(`https://webtoon.kakao.com/original-webtoon?tab=${day}`);
+    await autoScroll(page);
+    const content = await page.content();
+    const $ = load(content);
+    $('.relative.w-full').each((index, element) => {
+      const $webtoon = $(element).find('a').attr('href');
+      const $adult = $(element).find('.w-full.mt-6.px-2.flex-center.gap-x-2 > img').attr('alt');
+      // Webtoon이 아닌 태그와 성인 웹툰 제거
+      if ($webtoon && $webtoon !== '#none' && $adult !== '성인') {
+        const thumbnail = $(element).find('img.w-full').attr('src');
+        const [a, b, titleName, titleId] = $webtoon.split('/');
+        webtoons.push({
+          titleId,
+          titleName,
+          thumbnail,
+          platform: 'kakao',
+          isEnd: day === 'complete',
+          link: `https://webtoon.kakao.com/content/${titleName}/${titleId}`,
+        });
+      }
+    });
+    let i = 1;
+    for await (const webtoon of webtoons) {
+      const check = await this.webtoonRepository.findOne({
+        select: ['id', 'isEnd'],
+        where: { titleId: webtoon.titleId, platform: 'kakao' },
+      });
+      if (check?.id && check.isEnd === webtoon.isEnd) {
+        // 이미 저장되어 있고 연재여부도 그대로
+        continue;
+      } else if (check?.id && check.isEnd !== webtoon.isEnd) {
+        // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
+        await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
+      } else {
+        // DB에 없는 새로운 웹툰
+        const savedWebtoon = await this.webtoonRepository.save(webtoon);
+        await this.crawlingWebtoonDetail(savedWebtoon.id, page);
+      }
+      console.log(`Kakao 웹툰 ${i}개 크롤링 완료`);
+      console.log(webtoon);
+      i += 1;
+    }
   }
 
   async crawlingWebtoons() {
@@ -88,17 +150,17 @@ export class KakaoCrawlerService {
       });
       console.log(`${webtoonKind} 웹툰 크롤링 완료`);
     }
-    let i = 1;
-    for await (const webtoonBase of webtoonBases) {
-      if (!storedTitleIds.includes(webtoonBase.titleId)) {
-        const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId, page);
-        await this.webtoonRepository.save({ ...webtoonBase, ...details });
-        sleep(5000);
-        console.log({ ...webtoonBase, ...details });
-        console.log(`Webtoon ${i}개 크롤링 완료`);
-        i = i + 1;
-      }
-    }
+    // let i = 1;
+    // for await (const webtoonBase of webtoonBases) {
+    //   if (!storedTitleIds.includes(webtoonBase.titleId)) {
+    //     const details = await this.crawlingWebtoonDetail(webtoonBase.titleName, webtoonBase.titleId, page);
+    //     await this.webtoonRepository.save({ ...webtoonBase, ...details });
+    //     sleep(5000);
+    //     console.log({ ...webtoonBase, ...details });
+    //     console.log(`Webtoon ${i}개 크롤링 완료`);
+    //     i = i + 1;
+    //   }
+    // }
     await browser.close();
   }
 }
