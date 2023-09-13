@@ -48,12 +48,12 @@ export class Webtoon {
   @OneToMany(() => Comment, (comment) => comment.webtoon)
   comments: Comment[];
 
-  @OneToMany(() => Genre, (genre) => genre.webtoon)
+  @OneToMany(() => Genre, (genre) => genre.webtoon, { cascade: true })
   genres: Genre[];
 
-  @OneToMany(() => Author, (author) => author.webtoon)
+  @OneToMany(() => Author, (author) => author.webtoon, { cascade: true })
   authors: Author[];
 
-  @OneToMany(() => DayOfWeek, (dayOfweek) => dayOfweek.webtoon)
+  @OneToMany(() => DayOfWeek, (dayOfweek) => dayOfweek.webtoon, { cascade: true })
   dayOfWeeks: DayOfWeek[];
 }

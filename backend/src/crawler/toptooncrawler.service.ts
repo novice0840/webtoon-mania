@@ -2,64 +2,81 @@ import puppeteer from 'puppeteer';
 import { load } from 'cheerio';
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
-import { Webtoon } from 'src/entity';
+import { Author, DayOfWeek, Genre, Webtoon } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { convertToNumber, autoScroll } from 'src/util/crawling';
 
 @Injectable()
 export class ToptoonCrawlerService {
-  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
+  private days;
+  private dayConverter;
+  constructor(
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Author) private authorRepository: Repository<Author>,
+    @InjectRepository(DayOfWeek) private dayOfWeekRepository: Repository<DayOfWeek>,
+    @InjectRepository(Genre) private genreRepository: Repository<Genre>,
+  ) {
+    this.days = ['월', '화', '수', '목', '금', '토', '일'];
+    this.dayConverter = {
+      월: 'Monday',
+      화: 'Tuesday',
+      수: 'Wednesday',
+      목: 'Thursday',
+      금: 'Friday',
+      토: 'Saturday',
+      일: 'Sunday',
+    };
+  }
 
-  private convertToNumber(str): number {
-    const tenThousand = 10000; // 1만의 값
-    const tenMillion = 100000000;
-    const thousand = 1000;
-    let number;
-    if (str.endsWith('만')) {
-      number = parseFloat(str) * tenThousand; // 문자열에서 숫자 부분 추출
-    } else if (str.endsWith('억')) {
-      number = parseFloat(str) * tenMillion; // 문자열에서 숫자 부분 추출
-    } else if (str.endsWith('천')) {
-      number = parseFloat(str) * thousand; // 문자열에서 숫자 부분 추출
-    } else {
-      number = parseFloat(str); // 문자열에서 숫자 부분 추출
-    }
-    return !isNaN(number) ? number : 0;
-  }
-  private async autoScroll(page): Promise<void> {
-    await page.evaluate(async () => {
-      await new Promise<void>((resolve) => {
-        let totalHeight = 0;
-        const distance = 100;
-        const timer = setInterval(() => {
-          const scrollHeight = document.body.scrollHeight;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-          if (totalHeight >= scrollHeight - window.innerHeight) {
-            clearInterval(timer);
-            resolve();
-          }
-        }, 10);
-      });
-    });
-  }
   async crawlingWebtoons() {
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
     const endWebtoons = await this.crawlingEndWebtoons();
     const currentWebtoons = await this.crawlingCurrentWebtoons();
     const webtoons = [...endWebtoons, ...currentWebtoons];
     let i = 1;
     for await (const webtoon of webtoons) {
-      const IsExist = await this.webtoonRepository.find({ where: { titleId: webtoon.titleId, platform: 'toptoon' } });
-      if (IsExist.length === 0) {
-        try {
-          const details = await this.crawlingWebtoonDetail(webtoon.titleId);
-          console.log(`웹툰 ${i}개 크롤링 완료`);
-          console.log({ ...webtoon, ...details });
-          this.webtoonRepository.save({ ...webtoon, ...details });
-          i += 1;
-        } catch (error) {
-          console.log(error);
+      try {
+        const check = await this.webtoonRepository.findOne({
+          select: ['id', 'isEnd'],
+          where: { titleId: webtoon.titleId, platform: 'toptoon' },
+        });
+        if (check?.id && check.isEnd === webtoon.isEnd) {
+          // 이미 저장되어 있고 연재여부도 그대로
+          continue;
+        } else if (check?.id && check.isEnd !== webtoon.isEnd) {
+          // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
+          await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
+          if (webtoon.isEnd) {
+            await this.dayOfWeekRepository.delete({ webtoonId: check.id });
+          } else {
+            await this.dayOfWeekRepository.save(
+              webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: check.id })),
+            );
+          }
+        } else {
+          // DB에 없는 새로운 웹툰
+          const savedWebtoon = await this.webtoonRepository.save({
+            titleId: webtoon.titleId,
+            titleName: webtoon.titleName,
+            isEnd: webtoon.isEnd,
+            platform: webtoon.platform,
+            link: webtoon.link,
+          });
+          await this.dayOfWeekRepository.save(
+            webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: savedWebtoon.id })),
+          );
+          await this.authorRepository.save(
+            webtoon.authors.map((element) => ({ name: element, webtoonId: savedWebtoon.id })),
+          );
+          await this.crawlingWebtoonDetail(savedWebtoon.id, page);
         }
+        console.log(`Lezhin 웹툰 ${i}개 크롤링 완료`);
+        console.log(webtoon);
+        i += 1;
+      } catch (error) {
+        console.log(error);
       }
     }
   }
@@ -72,7 +89,7 @@ export class ToptoonCrawlerService {
     for await (const day of days) {
       await page.goto(`https://toptoon.com/weekly#weekly${day}`);
       await page.waitForSelector('li.jsComicObj');
-      await this.autoScroll(page);
+      await autoScroll(page);
       const content = await page.content();
       const $ = load(content);
       $('ul.swiper-slide.main-swiper.initialized.swiper-main-active li.jsComicObj').each((index, element) => {
@@ -84,7 +101,7 @@ export class ToptoonCrawlerService {
           .replace(/^"|"$/g, '');
         const titleId = $(element).find('a').attr('href')?.split('/')[3];
         const titleName = $(element).find('span.thumb_tit_text').text();
-        const viewCount = this.convertToNumber($(element).find('span.viewCountTxt').text());
+        const viewCount = convertToNumber($(element).find('span.viewCountTxt').text());
         const link = `https://toptoon.com/comic/ep_list/${titleId}`;
         webtoons.push({ thumbnail, titleId, titleName, viewCount, link, isEnd: false, platform: 'toptoon' });
       });
@@ -102,7 +119,7 @@ export class ToptoonCrawlerService {
     for await (const year of years) {
       await page.goto(`https://toptoon.com/complete#complete3`);
       await page.waitForSelector('.thumbbox');
-      await this.autoScroll(page);
+      await autoScroll(page);
       await page.click('.select_box.clearfix');
       await page.click(`li[data-url="/complete/getYearHtml/${year}"]`);
       await page.waitForSelector('.thumbbox');
@@ -119,7 +136,7 @@ export class ToptoonCrawlerService {
         if (thumbnail) {
           const titleId = $(element).find('a').attr('href')?.split('/')[3];
           const titleName = $(element).find('span.thumb_tit_text').text();
-          const viewCount = this.convertToNumber($(element).find('span.viewCountTxt').text());
+          const viewCount = convertToNumber($(element).find('span.viewCountTxt').text());
           const link = `https://toptoon.com/comic/ep_list/${titleId}`;
           webtoons.push({ thumbnail, titleId, titleName, viewCount, link, isEnd: true, platform: 'toptoon' });
         }
@@ -130,19 +147,7 @@ export class ToptoonCrawlerService {
     return webtoons;
   }
 
-  async crawlingWebtoonDetail(webtoonId: string) {
-    const days = ['월', '화', '수', '목', '금', '토', '일'];
-    const dayConverter = {
-      월: 'Monday',
-      화: 'Tuesday',
-      수: 'Wednesday',
-      목: 'Thursday',
-      금: 'Friday',
-      토: 'Saturday',
-      일: 'Sunday',
-    };
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
+  async crawlingWebtoonDetail(webtoonId: string, page) {
     await page.goto(`https://toptoon.com/comic/ep_list/${webtoonId}`);
     const content = await page.content();
     const $ = load(content);
@@ -156,14 +161,13 @@ export class ToptoonCrawlerService {
     $('.comic_tag span').each((index, element) => {
       const tag = $(element).text().slice(1);
 
-      if (days.includes(tag)) {
-        day_of_weeks.push(dayConverter[tag]);
+      if (this.days.includes(tag)) {
+        day_of_weeks.push(this.dayConverter[tag]);
       } else {
         tags.push(tag);
       }
     });
     const starScore = parseFloat($('.comic_spoint').text());
-    await browser.close();
     return { authors, description, tags, day_of_weeks, starScore };
   }
 }
