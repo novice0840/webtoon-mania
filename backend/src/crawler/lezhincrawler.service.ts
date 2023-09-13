@@ -2,31 +2,67 @@ import puppeteer from 'puppeteer';
 import { load } from 'cheerio';
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
-import { Webtoon } from 'src/entity';
+import { Webtoon, Author, DayOfWeek, Genre } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class LezhinCrawlerService {
-  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
+  constructor(
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Author) private authorRepository: Repository<Author>,
+    @InjectRepository(DayOfWeek) private dayOfWeekRepository: Repository<DayOfWeek>,
+    @InjectRepository(Genre) private genreRepository: Repository<Genre>,
+  ) {}
 
   async crawlingWebtoons() {
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
     const currentWetboons = await this.crawlingCurrentWebtoons();
     const endWebtoons = await this.crawlingEndWebtoons();
     const webtoons = [...currentWetboons, ...endWebtoons];
     let i = 1;
     for await (const webtoon of webtoons) {
-      const IsExist = await this.webtoonRepository.find({ where: { titleId: webtoon.titleId, platform: 'lezhin' } });
-      if (IsExist.length === 0) {
-        try {
-          const details = await this.crawlingWebtoonDetail(webtoon.titleId);
-          console.log(`웹툰 ${i}개 크롤링 완료`);
-          console.log({ ...webtoon, ...details });
-          this.webtoonRepository.save({ ...webtoon, ...details });
-          i += 1;
-        } catch (error) {
-          console.log(error);
+      try {
+        const check = await this.webtoonRepository.findOne({
+          select: ['id', 'isEnd'],
+          where: { titleId: webtoon.titleId, platform: 'lezhin' },
+        });
+        if (check?.id && check.isEnd === webtoon.isEnd) {
+          // 이미 저장되어 있고 연재여부도 그대로
+          continue;
+        } else if (check?.id && check.isEnd !== webtoon.isEnd) {
+          // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
+          await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
+          if (webtoon.isEnd) {
+            await this.dayOfWeekRepository.delete({ webtoonId: check.id });
+          } else {
+            await this.dayOfWeekRepository.save(
+              webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: check.id })),
+            );
+          }
+        } else {
+          // DB에 없는 새로운 웹툰
+          const savedWebtoon = await this.webtoonRepository.save({
+            titleId: webtoon.titleId,
+            titleName: webtoon.titleName,
+            isEnd: webtoon.isEnd,
+            platform: webtoon.platform,
+            link: webtoon.link,
+          });
+          await this.dayOfWeekRepository.save(
+            webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: savedWebtoon.id })),
+          );
+          await this.authorRepository.save(
+            webtoon.authors.map((element) => ({ name: element, webtoonId: savedWebtoon.id })),
+          );
+          await this.crawlingWebtoonDetail(savedWebtoon.id, page);
         }
+        console.log(`Lezhin 웹툰 ${i}개 크롤링 완료`);
+        console.log(webtoon);
+        i += 1;
+      } catch (error) {
+        console.log(error);
       }
     }
   }
@@ -58,7 +94,7 @@ export class LezhinCrawlerService {
       .map((webtoon) => ({
         titleId: webtoon.alias,
         titleName: webtoon.title,
-        day_of_weeks: webtoon.schedule.periods.map((day) => dayConverter[day]),
+        dayOfWeeks: webtoon.schedule.periods.map((day) => dayConverter[day]),
         authors: webtoon.authors.map((author) => author.name),
         platform: 'lezhin',
         isEnd: false,
@@ -92,7 +128,7 @@ export class LezhinCrawlerService {
           authors: webtoon.artists.map((artist) => artist.name),
           isEnd: true,
           platform: 'lezhin',
-          day_of_weeks: [],
+          dayOfWeeks: [],
           link: `https://www.lezhin.com/ko/comic/${webtoon.alias}`,
         });
       });
@@ -101,10 +137,9 @@ export class LezhinCrawlerService {
     return webtoons;
   }
 
-  async crawlingWebtoonDetail(titleId: string) {
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
-    await page.goto(`https://www.lezhin.com/ko/comic/${titleId}`);
+  async crawlingWebtoonDetail(id, page) {
+    const webtoon = await this.webtoonRepository.findOne({ select: ['titleId'], where: { id } });
+    await page.goto(`https://www.lezhin.com/ko/comic/${webtoon.titleId}`);
     await page.click('button.comicInfo__btnShowExtend');
     await page.waitForSelector('.comicInfoExtend__synopsis');
     const content = await page.content();
@@ -115,7 +150,7 @@ export class LezhinCrawlerService {
     $('a.comicInfo__tag').each((index, element) => {
       tags.push($(element).text().slice(1));
     });
-    await browser.close();
-    return { titleId, description, tags, thumbnail };
+    await this.webtoonRepository.save({ id, description, thumbnail });
+    await this.genreRepository.save(tags.map((element) => ({ tag: element, webtoonId: id })));
   }
 }

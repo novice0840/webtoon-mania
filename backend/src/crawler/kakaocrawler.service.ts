@@ -81,7 +81,6 @@ export class KakaoCrawlerService {
         });
       }
     });
-    console.log('check');
     let i = 1;
     for await (const webtoon of webtoons) {
       try {
@@ -98,7 +97,7 @@ export class KakaoCrawlerService {
           if (webtoon.isEnd) {
             await this.dayOfWeekRepository.delete({ webtoonId: check.id });
           } else {
-            await this.dayOfWeekRepository.save({ webtoonId: webtoon.id, day: this.dayConverter[day] });
+            await this.dayOfWeekRepository.save({ webtoonId: check.id, day: this.dayConverter[day] });
           }
         } else {
           // DB에 없는 새로운 웹툰
@@ -109,7 +108,7 @@ export class KakaoCrawlerService {
         console.log(`Kakao 웹툰 ${i}개 크롤링 완료`);
         console.log(webtoon);
         i += 1;
-        sleep(3000);
+        sleep(5000);
       } catch (error) {
         console.log(error);
       }

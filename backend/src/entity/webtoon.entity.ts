@@ -19,7 +19,9 @@ export class Webtoon {
   @Column({ name: 'title_name' })
   titleName: string;
 
-  @Column()
+  @Column({
+    default: 'https://image-comic.pstatic.net/webtoon/616238/thumbnail/thumbnail_IMAG21_4063151999090243637.jpg',
+  })
   thumbnail: string;
 
   @Column({ name: 'interest_count', default: 0 })
