@@ -32,11 +32,11 @@ export class ToptoonCrawlerService {
   async crawlingWebtoons() {
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
+    // const currentWebtoons = await this.crawlingCurrentWebtoons();
     const endWebtoons = await this.crawlingEndWebtoons();
-    const currentWebtoons = await this.crawlingCurrentWebtoons();
-    const webtoons = [...endWebtoons, ...currentWebtoons];
+    const webtoons = [...endWebtoons];
     let i = 1;
-    for await (const webtoon of webtoons) {
+    for await (let webtoon of webtoons) {
       try {
         const check = await this.webtoonRepository.findOne({
           select: ['id', 'isEnd'],
@@ -45,40 +45,23 @@ export class ToptoonCrawlerService {
         if (check?.id && check.isEnd === webtoon.isEnd) {
           // 이미 저장되어 있고 연재여부도 그대로
           continue;
-        } else if (check?.id && check.isEnd !== webtoon.isEnd) {
-          // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
-          await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
-          if (webtoon.isEnd) {
-            await this.dayOfWeekRepository.delete({ webtoonId: check.id });
-          } else {
-            await this.dayOfWeekRepository.save(
-              webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: check.id })),
-            );
-          }
+        } else if (check?.id) {
+          // 저장되어 있는데 연재여부가 바뀐 경우
+          this.webtoonRepository.save({ id: check.id, ...webtoon });
         } else {
           // DB에 없는 새로운 웹툰
-          const savedWebtoon = await this.webtoonRepository.save({
-            titleId: webtoon.titleId,
-            titleName: webtoon.titleName,
-            isEnd: webtoon.isEnd,
-            platform: webtoon.platform,
-            link: webtoon.link,
-          });
-          await this.dayOfWeekRepository.save(
-            webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: savedWebtoon.id })),
-          );
-          await this.authorRepository.save(
-            webtoon.authors.map((element) => ({ name: element, webtoonId: savedWebtoon.id })),
-          );
-          await this.crawlingWebtoonDetail(savedWebtoon.id, page);
+          const detail = await this.crawlingWebtoonDetail(webtoon.titleId, page);
+          webtoon = { ...webtoon, ...detail };
+          console.log(`Lezhin 웹툰 ${i}개 크롤링 완료`);
+          console.log(webtoon);
+          this.webtoonRepository.save(webtoon);
+          i += 1;
         }
-        console.log(`Lezhin 웹툰 ${i}개 크롤링 완료`);
-        console.log(webtoon);
-        i += 1;
       } catch (error) {
         console.log(error);
       }
     }
+    await browser.close();
   }
 
   async crawlingCurrentWebtoons() {
@@ -152,22 +135,19 @@ export class ToptoonCrawlerService {
     const content = await page.content();
     const $ = load(content);
     const authors = $('span.comic_wt').text().split('&');
-    const tags = [];
-    $('.comic_tag span').each((index, element) => {
-      tags.push($(element).text().slice(1));
-    });
+    const genres = [];
     const description = $('p.story_synop').text();
-    const day_of_weeks = [];
+    const dayOfWeeks = [];
     $('.comic_tag span').each((index, element) => {
       const tag = $(element).text().slice(1);
 
       if (this.days.includes(tag)) {
-        day_of_weeks.push(this.dayConverter[tag]);
-      } else {
-        tags.push(tag);
+        dayOfWeeks.push(this.dayConverter[tag]);
+      } else if (!genres.map((element) => element.tag).includes(tag)) {
+        genres.push({ tag });
       }
     });
     const starScore = parseFloat($('.comic_spoint').text());
-    return { authors, description, tags, day_of_weeks, starScore };
+    return { authors, description, genres, dayOfWeeks, starScore };
   }
 }
