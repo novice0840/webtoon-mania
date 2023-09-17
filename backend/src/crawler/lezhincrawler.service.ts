@@ -22,7 +22,7 @@ export class LezhinCrawlerService {
     const endWebtoons = await this.crawlingEndWebtoons();
     const webtoons = [...currentWetboons, ...endWebtoons];
     let i = 1;
-    for await (const webtoon of webtoons) {
+    for await (let webtoon of webtoons) {
       try {
         const check = await this.webtoonRepository.findOne({
           select: ['id', 'isEnd'],
@@ -31,36 +31,18 @@ export class LezhinCrawlerService {
         if (check?.id && check.isEnd === webtoon.isEnd) {
           // 이미 저장되어 있고 연재여부도 그대로
           continue;
-        } else if (check?.id && check.isEnd !== webtoon.isEnd) {
-          // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
-          await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
-          if (webtoon.isEnd) {
-            await this.dayOfWeekRepository.delete({ webtoonId: check.id });
-          } else {
-            await this.dayOfWeekRepository.save(
-              webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: check.id })),
-            );
-          }
+        } else if (check?.id) {
+          // 저장되어 있는데 연재여부가 바뀐 경우
+          await this.webtoonRepository.save({ id: check.id, ...webtoon });
         } else {
           // DB에 없는 새로운 웹툰
-          const savedWebtoon = await this.webtoonRepository.save({
-            titleId: webtoon.titleId,
-            titleName: webtoon.titleName,
-            isEnd: webtoon.isEnd,
-            platform: webtoon.platform,
-            link: webtoon.link,
-          });
-          await this.dayOfWeekRepository.save(
-            webtoon.dayOfWeeks.map((element) => ({ day: element, webtoonId: savedWebtoon.id })),
-          );
-          await this.authorRepository.save(
-            webtoon.authors.map((element) => ({ name: element, webtoonId: savedWebtoon.id })),
-          );
-          await this.crawlingWebtoonDetail(savedWebtoon.id, page);
+          const detail = await this.crawlingWebtoonDetail(webtoon.titleId, page);
+          webtoon = { ...webtoon, ...detail };
+          console.log(`웹툰 ${i}개 크롤링 완료`);
+          console.log(webtoon);
+          await this.webtoonRepository.save(webtoon);
+          i += 1;
         }
-        console.log(`Lezhin 웹툰 ${i}개 크롤링 완료`);
-        console.log(webtoon);
-        i += 1;
       } catch (error) {
         console.log(error);
       }
@@ -94,8 +76,8 @@ export class LezhinCrawlerService {
       .map((webtoon) => ({
         titleId: webtoon.alias,
         titleName: webtoon.title,
-        dayOfWeeks: webtoon.schedule.periods.map((day) => dayConverter[day]),
-        authors: webtoon.authors.map((author) => author.name),
+        dayOfWeeks: webtoon.schedule.periods.map((day) => ({ day: dayConverter[day] })),
+        authors: webtoon.authors.map((author) => ({ name: author.name })),
         platform: 'lezhin',
         isEnd: false,
         link: `https://www.lezhin.com/ko/comic/${webtoon.alias}`,
@@ -128,7 +110,6 @@ export class LezhinCrawlerService {
           authors: webtoon.artists.map((artist) => artist.name),
           isEnd: true,
           platform: 'lezhin',
-          dayOfWeeks: [],
           link: `https://www.lezhin.com/ko/comic/${webtoon.alias}`,
         });
       });
@@ -137,20 +118,18 @@ export class LezhinCrawlerService {
     return webtoons;
   }
 
-  async crawlingWebtoonDetail(id, page) {
-    const webtoon = await this.webtoonRepository.findOne({ select: ['titleId'], where: { id } });
-    await page.goto(`https://www.lezhin.com/ko/comic/${webtoon.titleId}`);
+  async crawlingWebtoonDetail(titleId, page) {
+    await page.goto(`https://www.lezhin.com/ko/comic/${titleId}`);
     await page.click('button.comicInfo__btnShowExtend');
     await page.waitForSelector('.comicInfoExtend__synopsis');
     const content = await page.content();
     const $ = load(content);
     const description = $('.comicInfoExtend__synopsis p').text();
     const thumbnail = $('picture.comicInfo__cover img').attr('src');
-    const tags = [];
+    const genres = [];
     $('a.comicInfo__tag').each((index, element) => {
-      tags.push($(element).text().slice(1));
+      genres.push({ tag: $(element).text().slice(1) });
     });
-    await this.webtoonRepository.save({ id, description, thumbnail });
-    await this.genreRepository.save(tags.map((element) => ({ tag: element, webtoonId: id })));
+    return { description, thumbnail, genres };
   }
 }

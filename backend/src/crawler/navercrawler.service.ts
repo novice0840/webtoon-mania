@@ -15,8 +15,35 @@ export class NaverCrawlerService {
   ) {}
 
   async crawlingWebtoons() {
-    await this.crawlingCurrentWebtoons();
-    await this.crawlingEndWebtoons();
+    const currentWebtoobs = await this.crawlingCurrentWebtoons();
+    const endWebtoons = await this.crawlingEndWebtoons();
+    const webtoons = [...currentWebtoobs, ...endWebtoons];
+    let i = 1;
+    for await (let webtoon of webtoons) {
+      const check = await this.webtoonRepository.findOne({
+        select: ['id', 'isEnd'],
+        where: { titleId: webtoon.titleId, platform: 'naver' },
+      });
+      if (check?.id && check.isEnd === webtoon.isEnd) {
+        // 이미 저장되어 있고 연재여부도 그대로
+        continue;
+      } else if (check?.id) {
+        // 저장되어 있는데 연재여부가 바뀐 경우
+        this.webtoonRepository.save({ id: check.id, ...webtoon });
+      } else {
+        try {
+          // DB에 없는 새로운 웹툰
+          const detail = await this.crawlingWebtoonDetail(webtoon.titleId);
+          webtoon = { ...webtoon, ...detail };
+          console.log(`Naver 웹툰 ${i}개 크롤링 완료`);
+          console.log(webtoon);
+          await this.webtoonRepository.save(webtoon);
+          i += 1;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
   }
 
   async crawlingCurrentWebtoons() {
@@ -34,26 +61,8 @@ export class NaverCrawlerService {
         isEnd: false,
         link: `https://comic.naver.com/webtoon/list?titleId=${element.titleId}`,
       }));
-    let i = 1;
-    for await (const webtoon of webtoons) {
-      const check = await this.webtoonRepository.findOne({
-        select: ['id', 'isEnd'],
-        where: { titleId: webtoon.titleId, platform: 'naver' },
-      });
-      if (check?.id && !check.isEnd) {
-        continue;
-      } else if (check?.id && check.isEnd) {
-        // 연재완료된 웹툰이 다시 시작한 경우
-        await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
-      } else {
-        // DB에 없는 새로운 웹툰
-        const savedWebtoon = await this.webtoonRepository.save(webtoon);
-        await this.crawlingWebtoonDetail(savedWebtoon.id);
-      }
-      console.log(`Naver 연재 웹툰 ${i}개 크롤링 완료`);
-      console.log(webtoon);
-      i += 1;
-    }
+    console.log(`현재 연재중인 웹툰 크롤링 완료`);
+    return webtoons;
   }
 
   async crawlingEndWebtoons() {
@@ -77,53 +86,22 @@ export class NaverCrawlerService {
         }));
       webtoons = webtoons.concat(pageWebtoons);
     }
-
-    let i = 1;
-    for await (const webtoon of webtoons) {
-      const check = await this.webtoonRepository.findOne({
-        select: ['id', 'isEnd'],
-        where: { titleId: webtoon.titleId, platform: 'naver' },
-      });
-      if (check?.id && check.isEnd) {
-        continue;
-      } else if (check?.id && !check.isEnd) {
-        // 연재 중인 웹툰이 끝난 경우
-        await this.webtoonRepository.save({ id: check.id, ...webtoon });
-      } else {
-        // DB에 없는 새로운 웹툰
-        const savedWebtoon = await this.webtoonRepository.save(webtoon);
-        await this.crawlingWebtoonDetail(savedWebtoon.id);
-      }
-      console.log(`Naver 완결 웹툰 ${i}개 크롤링 완료`);
-      console.log(webtoon);
-      i += 1;
-    }
+    console.log(`연재 완료 웹툰 크롤링 완료`);
+    return webtoons;
   }
 
-  async crawlingWebtoonDetail(id) {
-    const webtoon = await this.webtoonRepository.findOne({ select: ['titleId'], where: { id } });
+  async crawlingWebtoonDetail(titleId: string) {
     const response = await axios.get(`
-      https://comic.naver.com/api/article/list/info?titleId=${webtoon.titleId}`);
-    const data: {
-      publishDayOfWeekList: string[];
-      curationTagList: { tagName: string }[];
-      synopsis: string;
-      favoriteCount: number;
-      author: { writers: { name: string }; painters: { name: string }; originAuthors: { name: string } };
-    } = response.data;
+      https://comic.naver.com/api/article/list/info?titleId=${titleId}`);
+    const data = response.data;
     const description = data.synopsis.replaceAll(/['"]/g, ' ');
     const interestCount = data.favoriteCount;
-    const dayOfWeeks = data.publishDayOfWeekList.map((day) => day.charAt(0).toUpperCase() + day.slice(1).toLowerCase());
-    const tags = data.curationTagList.map((tag) => tag.tagName);
+    const dayOfWeeks = data.publishDayOfWeekList.map((day) => ({
+      day: day.charAt(0).toUpperCase() + day.slice(1).toLowerCase(),
+    }));
+    const genres = data.curationTagList.map((tag) => ({ tag: tag.tagName }));
     // 글 작가과 그림 작가가 같은 경우 author에 같은 사람이 2번 들어가는 경우, 중복제거가 필요
-    const authors: string[] = Object.values(data.author)
-      .flatMap((element) => element)
-      .map((element) => element.name)
-      .filter((element, index, array) => array.indexOf(element) === index);
-
-    await this.webtoonRepository.save({ id, description, interestCount });
-    await this.dayOfWeekRepository.save(dayOfWeeks.map((element) => ({ webtoonId: id, day: element })));
-    await this.authorRepository.save(authors.map((element) => ({ webtoonId: id, name: element })));
-    await this.genreRepository.save(tags.map((element) => ({ webtoonId: id, tag: element })));
+    const authors: string[] = data.communityArtists.map((element) => ({ name: element.name }));
+    return { description, interestCount, dayOfWeeks, authors, genres };
   }
 }

@@ -30,7 +30,7 @@ export class CronjobController {
       link: 'www.naver.com',
       genres: [{ tag: 'tag1' }, { tag: 'tag2' }],
     };
-    return this.toptoonCrawlerService.crawlingWebtoons();
+    return this.toomicsCrawlerService.crawlingWebtoons();
   }
 
   @Get('init/naver/webtoon')

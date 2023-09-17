@@ -16,7 +16,7 @@ export class KakaoCrawlerService {
     @InjectRepository(DayOfWeek) private dayOfWeekRepository: Repository<DayOfWeek>,
     @InjectRepository(Genre) private genreRepository: Repository<Genre>,
   ) {
-    this.days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'complete'];
+    this.days = ['mon']; //['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'complete'];
     this.dayConverter = {
       mon: 'Monday',
       tue: 'Tuesday',
@@ -28,32 +28,40 @@ export class KakaoCrawlerService {
     };
   }
 
-  async crawlingWebtoonDetail(id, page) {
-    const webtoon = await this.webtoonRepository.findOne({ select: ['titleName', 'titleId'], where: { id } });
-    await page.goto(`https://webtoon.kakao.com/content/${webtoon.titleName}/${webtoon.titleId}`);
-    await page.waitForSelector(
-      'p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis',
-    );
-    const content = await page.content();
-    const $ = load(content);
-    const authors = $('p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis')
-      .eq(1)
-      .text()
-      .split(', ');
-    const info = $('.flex.justify-center.items-start.h-14.mt-8.leading-14');
-    const tags = info.find('p').eq(0).text().split(/\s|\//);
-    const likeCount = convertToNumber(info.find('p').eq(1).text());
-    const viewCount = convertToNumber(info.find('p').eq(2).text());
-    await this.webtoonRepository.save({ id, likeCount, viewCount });
-    await this.authorRepository.save(authors.map((element) => ({ webtoonId: id, name: element })));
-    await this.genreRepository.save(tags.map((element) => ({ webtoonId: id, tag: element })));
-  }
-
   async crawlingWebtoons() {
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
+    let webtoons = [];
     for await (const day of this.days) {
-      await this.crawlingDayWebtoon(day, page);
+      const dayWebtoons = await this.crawlingDayWebtoon(day, page);
+      webtoons = webtoons.concat(dayWebtoons);
+    }
+    let i = 1;
+    for await (let webtoon of webtoons) {
+      try {
+        const check = await this.webtoonRepository.findOne({
+          select: ['id', 'isEnd'],
+          where: { titleId: webtoon.titleId, platform: 'kakao' },
+        });
+        if (check?.id && check.isEnd === webtoon.isEnd) {
+          // 이미 저장되어 있고 연재여부도 그대로
+          continue;
+        } else if (check?.id) {
+          // 저장되어 있는데 연재여부가 바뀐 경우
+          await this.webtoonRepository.save({ id: check.id, ...webtoon });
+        } else {
+          // DB에 없는 새로운 웹툰
+          const detail = await this.crawlingWebtoonDetail(webtoon.titleId, webtoon.titleName, page);
+          webtoon = { ...webtoon, ...detail };
+          console.log(`Kakao 웹툰 ${i}개 크롤링 완료`);
+          console.log(webtoon);
+          await this.webtoonRepository.save(webtoon);
+          i += 1;
+          // await sleep(5000);
+        }
+      } catch (error) {
+        console.log('error check');
+      }
     }
     await browser.close();
   }
@@ -77,41 +85,35 @@ export class KakaoCrawlerService {
           thumbnail,
           platform: 'kakao',
           isEnd: day === 'complete',
+          dayOfWeeks: [{ day: this.dayConverter[day] }],
           link: `https://webtoon.kakao.com/content/${titleName}/${titleId}`,
         });
       }
     });
-    let i = 1;
-    for await (const webtoon of webtoons) {
-      try {
-        const check = await this.webtoonRepository.findOne({
-          select: ['id', 'isEnd'],
-          where: { titleId: webtoon.titleId, platform: 'kakao' },
-        });
-        if (check?.id && check.isEnd === webtoon.isEnd) {
-          // 이미 저장되어 있고 연재여부도 그대로
-          continue;
-        } else if (check?.id && check.isEnd !== webtoon.isEnd) {
-          // 저장되어 있는 웹툰이 연재 여부가 바뀐 경우
-          await this.webtoonRepository.save({ id: check.id, isEnd: !webtoon.isEnd });
-          if (webtoon.isEnd) {
-            await this.dayOfWeekRepository.delete({ webtoonId: check.id });
-          } else {
-            await this.dayOfWeekRepository.save({ webtoonId: check.id, day: this.dayConverter[day] });
-          }
-        } else {
-          // DB에 없는 새로운 웹툰
-          const savedWebtoon = await this.webtoonRepository.save(webtoon);
-          await this.dayOfWeekRepository.save({ webtoonId: webtoon.id, day: this.dayConverter[day] });
-          await this.crawlingWebtoonDetail(savedWebtoon.id, page);
-        }
-        console.log(`Kakao 웹툰 ${i}개 크롤링 완료`);
-        console.log(webtoon);
-        i += 1;
-        sleep(5000);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    return webtoons;
+  }
+
+  async crawlingWebtoonDetail(titleId, titleName, page) {
+    await page.goto(`https://webtoon.kakao.com/content/${titleName}/${titleId}`);
+    await page.waitForSelector(
+      'p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis',
+    );
+    const content = await page.content();
+    const $ = load(content);
+    const authors = $('p.whitespace-pre-wrap.break-all.break-words.support-break-word.overflow-hidden.text-ellipsis')
+      .eq(1)
+      .text()
+      .split(', ')
+      .map((element) => ({ name: element }));
+    const info = $('.flex.justify-center.items-start.h-14.mt-8.leading-14');
+    const tags = info
+      .find('p')
+      .eq(0)
+      .text()
+      .split(/\s|\//)
+      .map((element) => ({ tag: element }));
+    const likeCount = convertToNumber(info.find('p').eq(1).text());
+    const viewCount = convertToNumber(info.find('p').eq(2).text());
+    return { authors, tags, likeCount, viewCount };
   }
 }

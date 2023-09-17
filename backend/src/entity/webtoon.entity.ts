@@ -30,10 +30,10 @@ export class Webtoon {
   @Column({ type: 'float', name: 'star_score', default: 0 })
   starScore: number;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'varchar', length: 500, default: '' })
   description: string;
 
-  @Column({ name: 'view_count', default: 0 })
+  @Column({ name: 'view_count', default: 0, unsigned: true })
   viewCount: number;
 
   @Column({ name: 'like_count', default: 0 })
