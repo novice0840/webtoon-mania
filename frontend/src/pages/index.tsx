@@ -1,6 +1,5 @@
-import Main from "./Main";
-import Root from "./Root";
-import Webtoon from "./Webtoon";
-import Error from "./Error";
+import MainPage from "./MainPage";
+import WebtoonPage from "./WebtoonPage";
+import ErrorPage from "./ErrorPage";
 
-export { Main, Root, Webtoon, Error };
+export { MainPage, WebtoonPage, ErrorPage };

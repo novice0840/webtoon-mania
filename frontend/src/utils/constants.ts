@@ -36,6 +36,36 @@ export const genres = [
   "귀여움",
 ];
 
+export const comments = [
+  { id: "1", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "2", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "3", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "4", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "5", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "6", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "7", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+  { id: "8", writer: "hello", content: "this is content", like: 10, dislike: 10 },
+];
+
+export const webtoon = {
+  id: "jsajklsdajsda",
+  titleId: "김부장",
+  thumbnail:
+    "https://image-comic.pstatic.net/webtoon/802986/1/thumbnail_202x120_08bf617f-e890-4cbc-b2a6-60853de4b544.jpg",
+
+  titleName: "김부장",
+  interestCount: 0,
+  starScore: 0,
+  likeCount: 0,
+  isEnd: false,
+  link: "www.naver.com",
+  viewCount: 0,
+  description: "this is desciprtion",
+  authors: [{ name: "토프" }, { name: "방구석김씨" }],
+  dayOfWeeks: [{ day: "Monday" }, { day: "Tuesday" }],
+  genres: [{ tag: "로맨스" }, { tag: "액션" }],
+};
+
 export const webtoons = [
   {
     id: "jsajklsdajsda",

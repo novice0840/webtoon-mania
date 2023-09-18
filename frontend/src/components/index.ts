@@ -1,7 +1,5 @@
-import ChapterChart from "./ChapterChart";
-import ChapterGrid from "./ChapterGrid";
+import WebtoonDetail from "./WebtoonDetail";
 import Header from "./Header";
-import WebtoonGrid from "./WebtoonGrid";
 import ChatRoom from "./ChatRoom";
 import WebtoonList from "./WebtoonList";
 import SignIn from "./SignIn";
@@ -9,12 +7,12 @@ import SignUp from "./SignUp";
 import DayOfWeek from "./DayOfWeek";
 import Genres from "./Genres";
 import Platforms from "./Platforms";
+import CommentBox from "./CommentBox";
 
 export {
-  ChapterChart,
-  ChapterGrid,
+  CommentBox,
+  WebtoonDetail,
   Header,
-  WebtoonGrid,
   ChatRoom,
   WebtoonList,
   SignUp,

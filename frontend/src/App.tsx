@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Main, Root, Webtoon, Error } from "@src/pages";
+import { MainPage, Root, WebtoonPage, ErrorPage } from "@src/pages";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 
@@ -9,12 +9,13 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Main />,
-    errorElement: <Error />,
+    element: <MainPage />,
+    errorElement: <ErrorPage />,
   },
   {
-    path: "webtoon/:id",
-    element: <Webtoon />,
+    path: "webtoon/:platform/:id",
+    element: <WebtoonPage />,
+    errorElement: <ErrorPage />,
   },
 ]);
 
