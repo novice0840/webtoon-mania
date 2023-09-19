@@ -1,19 +1,20 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
-import { WebtoonsQueryDTO, WebtoonQueryDTO } from 'src/dto';
+import { WebtoonListQueryDTO, WebtoonDetailQueryDTO, WebtoonDetailDTO, WebtoonListDTO } from 'src/dto';
 
 @Controller('webtoon')
 export class WebtoonController {
   constructor(private readonly webtoonService: WebtoonService) {}
 
-  @Get('/all')
-  async getWebtoonAll(@Query() query: WebtoonsQueryDTO) {
-    return this.webtoonService.getWebtoonAll(query.page, query.platform);
+  // 여러 웹툰들을 배열로 요청
+  @Get('/list')
+  async getWebtoonAll(@Query() query: WebtoonListQueryDTO): Promise<WebtoonListDTO> {
+    return this.webtoonService.getWebtoonList(query);
   }
 
-  @Get('/one')
-  getWebtoonOne(@Query() query: WebtoonQueryDTO) {
-    // 특정 웹툰의 기본 정보와 댓글 수, 좋아요 수, 별점을 그래프로 보여줌
-    return this.webtoonService.getOneWebtoon(query.titleId, query.platform);
+  // 특정 한 웹툰의 세부 정보
+  @Get('/detail')
+  getWebtoonOne(@Query() query: WebtoonDetailQueryDTO): Promise<WebtoonDetailDTO> {
+    return this.webtoonService.getOneWebtoon(query);
   }
 }

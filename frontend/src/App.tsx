@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { MainPage, Root, WebtoonPage, ErrorPage } from "@src/pages";
+import { MainPage, WebtoonPage, ErrorPage } from "@src/pages";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 

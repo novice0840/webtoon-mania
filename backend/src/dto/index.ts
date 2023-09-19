@@ -1,4 +1,6 @@
-import { WebtoonQueryDTO } from './webtoonquery.dto';
-import { WebtoonsQueryDTO } from './webtoonsquery.dto';
+import { WebtoonDetailQueryDTO } from './webtoonDetailQuery.dto';
+import { WebtoonDetailDTO } from './webtoonDetail.dto';
+import { WebtoonListQueryDTO } from './webtoonListQuery.dto';
+import { WebtoonListDTO } from './webtoonList.dto';
 
-export { WebtoonsQueryDTO, WebtoonQueryDTO };
+export { WebtoonListQueryDTO, WebtoonDetailQueryDTO, WebtoonListDTO, WebtoonDetailDTO };

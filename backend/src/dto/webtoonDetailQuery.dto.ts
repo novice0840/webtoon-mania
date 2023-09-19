@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class WebtoonQueryDTO {
+export class WebtoonDetailQueryDTO {
   @IsString()
   titleId: string;
 
