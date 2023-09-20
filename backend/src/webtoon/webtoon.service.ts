@@ -1,33 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { Webtoon } from 'src/entity/webtoon.entity';
+import { Webtoon, Genre, DayOfWeek, Author } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { WebtoonListQueryDTO } from 'src/dto';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class WebtoonService {
-  constructor(@InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>) {}
+  constructor(
+    @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
+    @InjectRepository(Webtoon) private genreRepository: Repository<Genre>,
+    @InjectRepository(Webtoon) private dayOfWeekRepository: Repository<DayOfWeek>,
+    @InjectRepository(Webtoon) private authorRepository: Repository<Author>,
+    private dataSource: DataSource,
+  ) {}
 
   async getWebtoonList({ page, platform, isEnd, tags, days }: WebtoonListQueryDTO) {
     console.log(page, platform, isEnd, tags, days);
-    const limit = 100;
-    let totalPage;
-    let webtoons;
-    if (platform === 'all') {
-      totalPage = Math.ceil((await this.webtoonRepository.count()) / 50);
-      webtoons = await this.webtoonRepository.find({ order: { id: 'ASC' }, take: limit, skip: (page - 1) * limit });
-    } else {
-      totalPage = Math.ceil((await this.webtoonRepository.count({ where: { platform } })) / 50);
-      webtoons = await this.webtoonRepository.find({
-        select: ['id', 'titleId', 'titleName', 'thumbnail', 'isEnd'],
-        order: { id: 'ASC' },
-        take: limit,
-        skip: (page - 1) * limit,
-        where: { platform },
-        relations: ['dayOfWeeks', 'authors'],
-      });
-    }
-    return { info: { totalPage, page }, data: webtoons };
+    const limit = 50;
+    const totalPage = Math.ceil(
+      (await this.webtoonRepository.count({
+        where: {
+          platform,
+          isEnd,
+          genres: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
+          dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
+        },
+      })) / limit,
+    );
+    const data = await this.webtoonRepository.find({
+      select: ['id', 'titleId', 'titleName', 'thumbnail', 'isEnd'],
+      order: { id: 'ASC' },
+      take: limit,
+      skip: (page - 1) * limit,
+      relations: ['genres', 'dayOfWeeks', 'authors'],
+      where: {
+        platform,
+        isEnd,
+        genres: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
+        dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
+      },
+    });
+    return {
+      info: { totalPage, page },
+      data: data.map((element) => ({
+        ...element,
+        genres: element.genres.map((element) => element.tag),
+        dayOfWeeks: element.dayOfWeeks.map((element) => element.day),
+        authors: element.authors.map((element) => element.name),
+      })),
+    };
   }
 
   async getOneWebtoon({ titleId, platform }) {

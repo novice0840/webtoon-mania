@@ -8,22 +8,20 @@ export class WebtoonListQueryDTO {
   @IsInt()
   page = 1;
 
-  @ApiProperty({ description: '플랫폼 종류', default: 'all' })
-  @IsString()
-  platform = 'all';
+  @ApiProperty({ description: '플랫폼 종류' })
+  @IsOptional()
+  platform: string;
 
   @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()
   isEnd: boolean;
 
-  @ApiPropertyOptional()
-  @IsArray()
+  @ApiPropertyOptional({ description: '단일 값인 경우는 값 그대로 장르가 여러개면 ,를 붙인다. 예) 로맨스,액션' })
   @IsOptional()
-  tags: string[];
+  tags: string;
 
-  @ApiPropertyOptional()
-  @IsArray()
+  @ApiPropertyOptional({ description: '단일 값인 경우는 값 그대로 요일이 여러개면 ,를 붙인다. 예) Monday,Thuesday' })
   @IsOptional()
-  days: string[];
+  days: string;
 }

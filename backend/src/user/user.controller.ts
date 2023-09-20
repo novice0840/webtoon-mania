@@ -22,13 +22,13 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('info')
   getUser(@Request() req) {
     return req.user;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put()
+  @Put('info')
   updateUser(@Body() updateUserDto: UpdateUserDto, @Request() req) {
     return this.userService.updateUser(req.user, updateUserDto);
   }
