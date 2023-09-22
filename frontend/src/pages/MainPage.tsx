@@ -18,16 +18,17 @@ const Main = () => {
     setDayOfWeeks([...dayOfWeeks, event.target.name as DayOfWeekKind]);
   };
 
+  const fetchData = async (page: number): Promise<void> => {
+    const params = { page };
+    try {
+      const response = await axios.get("http://localhost:3001/webtoon/list");
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async (page: number): Promise<void> => {
-      const params = { page };
-      try {
-        const data = await axios.get("http://localhost:3001/webtoon/list");
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     void fetchData(1);
   }, []);
 
