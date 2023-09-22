@@ -8,7 +8,7 @@ export class WebtoonController {
 
   // 여러 웹툰들을 배열로 요청
   @Get('/list')
-  async getWebtoonAll(@Query() query: WebtoonListQueryDTO): Promise<any> {
+  async getWebtoonAll(@Query() query: WebtoonListQueryDTO): Promise<WebtoonListDTO> {
     return this.webtoonService.getWebtoonList(query);
   }
 

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { MutableRefObject, forwardRef, RefObject, ForwardedRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -11,13 +11,14 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-const SignIn = () => {
+const SignIn = forwardRef(function SignIn(props, ref: ForwardedRef<HTMLElement>) {
   const handleSubmit = (event: React.FormEvent<HTMLInputElement>) => {
     event.preventDefault();
   };
 
   return (
     <Container
+      ref={ref}
       sx={{
         position: "absolute",
         top: "50%",
@@ -82,6 +83,5 @@ const SignIn = () => {
       </Box>
     </Container>
   );
-};
-
+});
 export default SignIn;

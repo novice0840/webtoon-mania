@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { MutableRefObject, forwardRef, RefObject, ForwardedRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -11,7 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-export default function SignUp() {
+const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -23,6 +23,7 @@ export default function SignUp() {
 
   return (
     <Container
+      ref={ref}
       sx={{
         position: "absolute",
         top: "50%",
@@ -115,4 +116,5 @@ export default function SignUp() {
       </Box>
     </Container>
   );
-}
+});
+export default SignUp;

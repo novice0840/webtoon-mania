@@ -16,7 +16,6 @@ export class WebtoonService {
   ) {}
 
   async getWebtoonList({ page, platform, isEnd, tags, days }: WebtoonListQueryDTO) {
-    console.log(page, platform, isEnd, tags, days);
     const limit = 50;
     const totalPage = Math.ceil(
       (await this.webtoonRepository.count({

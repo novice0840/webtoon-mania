@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Box, Paper, InputBase, IconButton, Stack, Button, Link, Modal } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { SignUp, SignIn } from "@src/components";
 import logo from "@src/assets/logo.jpg";
 
 const Header = () => {
+  const signInRef = useRef<HTMLElement>(null);
+  const signUpRef = useRef<HTMLElement>(null);
   const [signInOpen, setSignInOpen] = useState<boolean>(false);
   const [signUpOpen, setSignUpOpen] = useState<boolean>(false);
   const handleSignInOpen = () => setSignInOpen(true);
@@ -38,7 +40,7 @@ const Header = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <SignIn />
+          <SignIn ref={signInRef} />
         </Modal>
         <Modal
           open={signUpOpen}
@@ -46,7 +48,7 @@ const Header = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <SignUp />
+          <SignUp ref={signUpRef} />
         </Modal>
         <Button variant="contained" color="primary" onClick={handleSignInOpen}>
           Sign in
