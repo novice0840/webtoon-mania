@@ -28,11 +28,11 @@ export class WebtoonService {
       })) / limit,
     );
     const data = await this.webtoonRepository.find({
-      select: ['id', 'titleId', 'titleName', 'thumbnail', 'isEnd'],
+      select: ['id', 'titleId', 'titleName', 'thumbnail', 'platform'],
       order: { id: 'ASC' },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ['genres', 'dayOfWeeks', 'authors'],
+      relations: ['authors'],
       where: {
         platform,
         isEnd,
@@ -44,8 +44,6 @@ export class WebtoonService {
       info: { totalPage, page },
       data: data.map((element) => ({
         ...element,
-        genres: element.genres.map((element) => element.tag),
-        dayOfWeeks: element.dayOfWeeks.map((element) => element.day),
         authors: element.authors.map((element) => element.name),
       })),
     };

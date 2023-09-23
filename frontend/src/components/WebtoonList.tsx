@@ -1,16 +1,9 @@
 import React from "react";
 import { Grid, Paper, Typography, Link, Box, Stack } from "@mui/material";
+import { WebtoonBase } from "@src/types";
 
-const WebtoonList = ({
-  webtoons,
-}: {
-  webtoons: {
-    id: string;
-    titleId: string;
-    thumbnail: string;
-    authors: string[];
-  }[];
-}) => {
+const WebtoonList = ({ webtoons }: { webtoons: WebtoonBase[] }) => {
+  console.log(webtoons);
   return (
     <Grid container rowSpacing={5} spacing={3}>
       {webtoons.map((webtoon, index) => (

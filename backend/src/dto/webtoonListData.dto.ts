@@ -6,6 +6,5 @@ export class WebtoonListDataDTO extends PickType(WebtoonDetailDTO, [
   'titleId',
   'titleName',
   'thumbnail',
-  'dayOfWeeks',
   'authors',
 ] as const) {}
