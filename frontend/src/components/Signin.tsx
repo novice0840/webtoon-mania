@@ -26,7 +26,6 @@ const SignIn = forwardRef(function SignIn(props, ref: ForwardedRef<HTMLElement>)
         transform: "translate(-50%, -50%)",
         width: 400,
         bgcolor: "background.paper",
-
         p: 4,
       }}
       component="main"
