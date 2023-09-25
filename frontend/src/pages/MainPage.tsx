@@ -16,7 +16,7 @@ const Main = () => {
   const lastWebtoonRef = useRef<HTMLElement>(null);
 
   const handleSubmit = () => {
-    void fetchData(platform);
+    console.log("subnmit");
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,24 +31,14 @@ const Main = () => {
     setDayOfWeeks([...dayOfWeeks, event.target.name as DayOfWeekKind]);
   };
 
-  const fetchData = async (
-    platform = undefined,
-    dayOfWeeks = undefined,
-    tags = undefined,
-    isEnd = undefined
-  ): Promise<void> => {
+  const fetchData = async (): Promise<void> => {
+    const params: { platform?: string } = {};
+    if (platform !== "all") params.platform = platform;
     try {
       const response = await axios.get<{
         info: { totalPage: number; page: number };
         data: WebtoonBase[];
-      }>(`http://localhost:3001/webtoon/list?page=${page}`, {
-        params: {
-          platform,
-          dayOfWeeks,
-          tags,
-          isEnd,
-        },
-      });
+      }>(`http://localhost:3001/webtoon/list?page=${page}`, { params });
       const data = response.data;
       setTotalPage(data.info.totalPage);
       setWebtoons([...webtoons, ...data.data]);
@@ -58,11 +48,20 @@ const Main = () => {
   };
 
   useEffect(() => {
+    setWebtoons(() => []);
+    console.log("check1");
+    // console.log(webtoons);
+    // void fetchData();
+  }, [platform]);
+
+  useEffect(() => {
+    console.log("check2");
+
     void fetchData();
   }, [page]);
 
   useEffect(() => {
-    console.log("check");
+    console.log("check3");
     const observer = new IntersectionObserver((entries, observer) => {
       if (entries[0].isIntersecting && page <= totalPage) {
         observer.unobserve(lastWebtoonRef.current as HTMLElement);
