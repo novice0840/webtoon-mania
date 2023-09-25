@@ -9,6 +9,19 @@ import { WebtoonBase } from "@src/types";
 const Main = () => {
   const [platform, setPlatform] = useState<PlatformKind>("all");
   const [dayOfWeeks, setDayOfWeeks] = useState<DayOfWeekKind[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [webtoons, setWebtoons] = useState<WebtoonBase[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const lastWebtoonRef = useRef<HTMLElement>(null);
+
+  const handleSubmit = () => {
+    void fetchData(platform);
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   const handlePlatform = (event: React.SyntheticEvent, value: PlatformKind) => {
     setPlatform(value);
@@ -18,10 +31,53 @@ const Main = () => {
     setDayOfWeeks([...dayOfWeeks, event.target.name as DayOfWeekKind]);
   };
 
+  const fetchData = async (
+    platform = undefined,
+    dayOfWeeks = undefined,
+    tags = undefined,
+    isEnd = undefined
+  ): Promise<void> => {
+    try {
+      const response = await axios.get<{
+        info: { totalPage: number; page: number };
+        data: WebtoonBase[];
+      }>(`http://localhost:3001/webtoon/list?page=${page}`, {
+        params: {
+          platform,
+          dayOfWeeks,
+          tags,
+          isEnd,
+        },
+      });
+      const data = response.data;
+      setTotalPage(data.info.totalPage);
+      setWebtoons([...webtoons, ...data.data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    void fetchData();
+  }, [page]);
+
+  useEffect(() => {
+    console.log("check");
+    const observer = new IntersectionObserver((entries, observer) => {
+      if (entries[0].isIntersecting && page <= totalPage) {
+        observer.unobserve(lastWebtoonRef.current as HTMLElement);
+        setPage((page) => page + 1);
+        observer.observe(lastWebtoonRef.current as HTMLElement);
+      }
+    });
+    observer.observe(lastWebtoonRef.current as HTMLElement);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Container maxWidth="xl">
       <Box component="header" sx={{ mt: 3 }}>
-        <Header />
+        <Header search={search} handleSearch={handleSearch} handleSubmit={handleSubmit} />
       </Box>
       <Container maxWidth="lg">
         <Box component="nav">
@@ -34,7 +90,10 @@ const Main = () => {
           <Genres genres={genres} />
         </Box>
         <Box>
-          <WebtoonList />
+          <WebtoonList webtoons={webtoons} />
+        </Box>
+        <Box>
+          <Box ref={lastWebtoonRef}></Box>
         </Box>
       </Container>
     </Container>
