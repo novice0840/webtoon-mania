@@ -5,6 +5,7 @@ import { genres, webtoons } from "@src/utils/constants";
 import { WebtoonList, Header, DayOfWeek, Platforms, Genres } from "@src/components";
 import axios from "axios";
 import { WebtoonBase } from "@src/types";
+import { useNavigate, redirect, useLocation } from "react-router-dom";
 
 const Main = () => {
   const [platform, setPlatform] = useState<PlatformKind>("all");
@@ -14,9 +15,11 @@ const Main = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const lastWebtoonRef = useRef<HTMLElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = () => {
-    console.log("subnmit");
+    console.log("submit click");
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,13 +28,33 @@ const Main = () => {
 
   const handlePlatform = (event: React.SyntheticEvent, value: PlatformKind) => {
     setPlatform(value);
+    if (value === "all") navigate("/?platform=all");
+    else {
+      navigate(`/?platform=${value}`);
+    }
   };
 
   const handleDayOfWeek = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDayOfWeeks([...dayOfWeeks, event.target.name as DayOfWeekKind]);
   };
 
-  const fetchData = async (): Promise<void> => {
+  const fetchDatainit = async (): Promise<void> => {
+    const params: { platform?: string } = {};
+    if (platform !== "all") params.platform = platform;
+    try {
+      const response = await axios.get<{
+        info: { totalPage: number; page: number };
+        data: WebtoonBase[];
+      }>(`http://localhost:3001/webtoon/list?page=${page}`, { params });
+      const data = response.data;
+      setTotalPage(data.info.totalPage);
+      setWebtoons([...data.data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDataPlus = async (): Promise<void> => {
     const params: { platform?: string } = {};
     if (platform !== "all") params.platform = platform;
     try {
@@ -46,22 +69,16 @@ const Main = () => {
       console.log(error);
     }
   };
-
   useEffect(() => {
-    setWebtoons(() => []);
-    console.log("check1");
-    // console.log(webtoons);
-    // void fetchData();
+    void fetchDatainit();
   }, [platform]);
 
   useEffect(() => {
-    console.log("check2");
-
-    void fetchData();
+    void fetchDataPlus();
   }, [page]);
 
   useEffect(() => {
-    console.log("check3");
+    console.log("check");
     const observer = new IntersectionObserver((entries, observer) => {
       if (entries[0].isIntersecting && page <= totalPage) {
         observer.unobserve(lastWebtoonRef.current as HTMLElement);
