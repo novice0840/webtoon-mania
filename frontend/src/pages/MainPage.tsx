@@ -28,9 +28,9 @@ const Main = () => {
 
   const handlePlatform = (event: React.SyntheticEvent, value: PlatformKind) => {
     setPlatform(value);
-    if (value === "all") navigate("/?platform=all");
+    if (value === "all") navigate("?platform=all");
     else {
-      navigate(`/?platform=${value}`);
+      navigate(`?platform=${value}`);
     }
   };
 
@@ -47,6 +47,7 @@ const Main = () => {
         data: WebtoonBase[];
       }>(`http://localhost:3001/webtoon/list?page=${page}`, { params });
       const data = response.data;
+      setPage(1);
       setTotalPage(data.info.totalPage);
       setWebtoons([...data.data]);
     } catch (error) {
@@ -78,11 +79,11 @@ const Main = () => {
   }, [page]);
 
   useEffect(() => {
-    console.log("check");
     const observer = new IntersectionObserver((entries, observer) => {
+      console.log(totalPage);
       if (entries[0].isIntersecting && page <= totalPage) {
         observer.unobserve(lastWebtoonRef.current as HTMLElement);
-        setPage((page) => page + 1);
+        setPage(page + 1);
         observer.observe(lastWebtoonRef.current as HTMLElement);
       }
     });
