@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Snackbars } from "@src/components";
+import { CustomSnackbar } from "@src/components";
 
 const TestPage = () => {
   const [count, setCount] = useState(0);
@@ -8,7 +8,7 @@ const TestPage = () => {
     setCount(2);
     setCount(3);
   };
-  return <Snackbars />;
+  return <CustomSnackbar />;
 };
 
 export default TestPage;

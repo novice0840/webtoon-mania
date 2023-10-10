@@ -1,4 +1,4 @@
-import React, { MutableRefObject, forwardRef, RefObject, ForwardedRef } from "react";
+import React, { MutableRefObject, forwardRef, RefObject, ForwardedRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -10,15 +10,25 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { CustomSnackbar } from ".";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>) {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
+    try {
+      // await axios.post();
+      alert("회원가입에 성공하였습니다");
+      navigate("/");
+    } catch (error) {
+      alert("정보가 잘못되었습니다");
+    }
   };
 
   return (
