@@ -4,22 +4,29 @@ import SearchIcon from "@mui/icons-material/Search";
 import { SignUp, SignIn } from "@src/components";
 import logo from "@src/assets/logo.jpg";
 
-type PropTypes = {
-  search: string;
-  handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: () => void;
-};
+// type PropTypes = {
+//   search: string;
+//   handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+//   handleSubmit: () => void;
+// };
 
-const Header = ({ search, handleSearch, handleSubmit }: PropTypes) => {
+const Header = () => {
   const signInRef = useRef<HTMLElement>(null);
   const signUpRef = useRef<HTMLElement>(null);
   const [signInOpen, setSignInOpen] = useState<boolean>(false);
   const [signUpOpen, setSignUpOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
   const handleSignInOpen = () => setSignInOpen(true);
   const handleSignInClose = () => setSignInOpen(false);
   const handleSignUpOpen = () => setSignUpOpen(true);
   const handleSignUpClose = () => setSignUpOpen(false);
+  const handleSubmit = () => {
+    console.log("submit click");
+  };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Link href="/">

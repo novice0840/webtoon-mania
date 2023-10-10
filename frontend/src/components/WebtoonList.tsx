@@ -12,7 +12,10 @@ const WebtoonList = ({ webtoons }: PropTypes) => {
     <Grid container rowSpacing={5} spacing={3}>
       {webtoons.map((webtoon, index) => (
         <Grid item xs={6} sm={3} md={2} key={index}>
-          <Link style={{ textDecoration: "none" }}>
+          <Link
+            href={`/webtoon/${webtoon.platform}/${webtoon.titleId}`}
+            style={{ textDecoration: "none" }}
+          >
             <Paper elevation={5}>
               <Box component="img" sx={{ width: "100%", height: 180 }} src={webtoon.thumbnail} />
               <Typography variant="h6">{webtoon.titleName}</Typography>

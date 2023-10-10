@@ -7,7 +7,7 @@ import axios from "axios";
 import { WebtoonBase } from "@src/types";
 import { useNavigate, redirect, useLocation } from "react-router-dom";
 
-const Main = () => {
+const MainPage = () => {
   const [platform, setPlatform] = useState<PlatformKind>("all");
   const [dayOfWeeks, setDayOfWeeks] = useState<DayOfWeekKind[]>([]);
   const [search, setSearch] = useState<string>("");
@@ -35,12 +35,18 @@ const Main = () => {
   };
 
   const handleDayOfWeek = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDayOfWeeks([...dayOfWeeks, event.target.name as DayOfWeekKind]);
+    const newDay = event.target.name as DayOfWeekKind;
+    if (dayOfWeeks.includes(newDay)) {
+      setDayOfWeeks(dayOfWeeks.filter((day) => day !== newDay));
+    } else {
+      setDayOfWeeks([...dayOfWeeks, newDay]);
+    }
   };
 
   const fetchDatainit = async (): Promise<void> => {
-    const params: { platform?: string } = {};
+    const params: { platform?: string; days?: string } = {};
     if (platform !== "all") params.platform = platform;
+    if (dayOfWeeks.length !== 0) params.days = dayOfWeeks.join(",");
     try {
       const response = await axios.get<{
         info: { totalPage: number; page: number };
@@ -56,8 +62,9 @@ const Main = () => {
   };
 
   const fetchDataPlus = async (): Promise<void> => {
-    const params: { platform?: string } = {};
+    const params: { platform?: string; days?: string } = {};
     if (platform !== "all") params.platform = platform;
+    if (dayOfWeeks.length !== 0) params.days = dayOfWeeks.join(",");
     try {
       const response = await axios.get<{
         info: { totalPage: number; page: number };
@@ -70,31 +77,33 @@ const Main = () => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    void fetchDatainit();
-  }, [platform]);
-
-  useEffect(() => {
-    void fetchDataPlus();
-  }, [page]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries, observer) => {
-      console.log(totalPage);
       if (entries[0].isIntersecting && page <= totalPage) {
         observer.unobserve(lastWebtoonRef.current as HTMLElement);
-        setPage(page + 1);
+        console.log("check");
+        setPage((page) => page + 1);
         observer.observe(lastWebtoonRef.current as HTMLElement);
       }
     });
     observer.observe(lastWebtoonRef.current as HTMLElement);
     return () => observer.disconnect();
-  }, []);
+  }, [totalPage]);
+
+  useEffect(() => {
+    void fetchDatainit();
+  }, [platform, dayOfWeeks]);
+
+  useEffect(() => {
+    console.log("page changed");
+    void fetchDataPlus();
+  }, [page]);
 
   return (
     <Container maxWidth="xl">
       <Box component="header" sx={{ mt: 3 }}>
-        <Header search={search} handleSearch={handleSearch} handleSubmit={handleSubmit} />
+        <Header />
       </Box>
       <Container maxWidth="lg">
         <Box component="nav">
@@ -117,4 +126,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default MainPage;

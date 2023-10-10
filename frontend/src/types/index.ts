@@ -27,3 +27,15 @@ export type WebtoonBase = {
   thumbnail: string;
   authors: string[];
 };
+
+export type WebtoonDetailType = WebtoonBase & {
+  link: string;
+  interestCount: number;
+  starScore: number;
+  description: string;
+  viewCount: number;
+  likeCount: number;
+  isEnd: boolean;
+  dayOfWeeks: string[];
+  genres: string[];
+};

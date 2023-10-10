@@ -9,7 +9,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "webtoon/:platform/:id",
+    path: "webtoon/:platform/:titleId",
     element: <WebtoonPage />,
     errorElement: <ErrorPage />,
   },
