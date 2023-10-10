@@ -8,8 +8,9 @@ import DayOfWeek from "./DayOfWeek";
 import Genres from "./Genres";
 import Platforms from "./Platforms";
 import CommentBox from "./CommentBox";
-
+import Snackbars from "./Snackbars";
 export {
+  Snackbars,
   CommentBox,
   WebtoonDetail,
   Header,

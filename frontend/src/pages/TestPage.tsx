@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Snackbars } from "@src/components";
 
 const TestPage = () => {
   const [count, setCount] = useState(0);
@@ -7,12 +8,7 @@ const TestPage = () => {
     setCount(2);
     setCount(3);
   };
-  return (
-    <div>
-      <span>{count}</span>
-      <button onClick={handleClick}>증가</button>
-    </div>
-  );
+  return <Snackbars />;
 };
 
 export default TestPage;

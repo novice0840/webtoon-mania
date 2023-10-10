@@ -39,7 +39,6 @@ const WebtoonPage = () => {
       });
       const data = response.data;
       setWebtoonDetail(data);
-      console.log(data);
     } catch (error) {
       navigate("/");
       console.log(error);
