@@ -12,23 +12,27 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { CustomSnackbar } from ".";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>) {
   const navigate = useNavigate();
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const body = {
       email: data.get("email"),
+      name: data.get("name"),
       password: data.get("password"),
-    });
-    try {
-      // await axios.post();
-      alert("회원가입에 성공하였습니다");
-      navigate("/");
-    } catch (error) {
-      alert("정보가 잘못되었습니다");
-    }
+    };
+    axios
+      .post("http://localhost:3001/user/signup", body)
+      .then((response) => {
+        alert("회원가입이 완료 되었습니다");
+        navigate("/");
+      })
+      .catch((error) => {
+        alert("정보가 잘못되었습니다");
+      });
   };
 
   return (
@@ -71,6 +75,16 @@ const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>)
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="name"
+                label="name"
+                name="name"
+                autoComplete="name"
               />
             </Grid>
             <Grid item xs={12}>
