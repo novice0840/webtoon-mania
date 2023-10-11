@@ -24,15 +24,16 @@ const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>)
       name: data.get("name"),
       password: data.get("password"),
     };
-    axios
-      .post("http://localhost:3001/user/signup", body)
-      .then((response) => {
-        alert("회원가입이 완료 되었습니다");
-        navigate("/");
-      })
-      .catch((error) => {
-        alert("정보가 잘못되었습니다");
-      });
+    navigate("/");
+    // axios
+    //   .post("http://localhost:3001/user/signup", body)
+    //   .then((response) => {
+    //     alert("회원가입이 완료 되었습니다");
+    //     navigate("/");
+    //   })
+    //   .catch((error) => {
+    //     alert("정보가 잘못되었습니다");
+    //   });
   };
 
   return (
