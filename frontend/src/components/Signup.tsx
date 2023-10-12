@@ -14,7 +14,7 @@ import { CustomSnackbar } from ".";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>) {
+const SignUp = () => {
   const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,7 +38,6 @@ const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>)
 
   return (
     <Container
-      ref={ref}
       sx={{
         position: "absolute",
         top: "50%",
@@ -120,5 +119,5 @@ const SignUp = forwardRef(function SignUp(props, ref: ForwardedRef<HTMLElement>)
       </Box>
     </Container>
   );
-});
+};
 export default SignUp;

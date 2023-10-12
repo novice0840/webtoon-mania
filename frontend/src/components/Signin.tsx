@@ -11,14 +11,13 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-const SignIn = forwardRef(function SignIn(props, ref: ForwardedRef<HTMLElement>) {
+const SignIn = () => {
   const handleSubmit = (event: React.FormEvent<HTMLInputElement>) => {
     event.preventDefault();
   };
 
   return (
     <Container
-      ref={ref}
       sx={{
         position: "absolute",
         top: "50%",
@@ -82,5 +81,5 @@ const SignIn = forwardRef(function SignIn(props, ref: ForwardedRef<HTMLElement>)
       </Box>
     </Container>
   );
-});
+};
 export default SignIn;

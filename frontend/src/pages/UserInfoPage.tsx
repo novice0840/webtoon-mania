@@ -1,7 +1,8 @@
 import React from "react";
+import MainLayout from "@src/layout/MainLayout";
 
 const UserInfoPage = () => {
-  return <div>this is user info page</div>;
+  return <MainLayout>this is user info page</MainLayout>;
 };
 
 export default UserInfoPage;
