@@ -7,6 +7,16 @@ import { ToomicsCrawlerService } from 'src/crawler/toomicscralwer.service';
 import { Webtoon } from 'src/entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  S3Client,
+  PutObjectCommand,
+  CreateBucketCommand,
+  DeleteObjectCommand,
+  DeleteBucketCommand,
+  paginateListObjectsV2,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
+import * as fs from 'fs';
 
 @Controller('cronjob')
 export class CronjobController {
@@ -22,15 +32,21 @@ export class CronjobController {
 
   @Get('test')
   async test() {
-    const samplewebtoon = {
-      titleId: 'hello',
-      platform: 'naver',
-      titleName: 'hello',
-      isEnd: false,
-      link: 'www.naver.com',
-      genres: [{ tag: 'tag1' }, { tag: 'tag2' }],
-    };
-    return this.toomicsCrawlerService.crawlingWebtoons();
+    const s3Client = new S3Client({});
+    const fileContent = fs.readFileSync(
+      'https://image-comic.pstatic.net/webtoon/244245/thumbnail/thumbnail_IMAG21_7004844983486406968.jpg',
+    );
+    // Put an object into an Amazon S3 bucket.
+    const bucketName = 'webtoon-mania';
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: bucketName,
+        Key: 'sample/my-first-object.jpg',
+        Body: fileContent,
+      }),
+    );
+
+    return 'test';
   }
 
   @Get('init/naver/webtoon')
