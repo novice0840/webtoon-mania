@@ -15,8 +15,7 @@ Nestjs, Typeorm, MySQL
 
 ## Demo
 
-<img src="./img/mainpage.jpg">
-<img src="./img/webtoonpage.jpg">
+<img src="./img/Demo.jpg">
 
 ## Architecture
 
