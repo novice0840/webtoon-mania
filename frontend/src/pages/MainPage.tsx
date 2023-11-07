@@ -5,7 +5,7 @@ import { genres, webtoons } from "@src/utils/constants";
 import { WebtoonList, Header, DayOfWeek, Platforms, Genres } from "@src/components";
 import axios from "axios";
 import { WebtoonBase } from "@src/types";
-import { useNavigate, redirect, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
   const [category, setCategory] = useState({

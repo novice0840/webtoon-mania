@@ -15,38 +15,37 @@ export class WebtoonService {
     private dataSource: DataSource,
   ) {}
 
-  async getWebtoonList({ page, platform, isEnd, tags, days }: WebtoonListQueryDTO) {
+  async getWebtoonList({ page, platform, genres, dayOfWeeks, isEnd }) {
     const limit = 50;
-    const totalPage = Math.ceil(
-      (await this.webtoonRepository.count({
-        where: {
-          platform,
-          isEnd,
-          genres: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
-          dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
-        },
-      })) / limit,
-    );
-    const data = await this.webtoonRepository.find({
-      select: ['id', 'titleId', 'titleName', 'thumbnail', 'platform'],
-      order: { id: 'ASC' },
-      take: limit,
-      skip: (page - 1) * limit,
-      relations: ['authors'],
+    console.log(platform);
+    const totalCount = await this.webtoonRepository.count({
       where: {
         platform,
         isEnd,
-        genres: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
-        dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
       },
     });
-    return {
-      info: { totalPage, page },
-      data: data.map((element) => ({
-        ...element,
-        authors: element.authors.map((element) => element.name),
-      })),
-    };
+    const totalPage = Math.ceil(totalCount / limit);
+    return totalCount;
+    // const data = await this.webtoonRepository.find({
+    //   select: ['id', 'titleId', 'titleName', 'thumbnail', 'platform'],
+    //   order: { id: 'ASC' },
+    //   take: limit,
+    //   skip: (page - 1) * limit,
+    //   relations: ['authors'],
+    //   where: {
+    //     platform,
+    //     isEnd,
+    //     genres: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
+    //     dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
+    //   },
+    // });
+    // return {
+    //   info: { totalPage, page },
+    //   data: data.map((element) => ({
+    //     ...element,
+    //     authors: element.authors.map((element) => element.name),
+    //   })),
+    // };
   }
 
   async getOneWebtoon({ titleId, platform }) {

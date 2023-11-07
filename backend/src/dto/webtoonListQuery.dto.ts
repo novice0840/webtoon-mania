@@ -1,27 +1,27 @@
-import { IsNotEmpty, IsOptional, IsInt, IsString, IsBoolean, IsArray } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsInt, IsString, IsBooleanString, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
+import { PlatformType, DayOfWeekType } from 'src/types/webtoon';
 
 export class WebtoonListQueryDTO {
   @ApiProperty({ default: 1 })
-  @Type(() => Number)
   @IsInt()
   page = 1;
 
   @ApiProperty({ description: '플랫폼 종류' })
   @IsOptional()
-  platform: string;
+  platform: PlatformType;
 
-  @ApiPropertyOptional()
-  @IsBoolean()
+  @ApiPropertyOptional({ description: '웹툰 장르' })
+  @IsOptional()
+  genres: string[];
+
+  @ApiPropertyOptional({ description: '웹툰 연재 요일' })
+  @IsOptional()
+  dayOfWeeks: DayOfWeekType | DayOfWeekType[];
+
+  @ApiPropertyOptional({ description: '완결 여부' })
+  @IsBooleanString()
   @IsOptional()
   isEnd: boolean;
-
-  @ApiPropertyOptional({ description: '단일 값인 경우는 값 그대로 장르가 여러개면 ,를 붙인다. 예) 로맨스,액션' })
-  @IsOptional()
-  tags: string;
-
-  @ApiPropertyOptional({ description: '단일 값인 경우는 값 그대로 요일이 여러개면 ,를 붙인다. 예) Monday,Thuesday' })
-  @IsOptional()
-  days: string;
 }
