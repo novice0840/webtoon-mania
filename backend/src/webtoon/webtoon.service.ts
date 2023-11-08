@@ -17,11 +17,10 @@ export class WebtoonService {
 
   async getWebtoonList({ page, platform, genres, dayOfWeeks, isEnd }) {
     const limit = 50;
-    console.log(platform);
 
     const totalCount = await this.dataSource.query(
-      `select count(distinct webtoon.id) from webtoon join genre on webtoon.id = genre.webtoon_id 
-      where platform='naver';`,
+      `select count(distinct webtoon.id) as totalCount from webtoon join genre on webtoon.id = genre.webtoon_id 
+      where platform=${platform} and genre;`,
     );
 
     const totalPage = Math.ceil(totalCount / limit);
