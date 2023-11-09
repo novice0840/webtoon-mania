@@ -17,11 +17,19 @@ export class WebtoonService {
 
   async getWebtoonList({ page, platform, genres, dayOfWeeks, isEnd }) {
     const limit = 50;
+    console.log(page, platform, genres, dayOfWeeks, isEnd);
+    let query = `select count(*) from webtoon where 1=1 `;
+    if (platform !== 'all') {
+      query += ` and platform='${platform}'`;
+    }
+    if (isEnd === 'true') {
+      query += ` and is_end=true`;
+    } else if (isEnd === 'false') {
+      query += ` and is_end=false`;
+    }
 
-    const totalCount = await this.dataSource.query(
-      `select count(distinct webtoon.id) as totalCount from webtoon join genre on webtoon.id = genre.webtoon_id 
-      where platform=${platform} and genre;`,
-    );
+    console.log(query);
+    const totalCount = await this.dataSource.query(query);
 
     const totalPage = Math.ceil(totalCount / limit);
     return totalCount;

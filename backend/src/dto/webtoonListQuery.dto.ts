@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsInt, IsString, IsBooleanString, IsArray } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsInt, IsString, IsBooleanString, IsArray, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 import { PlatformType, DayOfWeekType } from 'src/types/webtoon';
@@ -8,9 +8,9 @@ export class WebtoonListQueryDTO {
   @IsInt()
   page = 1;
 
-  @ApiProperty({ description: '플랫폼 종류' })
+  @ApiProperty({ description: '플랫폼 종류', default: 'all' })
   @IsOptional()
-  platform: PlatformType;
+  platform = 'all';
 
   @ApiPropertyOptional({ description: '웹툰 장르' })
   @IsOptional()
@@ -21,7 +21,7 @@ export class WebtoonListQueryDTO {
   dayOfWeeks: DayOfWeekType | DayOfWeekType[];
 
   @ApiPropertyOptional({ description: '완결 여부' })
-  @IsBooleanString()
   @IsOptional()
-  isEnd: boolean;
+  @IsString()
+  isEnd: string;
 }
