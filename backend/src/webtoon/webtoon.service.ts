@@ -17,56 +17,41 @@ export class WebtoonService {
 
   async getWebtoonList({ page, platform, genres, dayOfWeeks, isEnd }) {
     const limit = 50;
-    let query = `select count(*) from webtoon where 1=1 `;
+    let queryFilter = ``;
     if (platform !== 'all') {
-      query += ` and platform='${platform}'`;
+      queryFilter += ` and platform='${platform}'`;
     }
+
     if (isEnd === 'true') {
-      query += ` and is_end=true`;
+      queryFilter += ` and is_end=true`;
     } else if (isEnd === 'false') {
-      query += ` and is_end=false`;
+      queryFilter += ` and is_end=false`;
     }
 
     if (typeof genres === 'string') {
-      query += ` and id in (select webtoon_id from genre where tag='${genres}')`;
+      queryFilter += ` and id in (select webtoon_id from genre where tag='${genres}')`;
     } else if (typeof genres === 'object') {
       genres.forEach((genre) => {
-        query += ` and id in (select webtoon_id from genre where tag='${genre}')`;
+        queryFilter += ` and id in (select webtoon_id from genre where tag='${genre}')`;
       });
     }
 
     if (typeof dayOfWeeks === 'string') {
-      query += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeeks}')`;
+      queryFilter += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeeks}')`;
     } else if (typeof dayOfWeeks === 'object') {
       dayOfWeeks.forEach((dayOfWeek) => {
-        query += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeek}')`;
+        queryFilter += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeek}')`;
       });
     }
 
-    const totalCount = await this.dataSource.query(query);
+    const totalCount = await this.dataSource.query(`select count(*) from webtoon where 1=1 ${queryFilter}`);
 
     const totalPage = Math.ceil(totalCount / limit);
-    return totalCount;
-    // const data = await this.webtoonRepository.find({
-    //   select: ['id', 'titleId', 'titleName', 'thumbnail', 'platform'],
-    //   order: { id: 'ASC' },
-    //   take: limit,
-    //   skip: (page - 1) * limit,
-    //   relations: ['authors'],
-    //   where: {
-    //     platform,
-    //     isEnd,
-    //     dayOfWeeks: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
-    //     dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
-    //   },
-    // });
-    // return {
-    //   info: { totalPage, page },
-    //   data: data.map((element) => ({
-    //     ...element,
-    //     authors: element.authors.map((element) => element.name),
-    //   })),
-    // };
+
+    const data = await this.dataSource.query(
+      `select * from webtoon where 1=1  ${queryFilter} limit ${limit} offset ${(page - 1) * limit}`,
+    );
+    return data;
   }
 
   async getOneWebtoon({ titleId, platform }) {

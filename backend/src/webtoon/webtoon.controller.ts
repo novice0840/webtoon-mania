@@ -9,7 +9,10 @@ export class WebtoonController {
   // 여러 웹툰들을 배열로 요청
   @Get('/list')
   async getWebtoonAll(@Query() query: WebtoonListQueryDTO) {
-    return this.webtoonService.getWebtoonList(query);
+    console.log(query);
+    return query;
+
+    // return this.webtoonService.getWebtoonList(query);
   }
 
   // 특정 한 웹툰의 세부 정보
