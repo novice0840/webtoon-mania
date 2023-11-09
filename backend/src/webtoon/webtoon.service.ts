@@ -17,7 +17,6 @@ export class WebtoonService {
 
   async getWebtoonList({ page, platform, genres, dayOfWeeks, isEnd }) {
     const limit = 50;
-    console.log(page, platform, genres, dayOfWeeks, isEnd);
     let query = `select count(*) from webtoon where 1=1 `;
     if (platform !== 'all') {
       query += ` and platform='${platform}'`;
@@ -36,7 +35,14 @@ export class WebtoonService {
       });
     }
 
-    console.log(query);
+    if (typeof dayOfWeeks === 'string') {
+      query += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeeks}')`;
+    } else if (typeof dayOfWeeks === 'object') {
+      dayOfWeeks.forEach((dayOfWeek) => {
+        query += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeek}')`;
+      });
+    }
+
     const totalCount = await this.dataSource.query(query);
 
     const totalPage = Math.ceil(totalCount / limit);
@@ -50,7 +56,7 @@ export class WebtoonService {
     //   where: {
     //     platform,
     //     isEnd,
-    //     genres: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
+    //     dayOfWeeks: { tag: tags?.split(',') ? In(tags.split(',')) : undefined },
     //     dayOfWeeks: { day: days?.split(',') ? In(days.split(',')) : undefined },
     //   },
     // });
