@@ -16,7 +16,7 @@ export class WebtoonListQueryDTO {
   @IsOptional()
   genres: string[];
 
-  @ApiPropertyOptional({ description: '웹툰 연재 요일' })
+  @ApiPropertyOptional({ description: '웹툰 연재 요일 ' })
   @IsOptional()
   dayOfWeeks: DayOfWeekType | DayOfWeekType[];
 

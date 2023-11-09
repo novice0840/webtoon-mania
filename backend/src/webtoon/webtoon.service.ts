@@ -28,6 +28,14 @@ export class WebtoonService {
       query += ` and is_end=false`;
     }
 
+    if (typeof genres === 'string') {
+      query += ` and id in (select webtoon_id from genre where tag='${genres}')`;
+    } else if (typeof genres === 'object') {
+      genres.forEach((genre) => {
+        query += ` and id in (select webtoon_id from genre where tag='${genre}')`;
+      });
+    }
+
     console.log(query);
     const totalCount = await this.dataSource.query(query);
 
