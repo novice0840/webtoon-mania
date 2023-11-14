@@ -8,14 +8,16 @@ import {
   IsBooleanString,
   IsArray,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 import { PlatformType, DayOfWeekType } from 'src/types/webtoon';
 
 export class WebtoonListQueryDTO {
-  // @ApiProperty({ default: 1 })
-  @IsNumberString()
+  @ApiProperty({ default: 1 })
+  @Type(() => Number)
+  @IsNumber()
   page = 1;
 
   @ApiProperty({ description: '플랫폼 종류', default: 'all' })
