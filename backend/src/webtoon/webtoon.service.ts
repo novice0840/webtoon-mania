@@ -28,30 +28,29 @@ export class WebtoonService {
       queryFilter += ` and is_end=false`;
     }
 
-    if (typeof genres === 'string') {
-      queryFilter += ` and id in (select webtoon_id from genre where tag='${genres}')`;
-    } else if (typeof genres === 'object') {
+    if (typeof genres === 'object') {
       genres.forEach((genre) => {
         queryFilter += ` and id in (select webtoon_id from genre where tag='${genre}')`;
       });
     }
 
-    if (typeof dayOfWeeks === 'string') {
-      queryFilter += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeeks}')`;
-    } else if (typeof dayOfWeeks === 'object') {
+    if (typeof dayOfWeeks === 'object') {
       dayOfWeeks.forEach((dayOfWeek) => {
         queryFilter += ` and id in (select webtoon_id from day_of_week where day='${dayOfWeek}')`;
       });
     }
 
-    const totalCount = await this.dataSource.query(`select count(*) from webtoon where 1=1 ${queryFilter}`);
+    const { totalCount } = (
+      await this.dataSource.query(`select count(*) as totalCount from webtoon where 1=1 ${queryFilter}`)
+    )[0];
 
     const totalPage = Math.ceil(totalCount / limit);
 
     const data = await this.dataSource.query(
       `select * from webtoon where 1=1  ${queryFilter} limit ${limit} offset ${(page - 1) * limit}`,
     );
-    return data;
+    console.log(`select * from webtoon where 1=1  ${queryFilter} limit ${limit} offset ${(page - 1) * limit}`);
+    return { totalPage, page, data };
   }
 
   async getOneWebtoon({ titleId, platform }) {
