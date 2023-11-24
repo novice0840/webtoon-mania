@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Tabs,
-  Tab,
-  Checkbox,
-  FormLabel,
-  FormGroup,
-  FormControl,
-  FormControlLabel,
-} from "@mui/material";
-import { PlatformKind } from "@src/types";
+import React, { useState } from "react";
+import { Tabs, Tab } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 
 const Platforms = () => {
