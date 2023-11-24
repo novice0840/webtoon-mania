@@ -5,14 +5,35 @@ import { useSearchParams } from "react-router-dom";
 const DayOfWeek = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const dayOfWeeks = searchParams.getAll("dayOfWeeks");
+  const platform = searchParams.get("platform");
+  const genres = searchParams.getAll("genres");
+  const isEnd = searchParams.get("isEnd") ? true : false;
 
   const handleDayOfWeek = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const dayOfWeek = event.target.name;
-    if (dayOfWeeks.includes(dayOfWeek)) {
-      setSearchParams({ dayOfWeeks: dayOfWeeks.filter((element) => element !== dayOfWeek) });
+    const name = event.target.name;
+    let newSearchParams = {};
+
+    if (platform) newSearchParams = { ...newSearchParams, platform };
+    if (genres) newSearchParams = { ...newSearchParams, genres };
+
+    if (name === "isEnd") {
+      if (isEnd) {
+        newSearchParams = { ...newSearchParams, isEnd: false };
+      } else {
+        newSearchParams = { ...newSearchParams, isEnd: true };
+      }
     } else {
-      setSearchParams({ dayOfWeeks: [...dayOfWeeks, dayOfWeek] });
+      if (dayOfWeeks.includes(name)) {
+        newSearchParams = {
+          ...newSearchParams,
+          dayOfWeeks: dayOfWeeks.filter((element) => element !== name),
+        };
+      } else {
+        newSearchParams = { ...newSearchParams, dayOfWeeks: [...dayOfWeeks, name] };
+      }
     }
+
+    setSearchParams(newSearchParams);
   };
 
   return (
@@ -47,7 +68,7 @@ const DayOfWeek = () => {
           control={<Checkbox name="sunday" checked={dayOfWeeks.includes("sunday")} />}
           label="일요웹툰"
         />
-        <FormControlLabel control={<Checkbox name="End" />} label="완결웹툰" />
+        <FormControlLabel control={<Checkbox name="End" checked={isEnd} />} label="완결웹툰" />
       </FormGroup>
     </FormControl>
   );
