@@ -14,7 +14,8 @@ type PropTypes = {
   genres: string[];
 };
 
-const Genres = ({ genres }: PropTypes) => {
+const Genres = () => {
+  const genres = ["로맨스", "액션"];
   return (
     <Accordion>
       <AccordionSummary

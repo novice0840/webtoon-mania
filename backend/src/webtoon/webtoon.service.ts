@@ -47,9 +47,13 @@ export class WebtoonService {
     const totalPage = Math.ceil(totalCount / limit);
 
     const data = await this.dataSource.query(
-      `select * from webtoon where 1=1  ${queryFilter} limit ${limit} offset ${(page - 1) * limit}`,
+      `select webtoon.id as id, 
+      webtoon.title_name as titleName, 
+      webtoon.thumbnail as thumbnail, 
+      group_concat(author.name) as authors 
+      from webtoon left join author on webtoon.id = author.webtoon_id 
+       where 1=1  ${queryFilter}  group by webtoon.id limit ${limit} offset ${(page - 1) * limit}`,
     );
-    console.log(`select * from webtoon where 1=1  ${queryFilter} limit ${limit} offset ${(page - 1) * limit}`);
     return { totalPage, page, data };
   }
 

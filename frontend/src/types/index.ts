@@ -19,16 +19,16 @@ export type DayOfWeekKorean =
   | "일요웹툰"
   | "완결웹툰";
 
-export type WebtoonBase = {
+export type WebtoonBaseType = {
   id: string;
-  titleId: string;
-  platform: PlatformKind;
   titleName: string;
   thumbnail: string;
   authors: string[];
 };
 
-export type WebtoonDetailType = WebtoonBase & {
+export type WebtoonDetailType = WebtoonBaseType & {
+  titleId: string;
+  platform: PlatformKind;
   link: string;
   interestCount: number;
   starScore: number;
