@@ -9,14 +9,44 @@ import {
   FormGroup,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Genres = () => {
-  const genres = ["로맨스", "액션"];
+  const [genres, setGenres] = useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dayOfWeeks = searchParams.getAll("dayOfWeeks");
+  const platform = searchParams.get("platform");
+  const genreParam = searchParams.getAll("genres");
+  const isEnd = searchParams.get("isEnd") ? true : false;
 
   useEffect(() => {
-    console.log("useEffect");
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/webtoon/kinds`)
+      .then((res) => res.json())
+      .then((data: string[]) => {
+        setGenres(data);
+      });
   }, []);
+
+  const handleGenres = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const genre = event.target.name;
+    let newSearchParams = {};
+
+    if (platform) newSearchParams = { ...newSearchParams, platform };
+    if (dayOfWeeks) newSearchParams = { ...newSearchParams, dayOfWeeks };
+    if (isEnd) newSearchParams = { ...newSearchParams, isEnd };
+
+    if (genreParam.includes(genre)) {
+      newSearchParams = {
+        ...newSearchParams,
+        genres: genreParam.filter((element) => element !== genre),
+      };
+    } else {
+      newSearchParams = { ...newSearchParams, genres: [...genreParam, genre] };
+    }
+    console.log(genre);
+    setSearchParams(newSearchParams);
+  };
 
   return (
     <Accordion>
@@ -29,9 +59,13 @@ const Genres = () => {
       </AccordionSummary>
       <AccordionDetails>
         <FormControl component="fieldset" variant="standard">
-          <FormGroup row>
+          <FormGroup onChange={handleGenres} row>
             {genres.map((genre) => (
-              <FormControlLabel key={genre} control={<Checkbox name={genre} />} label={genre} />
+              <FormControlLabel
+                key={genre}
+                control={<Checkbox name={genre} checked={genreParam.includes(genre)} />}
+                label={genre}
+              />
             ))}
           </FormGroup>
         </FormControl>
