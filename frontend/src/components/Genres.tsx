@@ -9,13 +9,15 @@ import {
   FormGroup,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-type PropTypes = {
-  genres: string[];
-};
+import { useEffect } from "react";
 
 const Genres = () => {
   const genres = ["로맨스", "액션"];
+
+  useEffect(() => {
+    console.log("useEffect");
+  }, []);
+
   return (
     <Accordion>
       <AccordionSummary

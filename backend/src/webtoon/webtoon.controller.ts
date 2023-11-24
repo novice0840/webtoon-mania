@@ -1,6 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
-import { WebtoonListQueryDTO, WebtoonDetailQueryDTO, WebtoonDetailDTO, WebtoonListDTO } from 'src/dto';
+import { WebtoonListQueryDTO, WebtoonDetailQueryDTO, WebtoonDetailDTO } from 'src/dto';
 
 @Controller('webtoon')
 export class WebtoonController {
@@ -16,5 +16,10 @@ export class WebtoonController {
   @Get('/detail')
   getWebtoonOne(@Query() query: WebtoonDetailQueryDTO): Promise<WebtoonDetailDTO> {
     return this.webtoonService.getOneWebtoon(query);
+  }
+
+  @Get('/kinds')
+  getWebtoonKinds() {
+    return this.webtoonService.getWebtoonKinds();
   }
 }

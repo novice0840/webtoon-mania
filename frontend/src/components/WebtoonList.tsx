@@ -12,6 +12,7 @@ const WebtoonList = () => {
   const platform = searchParams.get("platform");
   const genres = searchParams.getAll("genres").toString();
   const dayOfWeeks = searchParams.getAll("dayOfWeeks").toString();
+  const isEnd = searchParams.get("isEnd") ? true : false;
 
   useEffect(() => {
     void fetch(
@@ -21,7 +22,7 @@ const WebtoonList = () => {
       .then((data: { totalPage: number; page: number; data: WebtoonBaseType[] }) => {
         setWebtoons(data.data);
       });
-  }, [platform, genres, dayOfWeeks]);
+  }, [platform, genres, dayOfWeeks, isEnd]);
 
   return (
     <Grid container rowSpacing={5} spacing={3}>

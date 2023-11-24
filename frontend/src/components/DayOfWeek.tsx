@@ -18,9 +18,9 @@ const DayOfWeek = () => {
 
     if (name === "isEnd") {
       if (isEnd) {
-        newSearchParams = { ...newSearchParams, isEnd: false };
+        newSearchParams = { ...newSearchParams, dayOfWeeks };
       } else {
-        newSearchParams = { ...newSearchParams, isEnd: true };
+        newSearchParams = { ...newSearchParams, dayOfWeeks, isEnd: true };
       }
     } else {
       if (dayOfWeeks.includes(name)) {
@@ -68,7 +68,7 @@ const DayOfWeek = () => {
           control={<Checkbox name="sunday" checked={dayOfWeeks.includes("sunday")} />}
           label="일요웹툰"
         />
-        <FormControlLabel control={<Checkbox name="End" checked={isEnd} />} label="완결웹툰" />
+        <FormControlLabel control={<Checkbox name="isEnd" checked={isEnd} />} label="완결웹툰" />
       </FormGroup>
     </FormControl>
   );

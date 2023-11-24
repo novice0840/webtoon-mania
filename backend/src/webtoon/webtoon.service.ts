@@ -69,4 +69,10 @@ export class WebtoonService {
       authors: data.authors.map((element) => element.name),
     };
   }
+
+  async getWebtoonKinds() {
+    return (
+      await this.dataSource.query(`select tag as genre from genre group by tag order by count(tag) desc limit 50;`)
+    ).map((element) => element.genre);
+  }
 }
