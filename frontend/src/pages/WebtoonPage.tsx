@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Container, Box, Stack, Typography, Card, Paper, Link } from "@mui/material";
 import { Header, WebtoonDetail, CommentBox } from "@src/components";
 import { webtoon } from "@src/utils/constants";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { WebtoonDetailType } from "@src/types";
 
 const WebtoonPage = () => {
   const navigate = useNavigate();
-  const { platform, titleId } = useParams();
   const [webtoonDetail, setWebtoonDetail] = useState<WebtoonDetailType>({
     id: "0056174c-cda3-43de-afe3-f6da70e58037",
     titleId: "740482",
@@ -28,26 +26,6 @@ const WebtoonPage = () => {
     authors: ["고지애", "영재영"],
   });
 
-  const fetchData = async (
-    platform: string | undefined,
-    titleId: string | undefined
-  ): Promise<void> => {
-    const params = { platform, titleId };
-    try {
-      const response = await axios.get<WebtoonDetailType>(`http://localhost:3001/webtoon/detail`, {
-        params,
-      });
-      const data = response.data;
-      setWebtoonDetail(data);
-    } catch (error) {
-      navigate("/");
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    void fetchData(platform, titleId);
-  }, []);
   return (
     <Container maxWidth="xl">
       <Box component="header" sx={{ mt: 3 }}>

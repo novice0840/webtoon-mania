@@ -16,11 +16,11 @@ const router = createBrowserRouter([
     element: <MainPage />,
     errorElement: <ErrorPage />,
   },
-  // {
-  //   path: "webtoon/:platform/:titleId",
-  //   element: <WebtoonPage />,
-  //   errorElement: <ErrorPage />,
-  // },
+  {
+    path: "webtoon/:id",
+    element: <WebtoonPage />,
+    errorElement: <ErrorPage />,
+  },
   {
     path: "user/info",
     element: <UserInfoPage />,
