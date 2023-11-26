@@ -14,7 +14,6 @@ const WebtoonList = () => {
   const genres = searchParams.getAll("genres").toString();
   const dayOfWeeks = searchParams.getAll("dayOfWeeks").toString();
   const isEnd = searchParams.get("isEnd") ? true : false;
-  // let isLoading = false;
 
   // 첫 페이지 로딩
   useEffect(() => {
@@ -47,7 +46,6 @@ const WebtoonList = () => {
     if (!lastWebtoonRef.current) return;
     const observer = new IntersectionObserver((entries: any) => {
       if (lastWebtoonRef.current && entries[0].isIntersecting) {
-        console.log("intersecting");
         setCurPage((curPage) => curPage + 1);
       }
     });

@@ -1,6 +1,6 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
-import { WebtoonListQueryDTO, WebtoonDetailQueryDTO, WebtoonDetailDTO } from 'src/dto';
+import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/dto';
 
 @Controller('webtoon')
 export class WebtoonController {
@@ -13,11 +13,12 @@ export class WebtoonController {
   }
 
   // 특정 한 웹툰의 세부 정보
-  @Get('/detail')
-  getWebtoonOne(@Query() query: WebtoonDetailQueryDTO): Promise<WebtoonDetailDTO> {
-    return this.webtoonService.getOneWebtoon(query);
+  @Get('/detail/:id')
+  getWebtoonOne(@Param('id') id: string) {
+    return this.webtoonService.getOneWebtoon(id);
   }
 
+  // 웹툰 인기 장르 50개 반환
   @Get('/kinds')
   getWebtoonKinds() {
     return this.webtoonService.getWebtoonKinds();

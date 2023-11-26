@@ -57,11 +57,12 @@ export class WebtoonService {
     return { totalPage, page, data };
   }
 
-  async getOneWebtoon({ titleId, platform }) {
+  async getOneWebtoon(id) {
     const data = await this.webtoonRepository.findOne({
-      where: { titleId, platform },
+      where: { id },
       relations: ['genres', 'dayOfWeeks', 'authors'],
     });
+
     return {
       ...data,
       genres: data.genres.map((element) => element.tag),
