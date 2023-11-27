@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Box,
@@ -10,13 +10,27 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { comments } from "@src/utils/constants";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import { useParams } from "react-router-dom";
+import { CommentType } from "@src/types";
 
 const CommentBox = () => {
+  const { webtoonId } = useParams();
+  const [comments, setComments] = useState<CommentType[]>([]);
+
+  useEffect(() => {
+    void fetch(
+      `${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId as string}`
+    )
+      .then((res) => res.json())
+      .then((data: CommentType[]) => {
+        setComments(data);
+      });
+  }, []);
+
   return (
     <Container>
       <Box component="form">
@@ -31,7 +45,7 @@ const CommentBox = () => {
       <Box>
         {comments.map((comment) => (
           <Paper elevation={3} key={comment.id} sx={{ p: 1, m: 1 }}>
-            <Typography>{comment.writer}</Typography>
+            <Typography>{comment.writerName}</Typography>
             <Typography>{comment.content}</Typography>
             <Stack direction="row" justifyContent="flex-end">
               <Button

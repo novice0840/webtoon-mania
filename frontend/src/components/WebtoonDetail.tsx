@@ -5,11 +5,13 @@ import { WebtoonDetailType } from "@src/types";
 import { useParams } from "react-router-dom";
 
 const WebtoonDetail = () => {
-  const { id } = useParams();
+  const { webtoonId } = useParams();
   const [webtoonDetail, setWebtoonDetail] = useState<WebtoonDetailType>();
 
   useEffect(() => {
-    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/webtoon/detail/${id as string}`)
+    void fetch(
+      `${import.meta.env.VITE_API_BASE_URL as string}/webtoon/detail/${webtoonId as string}`
+    )
       .then((res) => res.json())
       .then((data: WebtoonDetailType) => {
         setWebtoonDetail({ ...data });

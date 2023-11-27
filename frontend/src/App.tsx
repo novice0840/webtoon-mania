@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "webtoon/:id",
+    path: "webtoon/:webtoonId",
     element: <WebtoonPage />,
     errorElement: <ErrorPage />,
   },

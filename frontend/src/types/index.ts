@@ -39,3 +39,13 @@ export type WebtoonDetailType = WebtoonBaseType & {
   dayOfWeeks: string[];
   genres: string[];
 };
+
+export type CommentType = {
+  id: string;
+  content: string;
+  like: number;
+  dislike: number;
+  createAt: Date;
+  writerName: string;
+  my?: boolean;
+};
