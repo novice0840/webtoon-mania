@@ -12,7 +12,14 @@ export class CommentService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async getWebtoonComments(webtoonId) {
+  async getWebtoonComments(webtoonId, user) {
+    // 로그인이 되어 있고 유저가 해당 웹툰에 댓글을 남긴 경우 해당 댓글에 표식을 남김
+    if (!user) {
+      return await this.commentRepository.find({
+        where: { webtoonId },
+      });
+    }
+    // 아닌 경우는 단순히 댓글들만 반환
     return await this.commentRepository.find({
       where: { webtoonId },
     });
@@ -58,12 +65,9 @@ export class CommentService {
     await queryRunner.startTransaction(); // 3
 
     try {
-      const emotion = await queryRunner.manager.findOne(
-        button === 'like' ? Like : Dislike,
-        {
-          where: { userId, commentId },
-        },
-      );
+      const emotion = await queryRunner.manager.findOne(button === 'like' ? Like : Dislike, {
+        where: { userId, commentId },
+      });
       const comment = await queryRunner.manager.findOne(Comment, {
         where: { id: commentId },
       });
