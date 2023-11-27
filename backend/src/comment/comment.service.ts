@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Comment, Like, Dislike } from 'src/entity';
+import { Comment, Like, Dislike, User } from 'src/entity';
 import { Repository, DataSource } from 'typeorm';
 
 @Injectable()
@@ -9,20 +9,38 @@ export class CommentService {
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
     @InjectRepository(Like) private likeRepository: Repository<Like>,
     @InjectRepository(Dislike) private dislikeRepository: Repository<Dislike>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     private readonly dataSource: DataSource,
   ) {}
 
   async getWebtoonComments(webtoonId, user) {
-    // 로그인이 되어 있고 유저가 해당 웹툰에 댓글을 남긴 경우 해당 댓글에 표식을 남김
-    if (!user) {
-      return await this.commentRepository.find({
-        where: { webtoonId },
-      });
+    if (user) {
+      const userComments = (
+        await this.dataSource.query(`select id from comment where webtoon_id="${webtoonId}" and writer_id="${user.id}"`)
+      ).map((element) => element.id);
+
+      if (userComments) {
+        const comments = await this.dataSource.query(
+          `select comment.id as id, comment.content as content, 
+          comment.like as 'like', comment.dislike as dislike, 
+          comment.created_at as createdAt, user.name as writerName
+          from comment inner join user on comment.writer_id = user.id where comment.webtoon_id="${webtoonId}"`,
+        );
+        return comments.map((comment) => {
+          if (userComments.includes(comment.id)) {
+            return { ...comment, my: true };
+          }
+          return comment;
+        });
+      }
     }
-    // 아닌 경우는 단순히 댓글들만 반환
-    return await this.commentRepository.find({
-      where: { webtoonId },
-    });
+
+    return await this.dataSource.query(
+      `select comment.id as id, comment.content as content, 
+      comment.like as 'like', comment.dislike as dislike, 
+      comment.created_at as createdAt, user.name as writerName
+      from comment inner join user on comment.writer_id = user.id where comment.webtoon_id="${webtoonId}"`,
+    );
   }
 
   async getUserComments(userId) {
