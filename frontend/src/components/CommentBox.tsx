@@ -1,46 +1,67 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Box,
-  Stack,
-  Typography,
-  Card,
-  Paper,
-  Link,
-  Button,
-  TextField,
-} from "@mui/material";
+import { Container, Box, Stack, Typography, Paper, Button, TextField } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import { useParams } from "react-router-dom";
 import { CommentType } from "@src/types";
+import { useNavigate } from "react-router-dom";
+import { getCookie } from "@src/utils/cookie";
 
 const CommentBox = () => {
-  const { webtoonId } = useParams();
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const { webtoonId = "" } = useParams();
 
-  useEffect(() => {
-    void fetch(
-      `${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId as string}`
-    )
+  const [comments, setComments] = useState<CommentType[]>([]);
+  const navigate = useNavigate();
+
+  const getComments = () => {
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`)
       .then((res) => res.json())
       .then((data: CommentType[]) => {
         setComments(data);
       });
+  };
+
+  useEffect(() => {
+    getComments();
   }, []);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const access_token = getCookie("access_token") || "";
+    const data = new FormData(event.currentTarget);
+    const body = {
+      content: data.get("content"),
+    };
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getComments();
+      })
+      .catch((error) => {
+        navigate("/signin");
+      });
+  };
 
   return (
     <Container>
-      <Box component="form">
+      <Box component="form" onSubmit={handleSubmit}>
         <TextField
+          name="content"
           label="댓글 쓰기"
           variant="outlined"
           InputProps={{ sx: { height: 150 } }}
           sx={{ width: 80 / 100, mr: 3 }}
         />
-        <Button variant="contained">작성</Button>
+        <Button type="submit" variant="contained">
+          작성
+        </Button>
       </Box>
       <Box>
         {comments.map((comment) => (
