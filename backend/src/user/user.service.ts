@@ -7,15 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private webtoonRepository: Repository<User>,
-  ) {}
+  constructor(@InjectRepository(User) private webtoonRepository: Repository<User>) {}
 
   async signUp(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    return this.webtoonRepository.save([
-      { name: createUserDto.name, email: createUserDto.email, hashedPassword },
-    ]);
+    await this.webtoonRepository.save([{ name: createUserDto.name, email: createUserDto.email, hashedPassword }]);
+    return { message: 'user created' };
   }
 
   async updateUser(oldUser, newUser) {

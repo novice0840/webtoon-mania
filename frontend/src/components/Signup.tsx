@@ -1,18 +1,10 @@
-import React, { MutableRefObject, forwardRef, RefObject, ForwardedRef, useState } from "react";
-import Avatar from "@mui/material/Avatar";
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { CustomSnackbar } from ".";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -24,27 +16,43 @@ const SignUp = () => {
       name: data.get("name"),
       password: data.get("password"),
     };
-    navigate("/");
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/user/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
-    <Container
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 400,
-        bgcolor: "background.paper",
-
-        p: 4,
-      }}
-      component="main"
-      maxWidth="xs"
-    >
-      <TextField label="이름" />
-      <TextField label="이메일" />
-      <TextField label="비밀번호" />
+    <Container component="main" maxWidth="sm">
+      <Typography component="h1" variant="h5">
+        회원가입
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit}>
+        <TextField label="이름" name="name" margin="normal" required fullWidth />
+        <TextField label="이메일" name="email" margin="normal" required fullWidth />
+        <TextField
+          label="비밀번호"
+          name="password"
+          margin="normal"
+          type="password"
+          required
+          fullWidth
+        />
+        <Button type="submit" variant="contained">
+          제출하기
+        </Button>
+      </Box>
     </Container>
   );
 };
