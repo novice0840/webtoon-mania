@@ -9,6 +9,7 @@ import { getCookie } from "@src/utils/cookie";
 
 const CommentBox = () => {
   const { webtoonId = "" } = useParams();
+  const [content, setContent] = useState("");
 
   const [comments, setComments] = useState<CommentType[]>([]);
   const navigate = useNavigate();
@@ -32,21 +33,27 @@ const CommentBox = () => {
     const body = {
       content: data.get("content"),
     };
-    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        getComments();
-      })
-      .catch((error) => {
-        navigate("/signin");
-      });
+    console.log(event.target.querySelector(""));
+    // void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${access_token}`,
+    //   },
+    //   body: JSON.stringify(body),
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     getComments();
+    //   })
+    //   .catch((error) => {
+    //     navigate("/signin");
+    //   });
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(event.target.value);
+    // event.target.value = "";
   };
 
   return (
@@ -55,6 +62,8 @@ const CommentBox = () => {
         <TextField
           name="content"
           label="댓글 쓰기"
+          defaultValue={content}
+          onChange={handleChange}
           variant="outlined"
           InputProps={{ sx: { height: 150 } }}
           sx={{ width: 80 / 100, mr: 3 }}
