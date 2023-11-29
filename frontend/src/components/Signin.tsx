@@ -1,83 +1,54 @@
-import React, { MutableRefObject, forwardRef, RefObject, ForwardedRef } from "react";
-import Avatar from "@mui/material/Avatar";
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLInputElement>) => {
+  const navigate = useNavigate();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const body = {
+      email: data.get("email"),
+      password: data.get("password"),
+    };
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/user/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((data: { access_token: string }) => {
+        document.cookie = `access_token=${data.access_token}; Path=/`;
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
   return (
-    <Container
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 400,
-        bgcolor: "background.paper",
-        p: 4,
-      }}
-      component="main"
-      maxWidth="xs"
-    >
-      <Box>
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
+    <Container component="main" maxWidth="sm">
+      <Typography component="h1" variant="h5">
+        로그인
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit}>
+        <TextField label="이메일" name="email" margin="normal" required fullWidth />
+        <TextField
+          label="비밀번호"
+          name="password"
+          margin="normal"
+          type="password"
+          required
+          fullWidth
+        />
+        <Button type="submit" variant="contained">
+          제출하기
+        </Button>
       </Box>
     </Container>
   );

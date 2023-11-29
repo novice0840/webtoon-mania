@@ -1,11 +1,41 @@
-import { useState, useRef } from "react";
-import { Box, Paper, InputBase, IconButton, Stack, Button, Link, Modal } from "@mui/material";
+import { useState, useRef, useEffect } from "react";
+import {
+  Box,
+  Paper,
+  InputBase,
+  IconButton,
+  Stack,
+  Button,
+  Link,
+  Modal,
+  Typography,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { SignUp, SignIn } from "@src/components";
 import logo from "@src/assets/logo.jpg";
+import { getCookie } from "@src/utils/cookie";
 
 const Header = () => {
   const [search, setSearch] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    const access_token = getCookie("access_token") || "";
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/user/info`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data: { name: string }) => {
+        setUserName(data.name);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -30,18 +60,27 @@ const Header = () => {
           검색
         </IconButton>
       </Paper>
-      <Stack spacing={2} direction="row">
-        <Link href="/user/signin">
-          <Button variant="contained" color="primary">
-            Sign in
-          </Button>
-        </Link>
-        <Link href="/user/signup">
-          <Button variant="contained" color="info">
-            Sign up
-          </Button>
-        </Link>
-      </Stack>
+      {userName === "" ? (
+        <Stack spacing={2} direction="row">
+          <Link href="/user/signin">
+            <Button variant="contained" color="primary">
+              Sign in
+            </Button>
+          </Link>
+          <Link href="/user/signup">
+            <Button variant="contained" color="info">
+              Sign up
+            </Button>
+          </Link>
+        </Stack>
+      ) : (
+        <Stack spacing={2} direction="row">
+          <Typography component="h1" variant="h5">
+            {userName}님
+          </Typography>
+          <Button variant="contained">로그아웃 </Button>
+        </Stack>
+      )}
     </Stack>
   );
 };
