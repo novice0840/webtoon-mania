@@ -26,7 +26,7 @@ export class Chatting {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.chattings)
+  @ManyToOne(() => User, (user) => user.chattings, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'writer_id' })
   user: User;
 }

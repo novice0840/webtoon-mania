@@ -36,15 +36,15 @@ export class User {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
   comments: Comment[];
 
-  @OneToMany(() => Chatting, (chatting) => chatting.user)
+  @OneToMany(() => Chatting, (chatting) => chatting.user, { cascade: true })
   chattings: Chatting[];
 
-  @OneToMany(() => Like, (like) => like.user)
+  @OneToMany(() => Like, (like) => like.user, { cascade: true })
   likes: Like[];
 
-  @OneToMany(() => Dislike, (DisLike) => DisLike.user)
+  @OneToMany(() => Dislike, (DisLike) => DisLike.user, { cascade: true })
   dislikes: Dislike[];
 }

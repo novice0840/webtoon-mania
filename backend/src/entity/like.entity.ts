@@ -21,11 +21,11 @@ export class Like {
   @Column({ name: 'comment_id' })
   commentId: string;
 
-  @ManyToOne(() => User, (User) => User.likes)
+  @ManyToOne(() => User, (User) => User.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Comment, (Comment) => Comment.likes)
+  @ManyToOne(() => Comment, (Comment) => Comment.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'comment_id' })
   comment: Comment;
 }

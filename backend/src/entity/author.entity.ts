@@ -9,7 +9,7 @@ export class Author {
   @PrimaryColumn({ name: 'webtoon_id' })
   webtoonId: string;
 
-  @ManyToOne(() => Webtoon, (webtoon) => webtoon.authors)
+  @ManyToOne(() => Webtoon, (webtoon) => webtoon.authors, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'webtoon_id' })
   webtoon: Webtoon;
 }

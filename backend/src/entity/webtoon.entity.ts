@@ -45,7 +45,7 @@ export class Webtoon {
   @Column()
   link: string;
 
-  @OneToMany(() => Comment, (comment) => comment.webtoon)
+  @OneToMany(() => Comment, (comment) => comment.webtoon, { cascade: true })
   comments: Comment[];
 
   @OneToMany(() => Genre, (genre) => genre.webtoon, { cascade: true })

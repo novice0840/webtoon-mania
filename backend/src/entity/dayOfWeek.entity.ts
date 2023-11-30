@@ -9,7 +9,7 @@ export class DayOfWeek {
   @PrimaryColumn({ name: 'webtoon_id' })
   webtoonId: string;
 
-  @ManyToOne(() => Webtoon, (webtoon) => webtoon.dayOfWeeks)
+  @ManyToOne(() => Webtoon, (webtoon) => webtoon.dayOfWeeks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'webtoon_id' })
   webtoon: Webtoon;
 }

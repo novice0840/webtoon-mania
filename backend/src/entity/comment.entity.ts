@@ -39,17 +39,17 @@ export class Comment {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'writer_id' })
   user: User;
 
-  @ManyToOne(() => Webtoon, (webtoon) => webtoon.comments)
+  @ManyToOne(() => Webtoon, (webtoon) => webtoon.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'webtoon_id' })
   webtoon: Webtoon;
 
-  @OneToMany(() => Like, (like) => like.user)
+  @OneToMany(() => Like, (like) => like.user, { cascade: true })
   likes: Like[];
 
-  @OneToMany(() => Dislike, (DisLike) => DisLike.user)
+  @OneToMany(() => Dislike, (DisLike) => DisLike.user, { cascade: true })
   dislikes: Dislike[];
 }
