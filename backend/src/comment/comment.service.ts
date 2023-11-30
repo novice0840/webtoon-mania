@@ -89,16 +89,30 @@ export class CommentService {
       const comment = await queryRunner.manager.findOne(Comment, {
         where: { id: commentId },
       });
-      if (emotion) {
-        comment.like = Math.max(comment.like - 1, 0);
-        await queryRunner.manager.remove(emotion);
+      if (button === 'like') {
+        if (emotion) {
+          comment.like = Math.max(comment.like - 1, 0);
+          await queryRunner.manager.remove(emotion);
+        } else {
+          comment.like = Math.max(comment.like + 1, 0);
+          const newEmotion = button === 'like' ? new Like() : new Dislike();
+          newEmotion.userId = userId;
+          newEmotion.commentId = commentId;
+          await queryRunner.manager.save(newEmotion);
+        }
       } else {
-        comment.like = Math.max(comment.like + 1, 0);
-        const newEmotion = button === 'like' ? new Like() : new Dislike();
-        newEmotion.userId = userId;
-        newEmotion.commentId = commentId;
-        await queryRunner.manager.save(newEmotion);
+        if (emotion) {
+          comment.dislike = Math.max(comment.dislike - 1, 0);
+          await queryRunner.manager.remove(emotion);
+        } else {
+          comment.dislike = Math.max(comment.dislike + 1, 0);
+          const newEmotion = button === 'like' ? new Like() : new Dislike();
+          newEmotion.userId = userId;
+          newEmotion.commentId = commentId;
+          await queryRunner.manager.save(newEmotion);
+        }
       }
+
       await queryRunner.manager.save(comment);
       await queryRunner.commitTransaction(); // 4
     } catch (e) {

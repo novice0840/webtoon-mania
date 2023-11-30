@@ -74,9 +74,41 @@ const CommentBox = () => {
       });
   };
 
-  // const handleLike = () => {};
+  const handleLike = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const commentId = event.currentTarget.name;
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/like/${commentId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getComments();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  // const handleDislike = () => {};
+  const handleDislike = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const commentId = event.currentTarget.name;
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/dislike/${commentId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getComments();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Container>
@@ -103,6 +135,8 @@ const CommentBox = () => {
               <Button
                 variant="outlined"
                 color="primary"
+                name={comment.id}
+                onClick={handleLike}
                 sx={{ mr: 1 }}
                 startIcon={<ThumbUpOffAltIcon />}
               >
@@ -110,8 +144,10 @@ const CommentBox = () => {
               </Button>
               <Button
                 variant="outlined"
+                name={comment.id}
                 sx={{ mr: 1 }}
                 color="error"
+                onClick={handleDislike}
                 startIcon={<ThumbDownOffAltIcon />}
               >
                 {comment.dislike}
