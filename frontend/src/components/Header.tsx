@@ -13,13 +13,13 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { SignUp, SignIn } from "@src/components";
 import logo from "@src/assets/logo.jpg";
-import { getCookie } from "@src/utils/cookie";
+import { getCookie, deleteCookie } from "@src/utils/cookie";
 
 const Header = () => {
   const [search, setSearch] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
 
-  useEffect(() => {
+  const getUserInfo = () => {
     const access_token = getCookie("access_token") || "";
     void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/user/info`, {
       method: "GET",
@@ -30,16 +30,30 @@ const Header = () => {
     })
       .then((res) => res.json())
       .then((data: { name: string }) => {
-        setUserName(data.name);
+        if (data?.name) {
+          setUserName(data.name);
+        } else {
+          setUserName("");
+        }
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  useEffect(() => {
+    getUserInfo();
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
+
+  const handleLogout = () => {
+    deleteCookie("access_token");
+    getUserInfo();
+  };
+
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Link href="/">
@@ -78,7 +92,9 @@ const Header = () => {
           <Typography component="h1" variant="h5">
             {userName}님
           </Typography>
-          <Button variant="contained">로그아웃 </Button>
+          <Button onClick={handleLogout} variant="contained">
+            로그아웃{" "}
+          </Button>
         </Stack>
       )}
     </Stack>

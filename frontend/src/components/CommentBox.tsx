@@ -33,7 +33,7 @@ const CommentBox = () => {
     const body = {
       content: data.get("content"),
     };
-    console.log(event.target.querySelector(""));
+    // console.log(event.target.querySelector(""));
     // void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`, {
     //   method: "POST",
     //   headers: {
