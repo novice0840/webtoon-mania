@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Box, Stack, Typography, Paper, Button, TextField } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import { useParams } from "react-router-dom";
@@ -8,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { getCookie } from "@src/utils/cookie";
 
 const CommentBox = () => {
+  const access_token = getCookie("access_token") || "";
   const { webtoonId = "" } = useParams();
   const [content, setContent] = useState("");
 
@@ -15,7 +17,11 @@ const CommentBox = () => {
   const navigate = useNavigate();
 
   const getComments = () => {
-    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`)
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data: CommentType[]) => {
         setComments(data);
@@ -28,7 +34,6 @@ const CommentBox = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const access_token = getCookie("access_token") || "";
     void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/webtoon/${webtoonId}`, {
       method: "POST",
       headers: {
@@ -47,9 +52,31 @@ const CommentBox = () => {
       });
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContent(event.target.value);
   };
+
+  const handleCommentDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const commentId = event.currentTarget.name;
+    void fetch(`${import.meta.env.VITE_API_BASE_URL as string}/comment/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getComments();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  // const handleLike = () => {};
+
+  // const handleDislike = () => {};
 
   return (
     <Container>
@@ -57,7 +84,7 @@ const CommentBox = () => {
         <TextField
           name="content"
           label="댓글 쓰기"
-          onChange={handleChange}
+          onChange={handleCommentChange}
           variant="outlined"
           InputProps={{ sx: { height: 150 } }}
           sx={{ width: 80 / 100, mr: 3 }}
@@ -81,11 +108,22 @@ const CommentBox = () => {
               >
                 {comment.like}
               </Button>
-              <Button variant="outlined" color="error" startIcon={<ThumbDownOffAltIcon />}>
+              <Button
+                variant="outlined"
+                sx={{ mr: 1 }}
+                color="error"
+                startIcon={<ThumbDownOffAltIcon />}
+              >
                 {comment.dislike}
               </Button>
               {comment?.my && (
-                <Button variant="outlined" color="error" startIcon={<ThumbDownOffAltIcon />}>
+                <Button
+                  name={comment.id}
+                  onClick={handleCommentDelete}
+                  variant="outlined"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                >
                   삭제
                 </Button>
               )}
