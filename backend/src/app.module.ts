@@ -11,28 +11,21 @@ import { CommentModule } from './comment/comment.module';
 import { CrawlerModule } from './crawler/crawler.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { SharedModule } from './shared/shared.module';
+import { ApiConfigService } from './shared/services/api-config.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        type: 'mysql',
-        host: process.env.DB_HOST,
-        port: +process.env.DB_PORT,
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        entities: ['./entity/**/*.entity.ts'],
-        autoLoadEntities: true,
-        synchronize: true,
-        // logging: true,
-      }),
-      async dataSourceFactory(options) {
+      imports: [SharedModule],
+      useFactory: (configService: ApiConfigService) => configService.mysqlConfig,
+      inject: [ApiConfigService],
+      dataSourceFactory: (options) => {
         if (!options) {
           throw new Error('Invalid options passed');
         }
-        return addTransactionalDataSource(new DataSource(options));
+        return Promise.resolve(addTransactionalDataSource(new DataSource(options)));
       },
     }),
     ScheduleModule.forRoot(),
