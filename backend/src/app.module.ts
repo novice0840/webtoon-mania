@@ -9,6 +9,8 @@ import { ChattingModule } from './chatting/chatting.module';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { CrawlerModule } from './crawler/crawler.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -26,6 +28,12 @@ import { CrawlerModule } from './crawler/crawler.module';
         synchronize: true,
         // logging: true,
       }),
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
     ScheduleModule.forRoot(),
     WebtoonModule,
