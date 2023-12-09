@@ -16,7 +16,10 @@ import { ApiConfigService } from './shared/services/api-config.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: ['../env.development', '../env.production'],
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],
       useFactory: (configService: ApiConfigService) => configService.mysqlConfig,
