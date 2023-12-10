@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Param, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
 import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/dto';
 
@@ -22,5 +22,24 @@ export class WebtoonController {
   @Get('/kinds')
   getWebtoonKinds() {
     return this.webtoonService.getWebtoonKinds();
+  }
+
+  // Test Controller
+  @Get('test')
+  test() {
+    try {
+      throw new Error('');
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
+    }
   }
 }
