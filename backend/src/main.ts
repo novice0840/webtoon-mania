@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -10,6 +11,7 @@ async function bootstrap() {
     cors: true,
     snapshot: true,
   });
+  app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -19,6 +21,7 @@ async function bootstrap() {
       },
     }),
   );
+
   const config = new DocumentBuilder()
     .setTitle('Naver Webtoon Analyzer')
     .setDescription('API description')
