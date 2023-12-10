@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment, Like, Dislike, User } from 'src/entity';
 import { Repository, DataSource } from 'typeorm';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class CommentService {
@@ -77,6 +78,7 @@ export class CommentService {
     return this.clickEmotionButton(userId, commentId, 'dislike');
   }
 
+  @Transactional()
   private async clickEmotionButton(userId, commentId, button) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();

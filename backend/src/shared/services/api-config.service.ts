@@ -41,19 +41,21 @@ export class ApiConfigService {
     return value.replaceAll('\\n', '\n');
   }
 
+  get isDevelopment(): boolean {
+    return this.configService.get<string>('NODE_ENV') === 'development';
+  }
+
   get mysqlConfig(): TypeOrmModuleOptions {
-    console.log(this.configService.get<string>('DB_KIND'));
-    console.log(typeof this.configService.get<number>('DB_PORT'));
     return {
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'password',
-      database: 'webtoon_mania',
+      type: this.configService.get<'mysql' | 'postgres'>('DB_TYPE'),
+      host: this.configService.get<string>('DB_HOST'),
+      port: this.configService.get<number>('DB_PORT'),
+      username: this.configService.get<string>('DB_USER'),
+      password: this.configService.get<string>('DB_PASSWORD'),
+      database: this.configService.get<string>('DB_NAME'),
       entities: ['../../entity/**/*.entity.ts'],
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: this.isDevelopment,
     };
   }
 }

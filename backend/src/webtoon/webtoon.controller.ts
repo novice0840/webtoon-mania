@@ -1,10 +1,6 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
 import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/dto';
-import { ForbiddenException } from 'src/filters/forbidden.exception';
-import { GoneException } from '@nestjs/common';
-import { UseFilters } from '@nestjs/common';
-import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 
 @Controller('webtoon')
 export class WebtoonController {
@@ -26,12 +22,5 @@ export class WebtoonController {
   @Get('/kinds')
   getWebtoonKinds() {
     return this.webtoonService.getWebtoonKinds();
-  }
-
-  // Test Controller
-  @Get('test')
-  @UseFilters(HttpExceptionFilter)
-  test() {
-    throw new GoneException();
   }
 }

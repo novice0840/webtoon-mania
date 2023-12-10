@@ -26,6 +26,8 @@ export class CommentController {
   @Post('webtoon/:webtoonId')
   @UseGuards(JwtAuthGuard)
   createComment(@Body('content') content: string, @Request() req, @Param('webtoonId') webtoonId) {
+    console.log(content);
+
     return this.commentService.createComment(req.user.id, webtoonId, content);
   }
 
