@@ -42,13 +42,15 @@ export class ApiConfigService {
   }
 
   get mysqlConfig(): TypeOrmModuleOptions {
+    console.log(this.configService.get<string>('DB_KIND'));
+    console.log(typeof this.configService.get<number>('DB_PORT'));
     return {
-      type: this.DB_KIND,
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'password',
+      database: 'webtoon_mania',
       entities: ['../../entity/**/*.entity.ts'],
       autoLoadEntities: true,
       synchronize: true,

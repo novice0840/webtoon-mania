@@ -17,7 +17,7 @@ import { ApiConfigService } from './shared/services/api-config.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['../env.development', '../env.production'],
+      envFilePath: ['.env.development', '.env.production'],
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
