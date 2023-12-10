@@ -80,6 +80,15 @@ export class CommentService {
 
   @Transactional()
   private async clickEmotionButton(userId, commentId, button) {
+    const commentEntity = await this.commentRepository.findOne({ where: { id: commentId } });
+    commentEntity.like += 1;
+    await this.commentRepository.save(commentEntity);
+
+    // const likeEntity = new Like();
+    // await this.likeRepository.save(likeEntity);
+  }
+
+  private async clickEmotionButton2(userId, commentId, button) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction(); // 3

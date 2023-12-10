@@ -11,7 +11,6 @@ async function bootstrap() {
     cors: true,
     snapshot: true,
   });
-  app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -22,6 +21,7 @@ async function bootstrap() {
     }),
   );
 
+  // app.useGlobalFilters(new AllExceptionsFilter());
   const config = new DocumentBuilder()
     .setTitle('Naver Webtoon Analyzer')
     .setDescription('API description')
