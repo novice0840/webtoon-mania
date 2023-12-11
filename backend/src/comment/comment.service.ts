@@ -79,62 +79,37 @@ export class CommentService {
   }
 
   @Transactional()
-  private async clickEmotionButton(userId, commentId, button) {
+  private async clickEmotionButton(userId, commentId, emotion) {
+    // 4가지 경우로 나눠진다
+    // 1.좋아요 클릭  2.좋아요 해제  3.싫어요 클릭 4.싫어요 해제
     const commentEntity = await this.commentRepository.findOne({ where: { id: commentId } });
-    commentEntity.like += 1;
-    await this.commentRepository.save(commentEntity);
-
-    // const likeEntity = new Like();
-    // await this.likeRepository.save(likeEntity);
-  }
-
-  private async clickEmotionButton2(userId, commentId, button) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction(); // 3
-
-    try {
-      const emotion = await queryRunner.manager.findOne(button === 'like' ? Like : Dislike, {
-        where: { userId, commentId },
-      });
-      const comment = await queryRunner.manager.findOne(Comment, {
-        where: { id: commentId },
-      });
-      if (button === 'like') {
-        if (emotion) {
-          comment.like = Math.max(comment.like - 1, 0);
-          await queryRunner.manager.remove(emotion);
-        } else {
-          comment.like = Math.max(comment.like + 1, 0);
-          const newEmotion = button === 'like' ? new Like() : new Dislike();
-          newEmotion.userId = userId;
-          newEmotion.commentId = commentId;
-          await queryRunner.manager.save(newEmotion);
-        }
+    if (emotion === 'like') {
+      const likeEntity = await this.likeRepository.findOne({ where: { userId, commentId } });
+      if (likeEntity) {
+        commentEntity.like -= 1;
+        await this.likeRepository.delete(likeEntity);
       } else {
-        if (emotion) {
-          comment.dislike = Math.max(comment.dislike - 1, 0);
-          await queryRunner.manager.remove(emotion);
-        } else {
-          comment.dislike = Math.max(comment.dislike + 1, 0);
-          const newEmotion = button === 'like' ? new Like() : new Dislike();
-          newEmotion.userId = userId;
-          newEmotion.commentId = commentId;
-          await queryRunner.manager.save(newEmotion);
-        }
+        commentEntity.like += 1;
+        const newLike = new Like();
+        newLike.userId = userId;
+        newLike.commentId = commentId;
+        await this.likeRepository.save(newLike);
       }
-
-      await queryRunner.manager.save(comment);
-      await queryRunner.commitTransaction(); // 4
-    } catch (e) {
-      await queryRunner.rollbackTransaction(); // 5
-    } finally {
-      await queryRunner.release(); // 6
+    } else if (emotion === 'dislike') {
+      const dislikeEntity = await this.dislikeRepository.findOne({ where: { userId, commentId } });
+      if (dislikeEntity) {
+        commentEntity.dislike -= 1;
+        await this.dislikeRepository.delete(dislikeEntity);
+      } else {
+        commentEntity.dislike += 1;
+        const newDislike = new Dislike();
+        newDislike.userId = userId;
+        newDislike.commentId = commentId;
+        await this.dislikeRepository.save(newDislike);
+      }
+    } else {
+      throw new Error('존재하지 않은 감정버튼이 입려되었습니다');
     }
-
-    return {
-      success: true,
-      message: `${button === 'like' ? '좋아요' : '싫어요'} 버튼 클릭 성공`,
-    };
+    await this.commentRepository.save(commentEntity);
   }
 }
