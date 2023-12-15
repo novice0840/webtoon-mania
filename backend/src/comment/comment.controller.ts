@@ -3,8 +3,10 @@ import { CommentService } from './comment.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 import { JwtGetCommentGuard } from './guard/getComment.guard';
 import { User } from './../entity/user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('comment')
+@ApiTags('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 

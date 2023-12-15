@@ -5,8 +5,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './../auth/auth.service';
 import { LocalAuthGuard } from 'src/auth/guard/local.gurad';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
+@ApiTags('user')
 export class UserController {
   constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 

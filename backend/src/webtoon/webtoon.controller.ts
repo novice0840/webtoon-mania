@@ -1,8 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
 import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('webtoon')
+@ApiTags('webtoon')
 export class WebtoonController {
   constructor(private readonly webtoonService: WebtoonService) {}
 

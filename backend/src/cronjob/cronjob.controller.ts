@@ -17,8 +17,10 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import * as fs from 'fs';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('cronjob')
+@ApiTags('cronjob')
 export class CronjobController {
   constructor(
     @InjectRepository(Webtoon) private webtoonRepository: Repository<Webtoon>,
