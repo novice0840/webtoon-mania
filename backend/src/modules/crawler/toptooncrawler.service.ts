@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { Author, DayOfWeek, Genre, Webtoon } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { convertToNumber, autoScroll } from 'src/util/crawling';
+import { convertToNumber, autoScroll } from 'src/common/utils/crawling';
 
 @Injectable()
 export class ToptoonCrawlerService {

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { NaverCrawlerService } from 'src/crawler/navercrawler.service';
+import { NaverCrawlerService } from 'src/modules/crawler/navercrawler.service';
 
 @Injectable()
 export class CronjobService {

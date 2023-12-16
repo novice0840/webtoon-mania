@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
-import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/dto';
+import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/modules/webtoon/dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('webtoon')

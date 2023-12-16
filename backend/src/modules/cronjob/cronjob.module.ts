@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CronjobService } from './cronjob.service';
 import { CronjobController } from './cronjob.controller';
-import { CrawlerModule } from 'src/crawler/crawler.module';
+import { CrawlerModule } from 'src/modules/crawler/crawler.module';
 import { Webtoon, DayOfWeek, Author, Genre } from 'src/entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

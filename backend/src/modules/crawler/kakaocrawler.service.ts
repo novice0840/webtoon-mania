@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Author, DayOfWeek, Genre, Webtoon } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { autoScroll, sleep, convertToNumber } from 'src/util/crawling';
+import { autoScroll, sleep, convertToNumber } from 'src/common/utils/crawling';
 
 @Injectable()
 export class KakaoCrawlerService {

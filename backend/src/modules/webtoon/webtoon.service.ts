@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Webtoon, Genre, DayOfWeek, Author } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
-import { WebtoonListQueryDTO } from 'src/dto';
+import { WebtoonListQueryDTO } from 'src/modules/webtoon/dto';
 import { DataSource } from 'typeorm';
 
 @Injectable()

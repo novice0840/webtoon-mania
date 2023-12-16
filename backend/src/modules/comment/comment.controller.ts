@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Delete, UseGuards, Request, Body, Param } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
-import { JwtGetCommentGuard } from './guard/getComment.guard';
-import { User } from './../entity/user.entity';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { JwtGetCommentGuard } from 'src/guards/getComment.guard';
+import { User } from '../../entity/user.entity';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('comment')

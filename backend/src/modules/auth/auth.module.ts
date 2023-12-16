@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from 'src/entity/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalStrategy } from 'src/auth/strategy/local.strategy';
-import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
+import { LocalStrategy } from 'src/modules/auth/strategy/local.strategy';
+import { JwtStrategy } from 'src/modules/auth/strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 @Module({

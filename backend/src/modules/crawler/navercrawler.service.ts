@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
-import { naverCurrentWebtoonsURL } from 'src/constants';
+import { naverCurrentWebtoonsURL } from 'src/common/constants';
 import { Webtoon, Author, DayOfWeek, Genre } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

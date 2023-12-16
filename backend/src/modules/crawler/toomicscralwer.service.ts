@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { Webtoon } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { autoScroll } from 'src/util/crawling';
+import { autoScroll } from 'src/common/utils/crawling';
 
 @Injectable()
 export class ToomicsCrawlerService {

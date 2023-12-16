@@ -2,9 +2,9 @@ import { Controller, Get, Put, Delete, Body, Post, UseGuards, Request } from '@n
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthService } from './../auth/auth.service';
-import { LocalAuthGuard } from 'src/auth/guard/local.gurad';
-import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { AuthService } from '../auth/auth.service';
+import { LocalAuthGuard } from 'src/guards/local.gurad';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('user')

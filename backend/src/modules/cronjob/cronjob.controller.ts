@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import { NaverCrawlerService } from 'src/crawler/navercrawler.service';
-import { KakaoCrawlerService } from 'src/crawler/kakaocrawler.service';
-import { LezhinCrawlerService } from 'src/crawler/lezhincrawler.service';
-import { ToptoonCrawlerService } from 'src/crawler/toptooncrawler.service';
-import { ToomicsCrawlerService } from 'src/crawler/toomicscralwer.service';
+import { NaverCrawlerService } from 'src/modules/crawler/navercrawler.service';
+import { KakaoCrawlerService } from 'src/modules/crawler/kakaocrawler.service';
+import { LezhinCrawlerService } from 'src/modules/crawler/lezhincrawler.service';
+import { ToptoonCrawlerService } from 'src/modules/crawler/toptooncrawler.service';
+import { ToomicsCrawlerService } from 'src/modules/crawler/toomicscralwer.service';
 import { Webtoon } from 'src/entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
