@@ -1,16 +1,16 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WebtoonService } from './webtoon.service';
-import { WebtoonListQueryDTO, WebtoonDetailDTO } from 'src/modules/webtoon/dto';
+import { WebtoonListQueryDTO, WebtoonDetailDTO, WebtoonListDTO } from 'src/modules/webtoon/dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('webtoon')
-@ApiTags('webtoon')
+@ApiTags('Webtoon')
 export class WebtoonController {
   constructor(private readonly webtoonService: WebtoonService) {}
 
   // 여러 웹툰들을 배열로 요청
   @Get('/list')
-  async getWebtoonAll(@Query() query: WebtoonListQueryDTO) {
+  async getWebtoonAll(@Query() query: WebtoonListQueryDTO): Promise<WebtoonListDTO> {
     return this.webtoonService.getWebtoonList(query);
   }
 

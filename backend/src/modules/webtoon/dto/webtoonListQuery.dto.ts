@@ -20,12 +20,11 @@ export class WebtoonListQueryDTO {
   @IsNumber()
   page = 1;
 
-  @ApiProperty({ description: '플랫폼 종류', default: 'all' })
   @IsEnum(['all', 'naver', 'kakao', 'toptoon', 'toomics', 'lezhin'])
   @IsOptional()
+  @ApiProperty({ description: '플랫폼 종류', default: 'all' })
   platform = 'all';
 
-  @ApiPropertyOptional({ description: '웹툰 장르' })
   @Transform(({ value }) => {
     if (typeof value === 'string') {
       return [value];
@@ -34,9 +33,9 @@ export class WebtoonListQueryDTO {
   })
   @IsArray()
   @IsOptional()
+  @ApiPropertyOptional({ description: '웹툰 장르' })
   genres: string[];
 
-  @ApiPropertyOptional({ description: '웹툰 연재 요일 ' })
   @Transform(({ value }) => {
     if (typeof value === 'string') {
       return [value];
@@ -47,10 +46,11 @@ export class WebtoonListQueryDTO {
   @IsArray()
   @IsEnum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], { each: true })
   @IsOptional()
+  @ApiPropertyOptional({ description: '웹툰 연재 요일 ' })
   dayOfWeeks: DayOfWeekType[];
 
-  @ApiPropertyOptional({ description: '완결 여부' })
   @IsOptional()
   @IsBooleanString()
+  @ApiPropertyOptional({ description: '완결 여부' })
   isEnd: string;
 }
