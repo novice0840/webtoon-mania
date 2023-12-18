@@ -18,47 +18,60 @@ import { Type, Expose } from 'class-transformer';
 export class WebtoonDetailDTO {
   @IsUUID()
   @Expose()
+  @ApiProperty()
   id: string;
 
   @IsString()
+  @ApiProperty()
   titleId: string;
 
   @IsString()
+  @ApiProperty()
   platform: string;
 
   @IsString()
+  @ApiProperty()
   titleName: string;
 
   @IsFQDN()
+  @ApiProperty()
   thumbnail: string;
 
   @IsInt()
   @Min(0)
+  @ApiProperty()
   interestCount: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
+  @ApiProperty()
   starScore: number;
 
   @IsString()
-  description;
+  @ApiProperty()
+  description: string;
 
   @IsInt()
   @Min(0)
-  viewCount;
+  @ApiProperty()
+  viewCount: number;
 
   @IsInt()
   @Min(0)
-  likeCount;
+  @ApiProperty()
+  likeCount: number;
 
   @IsBoolean()
-  isEnd;
+  @ApiProperty()
+  isEnd: boolean;
 
   @IsFQDN()
-  link;
+  @ApiProperty()
+  link: string;
 
   @IsArray()
+  @ApiProperty()
   genres: string[];
 
   @IsArray()
