@@ -4,6 +4,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { JwtGetCommentGuard } from 'src/guards/getComment.guard';
 import { User } from '../../entity/user.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/decorators/auth.decorator';
 
 @Controller('comment')
 @ApiTags('comment')
@@ -20,6 +21,7 @@ export class CommentController {
   // 내 댓글 보기
   @Get('my')
   @UseGuards(JwtAuthGuard)
+  @Auth()
   getUserComments(@Request() req) {
     return this.commentService.getUserComments(req.user.id);
   }
@@ -27,6 +29,7 @@ export class CommentController {
   // 댓글 쓰기
   @Post('webtoon/:webtoonId')
   @UseGuards(JwtAuthGuard)
+  @Auth()
   createComment(@Body('content') content: string, @Request() req, @Param('webtoonId') webtoonId) {
     return this.commentService.createComment(req.user.id, webtoonId, content);
   }
@@ -34,6 +37,7 @@ export class CommentController {
   // 댓글을 삭제하는 기능 자기 자신의 댓글만 삭제 가능
   @Delete(':commentId')
   @UseGuards(JwtAuthGuard)
+  @Auth()
   deleteComment(@Param('commentId') commentId: string, @Request() req) {
     return this.commentService.deleteComment(req.user.id, commentId);
   }
@@ -41,6 +45,7 @@ export class CommentController {
   // 좋아요 버튼을 눌렀을 때s
   @Post('like/:commentId')
   @UseGuards(JwtAuthGuard)
+  @Auth()
   clickLikeButton(@Param('commentId') commentId: string, @Request() req) {
     return this.commentService.clickLiketButton(req.user.id, commentId);
   }
@@ -48,6 +53,7 @@ export class CommentController {
   // 싫어요 버튼을 눌렀을 때
   @Post('dislike/:commentId')
   @UseGuards(JwtAuthGuard)
+  @Auth()
   clickDislikeButton(@Param('commentId') commentId: string, @Request() req) {
     return this.commentService.clickDislikstButton(req.user.id, commentId);
   }
