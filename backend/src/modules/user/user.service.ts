@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,7 @@ export class UserService {
   async signUp(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     await this.userRepository.save([{ name: createUserDto.name, email: createUserDto.email, hashedPassword }]);
-    return { message: 'user created' };
+    return { statusCode: HttpStatus.CREATED, message: '유저가 생성되었습니다' };
   }
 
   async getUser(userId) {

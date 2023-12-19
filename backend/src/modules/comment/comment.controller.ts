@@ -5,56 +5,58 @@ import { JwtGetCommentGuard } from 'src/guards/getComment.guard';
 import { User } from '../../entity/user.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/decorators/auth.decorator';
+import { UserId } from 'src/decorators/userId.decorator';
+import { ApiOkResponse, ApiCreatedResponse, ApiNoContentResponse } from '@nestjs/swagger';
 
 @Controller('comment')
-@ApiTags('comment')
+@ApiTags('Comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  // 특정 웹툰의 댓글 보기
   @Get('webtoon/:webtoonId')
   @UseGuards(JwtGetCommentGuard)
+  @ApiOkResponse({ description: '특정 웹툰의 댓글 보기 성공' })
   getWebtoonComments(@Param('webtoonId') webtoonId, @Request() req) {
     return this.commentService.getWebtoonComments(webtoonId, req.user);
   }
 
-  // 내 댓글 보기
   @Get('my')
   @UseGuards(JwtAuthGuard)
   @Auth()
-  getUserComments(@Request() req) {
-    return this.commentService.getUserComments(req.user.id);
+  @ApiOkResponse({ description: ' 내 댓글 보기 성공' })
+  getUserComments(@UserId() id) {
+    return this.commentService.getUserComments(id);
   }
 
-  // 댓글 쓰기
   @Post('webtoon/:webtoonId')
   @UseGuards(JwtAuthGuard)
   @Auth()
-  createComment(@Body('content') content: string, @Request() req, @Param('webtoonId') webtoonId) {
-    return this.commentService.createComment(req.user.id, webtoonId, content);
+  @ApiCreatedResponse({ description: '댓글 쓰기 성공' })
+  createComment(@Body('content') content: string, @UserId() id, @Param('webtoonId') webtoonId) {
+    return this.commentService.createComment(id, webtoonId, content);
   }
 
-  // 댓글을 삭제하는 기능 자기 자신의 댓글만 삭제 가능
   @Delete(':commentId')
   @UseGuards(JwtAuthGuard)
   @Auth()
-  deleteComment(@Param('commentId') commentId: string, @Request() req) {
-    return this.commentService.deleteComment(req.user.id, commentId);
+  @ApiNoContentResponse({ description: '댓글 삭제 성공' })
+  deleteComment(@Param('commentId') commentId: string, @UserId() id) {
+    return this.commentService.deleteComment(id, commentId);
   }
 
-  // 좋아요 버튼을 눌렀을 때s
   @Post('like/:commentId')
   @UseGuards(JwtAuthGuard)
   @Auth()
-  clickLikeButton(@Param('commentId') commentId: string, @Request() req) {
-    return this.commentService.clickLiketButton(req.user.id, commentId);
+  @ApiOkResponse({ description: '좋아요 버튼 클릭 성공' })
+  clickLikeButton(@Param('commentId') commentId: string, @UserId() id) {
+    return this.commentService.clickLiketButton(id, commentId);
   }
 
-  // 싫어요 버튼을 눌렀을 때
   @Post('dislike/:commentId')
   @UseGuards(JwtAuthGuard)
   @Auth()
-  clickDislikeButton(@Param('commentId') commentId: string, @Request() req) {
-    return this.commentService.clickDislikstButton(req.user.id, commentId);
+  @ApiOkResponse({ description: '싫어요 버튼 클릭 성공' })
+  clickDislikeButton(@Param('commentId') commentId: string, @UserId() id) {
+    return this.commentService.clickDislikstButton(id, commentId);
   }
 }

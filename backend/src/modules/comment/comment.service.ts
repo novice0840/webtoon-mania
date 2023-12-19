@@ -108,7 +108,7 @@ export class CommentService {
         await this.dislikeRepository.save(newDislike);
       }
     } else {
-      throw new Error('존재하지 않은 감정버튼이 입려되었습니다');
+      throw new Error('존재하지 않은 감정버튼이 입력되었습니다');
     }
     await this.commentRepository.save(commentEntity);
   }
