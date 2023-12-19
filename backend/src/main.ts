@@ -23,6 +23,7 @@ async function bootstrap() {
 
   // app.useGlobalFilters(new AllExceptionsFilter());
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Naver Webtoon Analyzer')
     .setDescription('API description')
     .setVersion('1.0')
