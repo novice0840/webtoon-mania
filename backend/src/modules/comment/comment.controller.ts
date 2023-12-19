@@ -6,7 +6,7 @@ import { User } from '../../entity/user.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/decorators/auth.decorator';
 import { UserId } from 'src/decorators/userId.decorator';
-import { ApiOkResponse, ApiCreatedResponse, ApiNoContentResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 
 @Controller('comment')
 @ApiTags('Comment')
@@ -16,6 +16,7 @@ export class CommentController {
   @Get('webtoon/:webtoonId')
   @UseGuards(JwtGetCommentGuard)
   @ApiOkResponse({ description: '특정 웹툰의 댓글 보기 성공' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 웹툰입니다' })
   getWebtoonComments(@Param('webtoonId') webtoonId, @Request() req) {
     return this.commentService.getWebtoonComments(webtoonId, req.user);
   }
