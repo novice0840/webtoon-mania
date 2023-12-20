@@ -21,9 +21,9 @@ const WebtoonList = () => {
       `${import.meta.env.VITE_API_BASE_URL as string}/webtoon/list${window.location.search}`
     )
       .then((res) => res.json())
-      .then((data: { totalPage: number; page: number; data: WebtoonBaseType[] }) => {
+      .then((data: { info: { totalPage: number; page: number }; data: WebtoonBaseType[] }) => {
         setCurPage(1);
-        setTotalPage(data.totalPage);
+        setTotalPage(data.info.totalPage);
         setWebtoons(data.data);
       });
   }, [platform, genres, dayOfWeeks, isEnd]);
