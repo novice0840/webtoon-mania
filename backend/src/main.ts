@@ -9,6 +9,7 @@ async function bootstrap() {
   initializeTransactionalContext();
   const app = await NestFactory.create(AppModule, {
     cors: true,
+
     snapshot: true,
   });
   app.useGlobalPipes(

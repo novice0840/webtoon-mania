@@ -1,38 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Tooltip, Box } from "@mui/material";
-// import { socket } from "@utils/socket";
+import { socket } from "@utils/socket";
 
 const ChatRoom = () => {
-  // const [isConnected, setIsConnected] = useState(socket.connected);
-  // const [fooEvents, setFooEvents] = useState([]);
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    socket.on("connect", function () {
+      console.log("Connected");
 
-  // useEffect(() => {
-  //   function onConnect() {
-  //     setIsConnected(true);
-  //   }
+      socket.emit("events", { test: "test" });
+      socket.emit("identity", 0, (response: string) => console.log("Identity:", response));
+      socket.emit("room1", "room1 socket test", (response: string) => {
+        console.log("room1 socket response: ", response);
+      });
+    });
+    socket.on("room1", (data) => {
+      console.log("room1: ", data);
+    });
+    socket.on("room2", (data) => {
+      console.log("room2", data);
+    });
+    socket.on("events", function (data) {
+      console.log("event", data);
+    });
+    socket.on("exception", function (data) {
+      console.log("event", data);
+    });
+    socket.on("disconnect", function () {
+      console.log("Disconnected");
+    });
+    socket.on("connect", () => {
+      console.log("connect");
+    });
+  }, []);
 
-  //   function onDisconnect() {
-  //     setIsConnected(false);
-  //   }
+  const handleSubmt = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(message);
+  };
 
-  //   function onFooEvent(value: string) {
-  //     setFooEvents([value]);
-  //   }
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
 
-  //   socket.on("connect", onConnect);
-  //   socket.on("disconnect", onDisconnect);
-  //   socket.on("foo", onFooEvent);
-
-  //   return () => {
-  //     socket.off("connect", onConnect);
-  //     socket.off("disconnect", onDisconnect);
-  //     socket.off("foo", onFooEvent);
-  //   };
-  // }, []);
   return (
     <Tooltip title="ChatRoom" placement="right-end">
       <Box>
-        <div className="App">hello, world</div>
+        <form action="" onSubmit={handleSubmt}>
+          <input type="text" name="" id="" onChange={handleChange} value={message} />
+          <input type="button" value="" />
+        </form>
       </Box>
     </Tooltip>
   );

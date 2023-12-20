@@ -1,5 +1,5 @@
 import { Container, Box } from "@mui/material";
-import { Header, WebtoonDetail, CommentBox } from "@src/components";
+import { Header, WebtoonDetail, CommentBox, ChatRoom } from "@src/components";
 
 const WebtoonPage = () => {
   return (
@@ -15,6 +15,7 @@ const WebtoonPage = () => {
           <CommentBox />
         </Box>
       </Container>
+      <ChatRoom />
     </Container>
   );
 };

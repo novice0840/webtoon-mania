@@ -16,6 +16,7 @@ import { ApiConfigService } from './shared/services/api-config.service';
 
 @Module({
   imports: [
+    ChattingModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development', '.env.production'],
       isGlobal: true,
@@ -35,7 +36,6 @@ import { ApiConfigService } from './shared/services/api-config.service';
     WebtoonModule,
     CronjobModule,
     AuthModule,
-    ChattingModule,
     UserModule,
     CommentModule,
     CrawlerModule,
