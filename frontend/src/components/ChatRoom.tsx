@@ -7,36 +7,19 @@ const ChatRoom = () => {
   useEffect(() => {
     socket.on("connect", function () {
       console.log("Connected");
-
-      socket.emit("events", { test: "test" });
-      socket.emit("identity", 0, (response: string) => console.log("Identity:", response));
-      socket.emit("room1", "room1 socket test", (response: string) => {
-        console.log("room1 socket response: ", response);
-      });
-    });
-    socket.on("room1", (data) => {
-      console.log("room1: ", data);
-    });
-    socket.on("room2", (data) => {
-      console.log("room2", data);
-    });
-    socket.on("events", function (data) {
-      console.log("event", data);
-    });
-    socket.on("exception", function (data) {
-      console.log("event", data);
     });
     socket.on("disconnect", function () {
       console.log("Disconnected");
     });
-    socket.on("connect", () => {
-      console.log("connect");
+    socket.on("room1", (data) => {
+      console.log("room1: ", data);
     });
   }, []);
 
   const handleSubmt = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(message);
+    socket.emit("room1", message);
+    setMessage("");
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +31,7 @@ const ChatRoom = () => {
       <Box>
         <form action="" onSubmit={handleSubmt}>
           <input type="text" name="" id="" onChange={handleChange} value={message} />
-          <input type="button" value="" />
+          <input type="submit" value="" />
         </form>
       </Box>
     </Tooltip>

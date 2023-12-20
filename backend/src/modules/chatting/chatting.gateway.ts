@@ -24,7 +24,7 @@ export class ChattingGateway {
 
   @SubscribeMessage('room1')
   async getMessage(@MessageBody() data) {
-    this.server.emit('room2', data);
+    this.server.emit('room1', data);
     return data;
   }
 }
