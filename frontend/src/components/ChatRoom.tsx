@@ -1,8 +1,11 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Tooltip, Box } from "@mui/material";
 import { socket } from "@utils/socket";
+import { useParams } from "react-router-dom";
 
 const ChatRoom = () => {
+  const { webtoonId = "" } = useParams();
+
   const [message, setMessage] = useState("");
   useEffect(() => {
     socket.on("connect", function () {
@@ -14,11 +17,18 @@ const ChatRoom = () => {
     socket.on("room1", (data) => {
       console.log("room1: ", data);
     });
+    socket.on("roomName", (data) => {
+      console.log("room1: ", data);
+    });
+    socket.on(webtoonId, (data) => {
+      console.log(`${webtoonId}: `, data);
+    });
   }, []);
 
   const handleSubmt = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     socket.emit("room1", message);
+    socket.emit(webtoonId, message);
     setMessage("");
   };
 
