@@ -14,6 +14,11 @@ export class ChattingGateway {
   @WebSocketServer()
   server: Server;
 
+  @SubscribeMessage('connect')
+  async connect() {
+    console.log('connected');
+  }
+
   @SubscribeMessage('room1')
   async getMessage(@MessageBody() data) {
     this.server.emit('room1', data);
