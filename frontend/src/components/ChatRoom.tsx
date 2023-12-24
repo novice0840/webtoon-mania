@@ -5,30 +5,26 @@ import { useParams } from "react-router-dom";
 
 const ChatRoom = () => {
   const { webtoonId = "" } = useParams();
-
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+
   useEffect(() => {
-    socket.on("connect", function () {
-      console.log("Connected");
+    socket.on("message", (data: string) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
-    socket.on("disconnect", function () {
-      console.log("Disconnected");
-    });
-    socket.on("room1", (data) => {
-      console.log("room1: ", data);
-    });
-    socket.on("roomName", (data) => {
-      console.log("room1: ", data);
-    });
-    socket.on(webtoonId, (data) => {
-      console.log(`${webtoonId}: `, data);
-    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
-  const handleSubmt = (e: FormEvent<HTMLFormElement>) => {
+  const handleJoinRoom = () => {
+    socket.emit("joinRoom", { room: webtoonId });
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit("room1", message);
-    socket.emit(webtoonId, message);
+    socket.emit("sendMessage", { room: webtoonId, message });
     setMessage("");
   };
 
@@ -39,7 +35,7 @@ const ChatRoom = () => {
   return (
     <Tooltip title="ChatRoom" placement="right-end">
       <Box>
-        <form action="" onSubmit={handleSubmt}>
+        <form action="" onSubmit={handleSubmit}>
           <input type="text" name="" id="" onChange={handleChange} value={message} />
           <input type="submit" value="" />
         </form>
