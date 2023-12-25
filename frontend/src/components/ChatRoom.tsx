@@ -5,42 +5,61 @@ import { useParams } from "react-router-dom";
 
 const ChatRoom = () => {
   const { webtoonId = "" } = useParams();
+  const [room, setRoom] = useState(webtoonId);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+
+  const onConnect = () => {
+    console.log("Socket io connected");
+  };
+
+  const onDisconnect = () => {
+    console.log("Socket io disconnected");
+  };
 
   useEffect(() => {
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
     socket.on("message", (data: string) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+      console.log(data);
     });
 
     return () => {
-      socket.disconnect();
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
     };
   }, []);
 
   const handleJoinRoom = () => {
-    socket.emit("joinRoom", { room: webtoonId });
+    socket.emit("joinRoom", { room });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    socket.emit("sendMessage", { room: webtoonId, message });
-    setMessage("");
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
+  const handleMessageSend = () => {
+    socket.emit("sendMessage", { room, message });
   };
 
   return (
-    <Tooltip title="ChatRoom" placement="right-end">
-      <Box>
-        <form action="" onSubmit={handleSubmit}>
-          <input type="text" name="" id="" onChange={handleChange} value={message} />
-          <input type="submit" value="" />
-        </form>
-      </Box>
-    </Tooltip>
+    <div>
+      <h1>Chat App</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter room name"
+          value={room}
+          onChange={(e) => setRoom(e.target.value)}
+        />
+        <button onClick={handleJoinRoom}>Join Room</button>
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter your message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button onClick={handleMessageSend}>Send Message</button>
+      </div>
+    </div>
   );
 };
 

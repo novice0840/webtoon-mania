@@ -35,7 +35,8 @@ export class ChattingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage('sendMessage')
-  handleMessage(client: Socket, payload: { room: string; message: string }) {
-    this.server.to(payload.room).emit('message', { sender: client.id, message: payload.message });
+  handleMessage(@MessageBody('room') room, @MessageBody('message') message) {
+    // this.server.emit('message', message);
+    this.server.to(room).emit('message', { message });
   }
 }
