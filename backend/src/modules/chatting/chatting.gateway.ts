@@ -36,7 +36,6 @@ export class ChattingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('sendMessage')
   handleMessage(@MessageBody('room') room, @MessageBody('message') message) {
-    // this.server.emit('message', message);
     this.server.to(room).emit('message', { message });
   }
 }

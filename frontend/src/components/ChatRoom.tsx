@@ -20,8 +20,8 @@ const ChatRoom = () => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
 
-    socket.on("message", (data: string) => {
-      console.log(data);
+    socket.on("message", (data: { message: string }) => {
+      console.log(data.message);
     });
 
     return () => {
