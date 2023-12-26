@@ -16,17 +16,20 @@ const ChatRoom = () => {
     console.log("Socket io disconnected");
   };
 
+  const onMessage = (data: { clientId: string; message: string }) => {
+    console.log(`${data.clientId}: ${data.message}`);
+  };
+
   useEffect(() => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
 
-    socket.on("message", (data: { message: string }) => {
-      console.log(data.message);
-    });
+    socket.on("message", onMessage);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("message", onMessage);
     };
   }, []);
 

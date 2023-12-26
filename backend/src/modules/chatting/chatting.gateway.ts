@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -35,7 +36,8 @@ export class ChattingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage('sendMessage')
-  handleMessage(@MessageBody('room') room, @MessageBody('message') message) {
-    this.server.to(room).emit('message', { message });
+  handleMessage(@ConnectedSocket() client: Socket, @MessageBody('room') room, @MessageBody('message') message) {
+    console.log('get message', message);
+    this.server.to(room).emit('message', { message, clientId: client.id });
   }
 }
