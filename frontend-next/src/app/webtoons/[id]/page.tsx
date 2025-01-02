@@ -1,4 +1,7 @@
-export default async function WebtoonDetail({
+import WebtoonDetail from "./components/WebtoonDetail";
+import Aside from "./components/Aside";
+
+export default async function WebtoonPage({
   params,
 }: {
   params: { id: string };
@@ -6,9 +9,9 @@ export default async function WebtoonDetail({
   const { id } = await params;
 
   return (
-    <div>
-      <h1>Webtoon Detail Page</h1>
-      <p>Webtoon ID: {id}</p>
+    <div className="mx-auto flex max-w-4xl justify-between gap-4">
+      <WebtoonDetail />
+      <Aside />
     </div>
   );
 }

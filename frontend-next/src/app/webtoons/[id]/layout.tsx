@@ -3,10 +3,5 @@ export default function WebtoonsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div>
-      <h1>Webtoons Layout</h1>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 }

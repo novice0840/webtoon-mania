@@ -2,12 +2,15 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import SearchForm from "./SearchForm";
+import Link from "next/link";
 
 const Header = () => {
   return (
     <header className="flex h-24 min-w-96 items-center justify-between gap-4">
       <div className="hidden flex-shrink-0 sm:block">
-        <Image src="/logo.svg" alt="logo" width={96} height={96} />
+        <Link href="/">
+          <Image src="/logo.svg" alt="logo" width={96} height={96} />
+        </Link>
       </div>
       <div className="basis-144">
         <SearchForm />
