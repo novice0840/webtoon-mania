@@ -16,7 +16,7 @@ const SearchForm = () => {
   return (
     <form onSubmit={handleSubmit} className="flex gap-4">
       <Input name="search" placeholder="검색" />
-      <Button>확인</Button>
+      <Button variant="outline">검색</Button>
     </form>
   );
 };

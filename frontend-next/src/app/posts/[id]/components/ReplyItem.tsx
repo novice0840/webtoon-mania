@@ -1,12 +1,12 @@
+import React from "react";
 import Image from "next/image";
-import Reply from "./Reply";
 import CommentFooter from "./CommentFooter";
 
-const CommentItem = () => {
+const ReplyItem = () => {
   return (
     <div className="flex">
       <div>
-        <Image src="/logo.svg" alt="프로필" width={40} height={40} />
+        <Image src="/logo.svg" alt="프로필" width={24} height={24} />
       </div>
       <div className="flex-1">
         <div>
@@ -20,7 +20,6 @@ const CommentItem = () => {
           pariatur consequuntur vitae.
         </p>
         <CommentFooter />
-        <Reply />
       </div>
       <div>
         <div title="더보기" className="cursor-pointer">
@@ -31,4 +30,4 @@ const CommentItem = () => {
   );
 };
 
-export default CommentItem;
+export default ReplyItem;
