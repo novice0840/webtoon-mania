@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const Aside = () => {
   return (
-    <div className="w-64">
+    <aside className="hidden w-64 lg:block">
       <div>이 작가의 또 다른 작품 </div>
       <ul>
         <li className="flex items-center gap-1">
@@ -14,7 +14,7 @@ const Aside = () => {
           </div>
         </li>
       </ul>
-    </div>
+    </aside>
   );
 };
 

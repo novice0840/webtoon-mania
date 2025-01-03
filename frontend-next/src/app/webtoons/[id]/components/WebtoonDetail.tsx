@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const WebtoonDetail = () => {
   return (
-    <div className="flex flex-1 gap-2">
+    <div className="flex gap-2">
       <Image src="/logo.svg" alt="webtoon" width={150} height={150} />
       <div className="flex flex-col gap-1">
         <h1>웹툰 제목</h1>

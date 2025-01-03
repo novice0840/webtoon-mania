@@ -1,5 +1,6 @@
 import WebtoonDetail from "./components/WebtoonDetail";
 import Aside from "./components/Aside";
+import WebtoonPostList from "./components/WebtoonPostList";
 
 export default async function WebtoonPage({
   params,
@@ -10,7 +11,10 @@ export default async function WebtoonPage({
 
   return (
     <div className="mx-auto flex max-w-4xl justify-between gap-4">
-      <WebtoonDetail />
+      <main className="flex flex-1 flex-col gap-8">
+        <WebtoonDetail />
+        <WebtoonPostList />
+      </main>
       <Aside />
     </div>
   );
