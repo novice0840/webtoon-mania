@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const PostItem = () => {
   return (
-    <Card className="max-w-xl">
+    <Card>
       <CardHeader>
         <CardTitle className="flex justify-between">
           <div className="flex items-center gap-2">
