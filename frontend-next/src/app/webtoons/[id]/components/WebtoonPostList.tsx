@@ -7,7 +7,7 @@ const WebtoonPostList = () => {
   return (
     <ul>
       {Array.from({ length: 10 }).map((_, index) => (
-        <li key={index}>
+        <li key={index} className="mb-4">
           <WebtoonPostItem />
         </li>
       ))}

@@ -16,15 +16,15 @@ const WebtoonPostForm = () => {
           e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
         }}
       />
-      <div>
-        <div>
-          <div title="이미지">
+      <div className="flex items-center justify-between p-4">
+        <div className="flex gap-4">
+          <div title="이미지" className="cursor-pointer">
             <Image src="/image.svg" alt="이미지" width={20} height={20} />
           </div>
-          <div title="투표">
+          <div title="투표" className="cursor-pointer">
             <Image src="/select.svg" alt="투표" width={20} height={20} />
           </div>
-          <div title="동영상">
+          <div title="동영상" className="cursor-pointer">
             <Image src="/video.svg" alt="동영상" width={20} height={20} />
           </div>
         </div>
