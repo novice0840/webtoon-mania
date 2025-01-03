@@ -4,18 +4,11 @@ import CommentItem from "./CommentItem";
 const CommentList = () => {
   return (
     <ul>
-      <li>
-        <CommentItem />
-      </li>
-      <li>
-        <CommentItem />
-      </li>
-      <li>
-        <CommentItem />
-      </li>
-      <li>
-        <CommentItem />
-      </li>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <li className="mt-4" key={index}>
+          <CommentItem />
+        </li>
+      ))}
     </ul>
   );
 };
