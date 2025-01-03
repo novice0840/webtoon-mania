@@ -1,18 +1,18 @@
 "use client";
 
 import React from "react";
-import WebtoonPostItem from "./WebtoonPostItem";
+import PostItem from "@/app/components/PostItem";
 
-const WebtoonPostList = () => {
+const PostList = () => {
   return (
     <ul>
       {Array.from({ length: 10 }).map((_, index) => (
         <li key={index} className="mb-4">
-          <WebtoonPostItem />
+          <PostItem />
         </li>
       ))}
     </ul>
   );
 };
 
-export default WebtoonPostList;
+export default PostList;

@@ -5,7 +5,7 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-const WebtoonPostForm = () => {
+const PostForm = () => {
   return (
     <form>
       <Textarea
@@ -34,4 +34,4 @@ const WebtoonPostForm = () => {
   );
 };
 
-export default WebtoonPostForm;
+export default PostForm;

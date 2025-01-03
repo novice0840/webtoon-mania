@@ -9,10 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-const WebtoonPostItem = () => {
+const PostItem = () => {
   return (
-    <Card>
+    <Card className="max-w-xl">
       <CardHeader>
         <CardTitle className="flex justify-between">
           <div className="flex items-center gap-2">
@@ -42,13 +43,15 @@ const WebtoonPostItem = () => {
           <Image src="/dislike.svg" alt="싫어요" width={20} height={20} />
           <span>1.4K</span>
         </Button>
-        <Button size="sm" variant="secondary" title="댓글">
-          <Image src="/chat.svg" alt="댓글" width={20} height={20} />
-          <span>1.4K</span>
+        <Button asChild size="sm" variant="secondary" title="댓글">
+          <Link href="/posts/1">
+            <Image src="/chat.svg" alt="댓글" width={20} height={20} />
+            <span>1.4K</span>
+          </Link>
         </Button>
       </CardFooter>
     </Card>
   );
 };
 
-export default WebtoonPostItem;
+export default PostItem;
