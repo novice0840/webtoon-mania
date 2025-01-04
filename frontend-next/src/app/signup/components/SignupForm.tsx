@@ -16,21 +16,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "이메일 형식이 올바르지 않습니다",
-  }),
-  password: z.string().min(8, {
-    message: "비밀번호는 8자 이상이어야 합니다",
-  }),
-});
+const formSchema = z
+  .object({
+    email: z.string().email({
+      message: "이메일 형식이 올바르지 않습니다",
+    }),
+    password: z.string().min(8, {
+      message: "비밀번호는 8자 이상이어야 합니다",
+    }),
+    passwordConform: z.string(),
+  })
+  .refine((data) => data.password === data.passwordConform, {
+    path: ["passwordConform"],
+    message: "비밀번호가 일치하지 않습니다",
+  });
 
-const SigninForm = () => {
+const SignupForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
+      passwordConform: "",
     },
   });
 
@@ -73,10 +80,27 @@ const SigninForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">로그인</Button>
+        <FormField
+          control={form.control}
+          name="passwordConform"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>비밀번호 확인</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="비밀번호를 다시 한번 입력하세요"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">회원가입</Button>
       </form>
     </Form>
   );
 };
 
-export default SigninForm;
+export default SignupForm;
