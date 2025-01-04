@@ -9,7 +9,7 @@ const WebtoonDetail = () => {
         <h1>웹툰 제목</h1>
         <div className="text-sm">작가명</div>
         <div className="text-sm">네이버</div>
-        <div>
+        <div className="flex gap-2">
           <span className="text-xs">장르1</span>
           <span className="text-xs">장르2</span>
           <span className="text-xs">장르3</span>

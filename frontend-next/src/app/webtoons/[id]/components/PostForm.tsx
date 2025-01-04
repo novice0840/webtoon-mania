@@ -24,8 +24,8 @@ const PostForm = () => {
           <div title="투표" className="cursor-pointer">
             <Image src="/select.svg" alt="투표" width={20} height={20} />
           </div>
-          <div title="동영상" className="cursor-pointer">
-            <Image src="/video.svg" alt="동영상" width={20} height={20} />
+          <div title="GIF" className="cursor-pointer">
+            <Image src="/video.svg" alt="GIF" width={20} height={20} />
           </div>
         </div>
         <Button>등록</Button>
