@@ -16,8 +16,12 @@ const Header = () => {
         <SearchForm />
       </div>
       <div className="flex gap-4">
-        <Button variant="outline">로그인</Button>
-        <Button variant="outline">회원가입</Button>
+        <Button variant="outline" asChild>
+          <Link href="/signin">로그인</Link>
+        </Button>
+        <Button variant="outline">
+          <Link href="/signup">회원가입</Link>
+        </Button>
       </div>
     </header>
   );
