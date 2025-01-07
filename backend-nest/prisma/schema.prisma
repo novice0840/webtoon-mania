@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,10 +8,31 @@ datasource db {
 }
 
 
+model Webtoon {
+  id        String    @id   @default(uuid())
+  title     String
+  writer    String
+  illustrator String
+  genre String
+  platform  String
+  synopsis String?
+  thumbnailURL String?
+}
+
+model Review {
+  id         String    @id   @default(uuid())
+  content   String
+  rating    Int
+  webtoon   Webtoon  @relation(fields: [webtoonId], references: [id])
+  webtoonId String
+}
+
+
 model User {
   id    Int     @default(autoincrement()) @id
   email String  @unique
   name  String?
+  sample String?
   posts Post[]
 }
 
@@ -28,4 +43,10 @@ model Post {
   published Boolean? @default(false)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+}
+
+model Sample {
+  id    Int     @default(autoincrement()) @id
+  name  String?
+  userId Int?
 }
