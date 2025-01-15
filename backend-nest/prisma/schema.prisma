@@ -14,9 +14,23 @@ model Webtoon {
   writer    String
   illustrator String
   genre String
-  platform  String
+  platform  Platform  @relation(fields: [platformId], references: [id])
+  platformId String
   synopsis String?
   thumbnailURL String?
+  reivews Review[]
+  posts Post[]
+  chats Chat[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Platform {
+  id        String    @id   @default(uuid())
+  name      String
+  webtoons  Webtoon[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model Review {
@@ -25,28 +39,54 @@ model Review {
   rating    Int
   webtoon   Webtoon  @relation(fields: [webtoonId], references: [id])
   webtoonId String
-}
-
-
-model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  sample String?
-  posts Post[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model Post {
-  id        Int      @default(autoincrement()) @id
-  title     String
+  id        String      @default(uuid()) @id
   content   String?
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  webtoon   Webtoon  @relation(fields: [webtoonId], references: [id])
+  webtoonId String
+  comments Comment[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
-model Sample {
-  id    Int     @default(autoincrement()) @id
-  name  String?
-  userId Int?
+model Comment {
+  id        String      @default(uuid()) @id
+  content   String
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post        @relation(fields: [postId], references: [id])
+  postId    String
+  parent    Comment?    @relation("CommentToReply", fields: [parentId], references: [id])
+  parentId  String?
+  replies   Comment[]   @relation("CommentToReply")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
+
+model Chat {
+  id        String      @default(uuid()) @id
+  content   String
+  webtoon   Webtoon      @relation(fields: [webtoonId], references: [id])
+  webtoonId String
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+model User {
+  id         String    @id   @default(uuid())
+  email String  @unique
+  name  String?
+  posts Post[]
+  comments Comment[]
+  chats Chat[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
