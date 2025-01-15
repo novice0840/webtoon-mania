@@ -5,4 +5,6 @@ model Bookmark {
   webtoon   Webtoon    @relation(fields: [webtoonId], references: [id])
   webtoonId String
   createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
 }

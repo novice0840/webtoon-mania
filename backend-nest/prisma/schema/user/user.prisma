@@ -11,4 +11,5 @@ model User {
   dislikes Dislike[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
 }

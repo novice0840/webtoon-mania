@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaService } from './prisma.service';
-import { PostService } from './post.service';
-import { UserService } from './user.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { WebtoonModule } from './modules/webtoon/webtoon.module';
+import { PrismaModule } from 'prisma/prisma.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService, PrismaService, PostService, UserService],
+  imports: [WebtoonModule, PrismaModule, ScheduleModule.forRoot()],
 })
 export class AppModule {}
