@@ -1,11 +1,23 @@
 import Fetch from './fetch';
 import { KMAS_WEBTOONLIST_BASE_URL } from '../constants/api';
 
-export const crawlingWebtoons = async (platform: string, prvKey: string) => {
+interface Webtoon {
+  title: string;
+  writer: string;
+  illustrator: string;
+  genre: string;
+  platform: string;
+  thumbnailURL: string;
+}
+
+export const crawlingWebtoons = async (
+  platform: string,
+  prvKey: string,
+): Promise<Webtoon[]> => {
   const params = {
     prvKey,
     pltfomCdNm: platform,
-    viewItemCount: 100,
+    viewItemCnt: 100,
     pageNo: 0,
   };
 
@@ -29,8 +41,12 @@ export const crawlingWebtoons = async (platform: string, prvKey: string) => {
         genre: item.mainGenreCdNm,
         platform: item.pltfomCdNm,
         thumbnailURL: item.imageDownloadUrl,
+        synopsis: item.outline
+          .replaceAll('\r', '')
+          .replaceAll('\n', '')
+          .replaceAll('\t', ''),
       }));
-
+    console.log(pageWebtoons.length, 'webtoons crawled from', platform);
     allWebtoons.push(...pageWebtoons);
   }
 

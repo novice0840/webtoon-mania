@@ -4,7 +4,7 @@ model Webtoon {
   writer    String
   illustrator String
   genre String
-  synopsis String
+  synopsis String? @db.Text
   thumbnailURL String
   platforms    WebtoonPlatform[]  
   reivews Review[]
