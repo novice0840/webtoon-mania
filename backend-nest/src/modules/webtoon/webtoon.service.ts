@@ -1,14 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { PrismaService } from 'prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
+
+import { PrismaService } from 'src/prisma/prisma.service';
+import { crawlingWebtoons } from 'src/common/utils/crawling';
 
 @Injectable()
 export class WebtoonService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async getAllWebtoons() {
     try {
-      const response = await fetch('https://example.com/api/webtoons');
+      const webtoons = await crawlingWebtoons(
+        '네이버웹툰',
+        this.configService.get('KMAS_API_KEY'),
+      );
+      console.log(webtoons);
     } catch (error) {}
     return this.prisma.webtoon.findMany();
   }
