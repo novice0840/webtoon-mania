@@ -46,9 +46,12 @@ export const crawlingWebtoons = async (
           .replaceAll('\n', '')
           .replaceAll('\t', ''),
       }));
-    console.log(pageWebtoons.length, 'webtoons crawled from', platform);
     allWebtoons.push(...pageWebtoons);
   }
-
+  console.log(
+    platform,
+    allWebtoons.length,
+    allWebtoons.filter((w) => w.title.includes('외모지상주의')),
+  );
   return allWebtoons;
 };

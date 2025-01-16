@@ -57,7 +57,7 @@ export class WebtoonService {
             },
           },
         });
-
+        console.log(webtoon.title, 'Existing webtoon:', existingWebtoon.title);
         if (existingWebtoon) {
           const isPlatformIncluded = existingWebtoon.platforms.some(
             (p) => p.platform.name === webtoon.platform,
