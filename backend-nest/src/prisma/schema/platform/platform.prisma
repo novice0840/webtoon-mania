@@ -1,7 +1,7 @@
 model Platform {
   id        String    @id   @default(uuid())
   name      String
-  webtoons  Webtoon[]
+  webtoons  WebtoonPlatform[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime?

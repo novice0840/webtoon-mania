@@ -1,14 +1,14 @@
 class Fetch {
   static async get(url: string, params = {}, options: any = {}) {
-    return await this.request(url, { ...options, method: 'GET' });
+    return await this.request(url, params, { ...options, method: 'GET' });
   }
 
   static async post(url: string, params = {}, options: any = {}) {
-    return await this.request(url, { ...options, method: 'POST' });
+    return await this.request(url, params, { ...options, method: 'POST' });
   }
 
   static async put(url: string, params = {}, options: any = {}) {
-    return await this.request(url, { ...options, method: 'PUT' });
+    return await this.request(url, params, { ...options, method: 'PUT' });
   }
 
   static async delete(url: string, params = {}, options: any = {}) {

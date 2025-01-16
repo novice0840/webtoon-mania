@@ -4,10 +4,9 @@ model Webtoon {
   writer    String
   illustrator String
   genre String
-  platform  Platform  @relation(fields: [platformId], references: [id])
-  platformId String
-  synopsis String?
-  thumbnailURL String?
+  synopsis String
+  thumbnailURL String
+  platforms    WebtoonPlatform[]  
   reivews Review[]
   posts Post[]
   chats Chat[]
