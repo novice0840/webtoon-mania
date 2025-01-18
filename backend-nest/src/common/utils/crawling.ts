@@ -10,6 +10,25 @@ interface Webtoon {
   thumbnailURL: string;
 }
 
+const getWebtoonTotalCount = async (url, params) => {
+  const response = await Fetch.get(url, params);
+  const totalCount = parseInt(response.result.totalCount);
+  return totalCount;
+};
+
+const transformWebtoonData = (item) => ({
+  title: item.title,
+  writer: item.sntncWritrNm,
+  illustrator: item.pictrWritrNm,
+  genre: item.mainGenreCdNm,
+  platform: item.pltfomCdNm,
+  thumbnailURL: item.imageDownloadUrl,
+  synopsis: item.outline
+    .replaceAll('\r', '')
+    .replaceAll('\n', '')
+    .replaceAll('\t', ''),
+});
+
 export const crawlingWebtoons = async (
   platform: string,
   prvKey: string,
@@ -21,8 +40,10 @@ export const crawlingWebtoons = async (
     pageNo: 0,
   };
 
-  const firstPageResponse = await Fetch.get(KMAS_WEBTOONLIST_BASE_URL, params);
-  const totalCount = parseInt(firstPageResponse.result.totalCount);
+  const totalCount = await getWebtoonTotalCount(
+    KMAS_WEBTOONLIST_BASE_URL,
+    params,
+  );
 
   const allWebtoons = [];
 
@@ -33,18 +54,7 @@ export const crawlingWebtoons = async (
 
     const pageWebtoons = pageResponse.itemList
       .filter((item) => item.ageGradCdNm !== '19세 이상')
-      .map((item) => ({
-        title: item.title,
-        writer: item.sntncWritrNm,
-        illustrator: item.pictrWritrNm,
-        genre: item.mainGenreCdNm,
-        platform: item.pltfomCdNm,
-        thumbnailURL: item.imageDownloadUrl,
-        synopsis: item.outline
-          .replaceAll('\r', '')
-          .replaceAll('\n', '')
-          .replaceAll('\t', ''),
-      }));
+      .map(transformWebtoonData);
     allWebtoons.push(...pageWebtoons);
   }
   return allWebtoons;

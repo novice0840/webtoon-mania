@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 import { crawlingWebtoons } from 'src/common/utils/crawling';
-import { Platform } from 'src/types/webtoon';
+import { PLATFORMS } from 'src/common/constants/webtoon';
 
 @Injectable()
 export class WebtoonService {
@@ -15,27 +15,8 @@ export class WebtoonService {
 
   async getAllWebtoons() {
     try {
-      const platforms = [
-        '네이버웹툰',
-        '다음웹툰',
-        '카카오페이지',
-        '레진코믹스',
-        '코미코',
-        '네이버시리즈',
-        '북큐브',
-        '미스터블루',
-        '네이트툰앤북',
-        '원스토리',
-        '피너툰',
-        '조아라',
-        '짱만화',
-        '봄툰',
-        '탑툰',
-        '무툰',
-      ];
-
       const crawlingResults = await Promise.allSettled(
-        platforms.map((platform) =>
+        PLATFORMS.map((platform) =>
           crawlingWebtoons(platform, this.configService.get('KMAS_API_KEY')),
         ),
       );
