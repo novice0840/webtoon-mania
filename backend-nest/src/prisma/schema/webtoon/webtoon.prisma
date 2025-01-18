@@ -3,9 +3,9 @@ model Webtoon {
   title     String
   writer    String
   illustrator String
-  genre String
+  genre String?
   synopsis String? @db.Text
-  thumbnailURL String
+  thumbnailURL String? @default("")
   platforms    WebtoonPlatform[]  
   reivews Review[]
   posts Post[]

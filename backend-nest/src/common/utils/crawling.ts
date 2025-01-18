@@ -22,13 +22,12 @@ export const crawlingWebtoons = async (
   };
 
   const firstPageResponse = await Fetch.get(KMAS_WEBTOONLIST_BASE_URL, params);
-  const totalPage = Math.ceil(
-    parseInt(firstPageResponse.result.totalCount) / 100,
-  );
+  const totalCount = parseInt(firstPageResponse.result.totalCount);
 
   const allWebtoons = [];
 
-  for (let pageNo = 0; pageNo < totalPage; pageNo++) {
+  // 만화진흥원의 API는 totalCount와 페이지 수가 같음
+  for (let pageNo = 0; pageNo < totalCount; pageNo += 100) {
     params.pageNo = pageNo;
     const pageResponse = await Fetch.get(KMAS_WEBTOONLIST_BASE_URL, params);
 
@@ -48,10 +47,5 @@ export const crawlingWebtoons = async (
       }));
     allWebtoons.push(...pageWebtoons);
   }
-  console.log(
-    platform,
-    allWebtoons.length,
-    allWebtoons.filter((w) => w.title.includes('외모지상주의')),
-  );
   return allWebtoons;
 };
