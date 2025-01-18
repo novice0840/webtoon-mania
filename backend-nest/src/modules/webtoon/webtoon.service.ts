@@ -13,75 +13,94 @@ export class WebtoonService {
     private readonly configService: ConfigService,
   ) {}
 
+  private async crawlingAllWebtoons() {
+    const crawlingResults = await Promise.allSettled(
+      PLATFORMS.map((platform) =>
+        crawlingWebtoons(platform, this.configService.get('KMAS_API_KEY')),
+      ),
+    );
+
+    return crawlingResults
+      .filter((result) => result.status === 'fulfilled')
+      .flatMap((result) => result.value);
+  }
+
+  private async getWebtoon(title, writer, illustrator) {
+    return this.prisma.webtoon.findFirst({
+      where: {
+        title,
+        writer,
+        illustrator,
+      },
+      include: {
+        platforms: {
+          include: {
+            platform: true,
+          },
+        },
+      },
+    });
+  }
+
+  private async addNewPlatform(webtoonId, platform) {
+    return this.prisma.webtoonPlatform.create({
+      data: {
+        webtoon: {
+          connect: {
+            id: webtoonId,
+          },
+        },
+        platform: {
+          connectOrCreate: {
+            where: { name: platform },
+            create: { name: platform },
+          },
+        },
+      },
+    });
+  }
+
+  private async createNewWebtoon(webtoon) {
+    const { platform, ...webtoonData } = webtoon;
+    await this.prisma.webtoon.create({
+      data: {
+        ...webtoonData,
+        platforms: {
+          create: {
+            platform: {
+              connectOrCreate: {
+                where: { name: platform },
+                create: { name: platform },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async getAllWebtoons() {
     try {
-      const crawlingResults = await Promise.allSettled(
-        PLATFORMS.map((platform) =>
-          crawlingWebtoons(platform, this.configService.get('KMAS_API_KEY')),
-        ),
-      );
-
-      const allWebtoons = crawlingResults
-        .filter((result) => result.status === 'fulfilled')
-        .flatMap((result: any) => result.value);
+      const allWebtoons = await this.crawlingAllWebtoons();
 
       allWebtoons.forEach(async (webtoon) => {
         try {
-          const existingWebtoon = await this.prisma.webtoon.findFirst({
-            where: {
-              title: webtoon.title,
-              writer: webtoon.writer,
-              illustrator: webtoon.illustrator,
-            },
-            include: {
-              platforms: {
-                include: {
-                  platform: true,
-                },
-              },
-            },
-          });
+          const existingWebtoon = await this.getWebtoon(
+            webtoon.title,
+            webtoon.writer,
+            webtoon.illustrator,
+          );
 
           if (existingWebtoon) {
             const isPlatformIncluded = existingWebtoon.platforms.some(
               (p) => p.platform.name === webtoon.platform,
             );
             if (isPlatformIncluded) return;
-
-            await this.prisma.webtoonPlatform.create({
-              data: {
-                webtoon: {
-                  connect: {
-                    id: existingWebtoon.id,
-                  },
-                },
-                platform: {
-                  connectOrCreate: {
-                    where: { name: webtoon.platform },
-                    create: { name: webtoon.platform },
-                  },
-                },
-              },
-            });
+            await this.addNewPlatform(existingWebtoon.id, webtoon.platform);
             return;
           }
 
-          const { platform, ...webtoonData } = webtoon;
-          await this.prisma.webtoon.create({
-            data: {
-              ...webtoonData,
-              platforms: {
-                create: {
-                  platform: {
-                    connectOrCreate: {
-                      where: { name: platform },
-                      create: { name: platform },
-                    },
-                  },
-                },
-              },
-            },
-          });
+          await this.createNewWebtoon(webtoon);
           console.log(`Processed webtoon: ${webtoon.title}`);
         } catch (error) {
           console.error(`Failed to process webtoon: ${webtoon.title}`, error);
