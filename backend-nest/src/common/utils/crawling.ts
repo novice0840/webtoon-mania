@@ -44,14 +44,12 @@ export const crawlingWebtoons = async (
     KMAS_WEBTOONLIST_BASE_URL,
     params,
   );
-
   const allWebtoons = [];
 
   // 만화진흥원의 API는 totalCount와 페이지 수가 같음
   for (let pageNo = 0; pageNo < totalCount; pageNo += 100) {
     params.pageNo = pageNo;
     const pageResponse = await Fetch.get(KMAS_WEBTOONLIST_BASE_URL, params);
-
     const pageWebtoons = pageResponse.itemList
       .filter((item) => item.ageGradCdNm !== '19세 이상')
       .map(transformWebtoonData);

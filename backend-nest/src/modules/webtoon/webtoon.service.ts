@@ -26,7 +26,7 @@ export class WebtoonService {
   }
 
   private async getWebtoon(title, writer, illustrator) {
-    return this.prisma.webtoon.findFirst({
+    return await this.prisma.webtoon.findFirst({
       where: {
         title,
         writer,
@@ -43,7 +43,7 @@ export class WebtoonService {
   }
 
   private async addNewPlatform(webtoonId, platform) {
-    return this.prisma.webtoonPlatform.create({
+    return await this.prisma.webtoonPlatform.create({
       data: {
         webtoon: {
           connect: {
@@ -109,6 +109,7 @@ export class WebtoonService {
     } catch (error) {
       console.error(error);
     }
+    return 'check';
   }
 
   @Cron('0 0 * * * *')
