@@ -8,3 +8,5 @@
 /frontend/node_modules
 /frontend/.env
 /frontend/dist
+
+/backend-nest/gcp-storage-key.json
