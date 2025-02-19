@@ -5,6 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { crawlingWebtoons } from 'src/common/utils/crawling';
 import { PLATFORMS } from 'src/common/constants/webtoon';
+import { Storage } from '@google-cloud/storage';
+import { v4 as uuidv4 } from 'uuid';
+import * as path from 'path';
 
 @Injectable()
 export class WebtoonService {
@@ -100,7 +103,8 @@ export class WebtoonService {
             return;
           }
 
-          await this.createNewWebtoon(webtoon);
+          const thumbnailURL = await this.uploadImage(webtoon.thumbnailURL);
+          await this.createNewWebtoon({ ...webtoon, thumbnailURL });
           console.log(`Processed webtoon: ${webtoon.title}`);
         } catch (error) {
           console.error(`Failed to process webtoon: ${webtoon.title}`, error);
@@ -115,5 +119,41 @@ export class WebtoonService {
   @Cron('0 0 * * * *')
   crawlingWebtoons() {
     console.log('Crawling webtoons...');
+  }
+
+  async uploadImage(imageUrl: string) {
+    try {
+      const uploadedUrl = await this.uploadImageToGCP(imageUrl);
+      console.log(`🌍 최종 업로드된 이미지 URL: ${uploadedUrl}`);
+      return uploadedUrl;
+    } catch (error) {
+      console.error(`🚨 업로드 실패: ${error.message}`);
+    }
+  }
+
+  async uploadImageToGCP(imageUrl) {
+    const keyFilePath = path.resolve(
+      __dirname,
+      '../../../gcp-storage-key.json',
+    );
+
+    const storage = new Storage({
+      keyFilename: keyFilePath,
+    });
+    const bucketName = this.configService.get('GCP_BUCKET_NAME');
+    const response = await fetch(imageUrl);
+    if (!response.ok)
+      throw new Error(`이미지 다운로드 실패: ${response.statusText}`);
+
+    const buffer = await response.arrayBuffer();
+    const fileName = `thumbnails/${uuidv4()}.jpg`;
+    const bucket = storage.bucket(bucketName);
+    const file = bucket.file(fileName);
+    await file.save(Buffer.from(buffer), {
+      contentType: response.headers.get('content-type') || 'image/jpeg',
+      public: true,
+    });
+    const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+    return publicUrl;
   }
 }
