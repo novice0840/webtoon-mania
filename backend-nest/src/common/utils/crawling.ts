@@ -51,9 +51,13 @@ export const crawlingWebtoons = async (
     params.pageNo = pageNo;
     const pageResponse = await Fetch.get(KMAS_WEBTOONLIST_BASE_URL, params);
     const pageWebtoons = pageResponse.itemList
-      .filter((item) => item.ageGradCdNm !== '19세 이상')
+      .filter(
+        (item) =>
+          item.ageGradCdNm !== '19세 이상' || item.ageGradCdNm !== '18세 이상',
+      )
       .map(transformWebtoonData);
     allWebtoons.push(...pageWebtoons);
+    console.log(`${platform} ${pageNo} 페이지 크롤링 완료`);
   }
   return allWebtoons;
 };

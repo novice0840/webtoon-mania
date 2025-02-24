@@ -8,6 +8,7 @@ import { PLATFORMS } from 'src/common/constants/webtoon';
 import { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
+import * as fs from 'node:fs';
 
 @Injectable()
 export class WebtoonService {
@@ -85,8 +86,8 @@ export class WebtoonService {
   async getAllWebtoons() {
     try {
       const allWebtoons = await this.crawlingAllWebtoons();
-
-      allWebtoons.forEach(async (webtoon) => {
+      console.log(`${allWebtoons.length}개 웹툰 크롤링 완료 `);
+      for (const webtoon of allWebtoons) {
         try {
           const existingWebtoon = await this.getWebtoon(
             webtoon.title,
@@ -98,9 +99,9 @@ export class WebtoonService {
             const isPlatformIncluded = existingWebtoon.platforms.some(
               (p) => p.platform.name === webtoon.platform,
             );
-            if (isPlatformIncluded) return;
+            if (isPlatformIncluded) continue;
             await this.addNewPlatform(existingWebtoon.id, webtoon.platform);
-            return;
+            continue;
           }
 
           const thumbnailURL = await this.uploadImage(webtoon.thumbnailURL);
@@ -109,11 +110,10 @@ export class WebtoonService {
         } catch (error) {
           console.error(`Failed to process webtoon: ${webtoon.title}`, error);
         }
-      });
+      }
     } catch (error) {
       console.error(error);
     }
-    return 'check';
   }
 
   @Cron('0 0 * * * *')
