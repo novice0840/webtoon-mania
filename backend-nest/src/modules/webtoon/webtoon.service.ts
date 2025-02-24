@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { ConfigService } from '@nestjs/config';
-
+import { PrismaPromise, Webtoon } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { crawlingWebtoons } from 'src/common/utils/crawling';
 import { PLATFORMS } from 'src/common/constants/webtoon';
 import { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
-import * as fs from 'node:fs';
 
 @Injectable()
 export class WebtoonService {
@@ -83,7 +81,7 @@ export class WebtoonService {
     });
   }
 
-  async getAllWebtoons() {
+  public async storeAllWebtoons() {
     try {
       const allWebtoons = await this.crawlingAllWebtoons();
       console.log(`${allWebtoons.length}개 웹툰 크롤링 완료 `);
@@ -116,9 +114,8 @@ export class WebtoonService {
     }
   }
 
-  @Cron('0 0 * * * *')
-  crawlingWebtoons() {
-    console.log('Crawling webtoons...');
+  public getWebtoons(): PrismaPromise<Webtoon[]> {
+    return this.prisma.webtoon.findMany();
   }
 
   async uploadImage(imageUrl: string) {

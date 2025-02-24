@@ -5,8 +5,13 @@ import { WebtoonService } from './webtoon.service';
 export class WebtoonController {
   constructor(private readonly webtoonService: WebtoonService) {}
 
-  @Get('all')
-  async getAllWebtoons() {
-    return await this.webtoonService.getAllWebtoons();
+  @Get('store')
+  async storeAllWebtoons() {
+    return await this.webtoonService.storeAllWebtoons();
+  }
+
+  @Get('/')
+  async getWebtoons() {
+    return await this.webtoonService.getWebtoons();
   }
 }
