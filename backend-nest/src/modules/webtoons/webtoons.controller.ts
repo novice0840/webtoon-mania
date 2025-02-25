@@ -1,9 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { WebtoonService } from './webtoons.service';
+import { WebtoonsService } from './webtoons.service';
 
-@Controller('webtoon')
-export class WebtoonController {
-  constructor(private readonly webtoonService: WebtoonService) {}
+@Controller('webtoons')
+export class WebtoonsController {
+  constructor(private readonly webtoonsService: WebtoonsService) {}
 
   @Get()
   async getWebtoons(
@@ -11,6 +11,6 @@ export class WebtoonController {
     @Query('platform') platform = 'all',
   ) {
     const pageNumber = parseInt(page, 10);
-    return await this.webtoonService.getWebtoons(pageNumber, platform);
+    return await this.webtoonsService.getWebtoons(pageNumber, platform);
   }
 }

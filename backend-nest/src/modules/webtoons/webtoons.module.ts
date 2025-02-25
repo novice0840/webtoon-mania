@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { WebtoonService } from './webtoons.service';
-import { WebtoonController } from './webtoons.controller';
+import { WebtoonsService } from './webtoons.service';
+import { WebtoonsController } from './webtoons.controller';
 
 @Module({
-  providers: [WebtoonService],
-  controllers: [WebtoonController],
+  providers: [WebtoonsService],
+  controllers: [WebtoonsController],
 })
 export class WebtoonsModule {}

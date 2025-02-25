@@ -10,7 +10,7 @@ import { Cron } from '@nestjs/schedule';
 
 const WEBTOONS_PER_PAGE = 100;
 @Injectable()
-export class WebtoonService {
+export class WebtoonsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
