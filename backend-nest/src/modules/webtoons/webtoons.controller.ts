@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { WebtoonService } from './webtoon.service';
+import { WebtoonService } from './webtoons.service';
 
 @Controller('webtoon')
 export class WebtoonController {
