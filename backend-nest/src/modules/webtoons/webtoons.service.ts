@@ -23,7 +23,7 @@ export class WebtoonsService {
       console.log(`${allWebtoons.length}개 웹툰 크롤링 완료 `);
       for (const webtoon of allWebtoons) {
         try {
-          const existingWebtoon = await this.getWebtoon(
+          const existingWebtoon = await this.fetchWebtoon(
             webtoon.title,
             webtoon.writer,
             webtoon.illustrator,
@@ -72,6 +72,52 @@ export class WebtoonsService {
     }
   }
 
+  public async getWebtoon(id: string) {
+    const webtoon = await this.prisma.webtoon.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        platforms: {
+          select: {
+            platform: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      ...webtoon,
+      platforms: webtoon.platforms.map((p) => p.platform.name),
+    };
+  }
+
+  public async getWebtoonsByWriter(writer: string) {
+    return await this.prisma.webtoon.findMany({
+      where: { writer },
+      select: {
+        id: true,
+        title: true,
+        thumbnailURL: true,
+      },
+    });
+  }
+
+  public async getWebtoonsByIllustrator(illustrator: string) {
+    return await this.prisma.webtoon.findMany({
+      where: { illustrator },
+      select: {
+        id: true,
+        title: true,
+        thumbnailURL: true,
+      },
+    });
+  }
+
   private async uploadImageToGCP(imageUrl) {
     const keyFilePath = path.resolve(
       __dirname,
@@ -110,7 +156,7 @@ export class WebtoonsService {
       .flatMap((result) => result.value);
   }
 
-  private async getWebtoon(title, writer, illustrator) {
+  private async fetchWebtoon(title, writer, illustrator) {
     return await this.prisma.webtoon.findFirst({
       where: {
         title,
