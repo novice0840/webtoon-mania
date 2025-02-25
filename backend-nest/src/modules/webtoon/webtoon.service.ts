@@ -114,11 +114,52 @@ export class WebtoonService {
     }
   }
 
-  public getWebtoons(): PrismaPromise<Webtoon[]> {
-    return this.prisma.webtoon.findMany();
+  public async getWebtoons(page: number, platform: string) {
+    const pageSize = 100; // 한 페이지당 100개
+    const skip = (page - 1) * pageSize; // 페이지네이션을 위한 skip 계산
+
+    // 📌 1. 총 개수 조회 (platform 필터 적용)
+    const totalCount = await this.prisma.webtoon.count({
+      where:
+        platform !== 'all'
+          ? {
+              platforms: {
+                some: {
+                  platform: { name: platform },
+                },
+              },
+            }
+          : {},
+    });
+
+    // 📌 2. 총 페이지 수 계산
+    const totalPage = Math.ceil(totalCount / pageSize);
+
+    // 📌 3. 웹툰 목록 조회 (다대다 관계 필터링)
+    const webtoons = await this.prisma.webtoon.findMany({
+      where:
+        platform !== 'all'
+          ? {
+              platforms: {
+                some: {
+                  platform: { name: platform },
+                },
+              },
+            }
+          : {},
+      take: pageSize,
+      skip: skip,
+    });
+
+    // 📌 4. `{ totalPage, curPage, data }` 형태로 반환
+    return {
+      totalPage,
+      curPage: page,
+      data: webtoons,
+    };
   }
 
-  async uploadImage(imageUrl: string) {
+  private async uploadImage(imageUrl: string) {
     try {
       const uploadedUrl = await this.uploadImageToGCP(imageUrl);
       console.log(`🌍 최종 업로드된 이미지 URL: ${uploadedUrl}`);
@@ -128,7 +169,7 @@ export class WebtoonService {
     }
   }
 
-  async uploadImageToGCP(imageUrl) {
+  private async uploadImageToGCP(imageUrl) {
     const keyFilePath = path.resolve(
       __dirname,
       '../../../gcp-storage-key.json',

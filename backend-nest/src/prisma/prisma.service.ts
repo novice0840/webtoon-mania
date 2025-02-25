@@ -6,6 +6,18 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  constructor() {
+    super({
+      omit: {
+        webtoon: {
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
+      },
+    });
+  }
+
   async onModuleInit() {
     await this.$connect();
   }
