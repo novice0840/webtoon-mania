@@ -1,0 +1,19 @@
+model Webtoon {
+  id        String    @id   @default(uuid())
+  title     String
+  writer    String
+  illustrator String
+  genre String?
+  synopsis String? @db.Text
+  thumbnailURL String? @default("")
+  platforms    WebtoonPlatform[]  
+  reivews Review[]
+  posts Post[]
+  chats Chat[]
+  bookmarks Bookmark[]
+  likes Like[]
+  dislikes Dislike[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+}
