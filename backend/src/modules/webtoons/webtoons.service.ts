@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { crawlingWebtoons } from 'src/common/utils/crawling';
@@ -50,11 +50,29 @@ export class WebtoonsService {
     }
   }
 
-  public async getWebtoons(page: number, platform: string) {
-    const totalCount = await this.getWebtoonCount(platform);
+  public async getWebtoons({
+    page,
+    platform,
+    illustrator,
+    writer,
+  }: {
+    page: number;
+    platform?: string;
+    illustrator?: string;
+    writer?: string;
+  }) {
+    const totalCount = await this.getWebtoonCount(
+      platform,
+      illustrator,
+      writer,
+    );
     const totalPage = Math.ceil(totalCount / WEBTOONS_PER_PAGE);
-    const webtoons = await this.fetchWebtoons(page, platform);
-
+    const webtoons = await this.fetchWebtoons({
+      page,
+      platform,
+      illustrator,
+      writer,
+    });
     return {
       totalPage,
       curPage: page,
@@ -90,32 +108,14 @@ export class WebtoonsService {
       },
     });
 
+    if (!webtoon) {
+      throw new NotFoundException(`잘못된 ID 입니다`);
+    }
+
     return {
       ...webtoon,
       platforms: webtoon.platforms.map((p) => p.platform.name),
     };
-  }
-
-  public async getWebtoonsByWriter(writer: string) {
-    return await this.prisma.webtoon.findMany({
-      where: { writer },
-      select: {
-        id: true,
-        title: true,
-        thumbnailURL: true,
-      },
-    });
-  }
-
-  public async getWebtoonsByIllustrator(illustrator: string) {
-    return await this.prisma.webtoon.findMany({
-      where: { illustrator },
-      select: {
-        id: true,
-        title: true,
-        thumbnailURL: true,
-      },
-    });
   }
 
   private async uploadImageToGCP(imageUrl) {
@@ -210,9 +210,11 @@ export class WebtoonsService {
     });
   }
 
-  private getWebtoonCount(platform) {
+  private getWebtoonCount(platform, illustrator, writer) {
     return this.prisma.webtoon.count({
       where: {
+        illustrator,
+        writer,
         platforms: {
           some: {
             platform: { name: platform },
@@ -222,19 +224,18 @@ export class WebtoonsService {
     });
   }
 
-  private async fetchWebtoons(page: number, platform: string) {
+  private async fetchWebtoons({ page, platform, illustrator, writer }) {
     const skip = (page - 1) * WEBTOONS_PER_PAGE;
     return await this.prisma.webtoon.findMany({
-      where:
-        platform !== 'all'
-          ? {
-              platforms: {
-                some: {
-                  platform: { name: platform },
-                },
-              },
-            }
-          : {},
+      where: {
+        illustrator,
+        writer,
+        platforms: {
+          some: {
+            platform: { name: platform },
+          },
+        },
+      },
       take: WEBTOONS_PER_PAGE,
       skip,
     });
