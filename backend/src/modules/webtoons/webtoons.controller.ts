@@ -20,7 +20,6 @@ export class WebtoonsController {
   @Get()
   @ApiOperation({
     summary: '웹툰 목록 조회',
-    description: '웹툰 목록을 조회합니다.',
   })
   @ApiQuery({
     name: 'page',
