@@ -6,6 +6,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 
 import { WebtoonsModule } from './modules/webtoons/webtoons.module';
 import { GenresModule } from './modules/genres/genres.module';
+import { PlatformsModule } from './modules/platforms/platforms.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { GenresModule } from './modules/genres/genres.module';
     PrismaModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
+    PlatformsModule,
   ],
 })
 export class AppModule {}
