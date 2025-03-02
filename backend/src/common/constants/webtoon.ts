@@ -15,4 +15,5 @@ export const PLATFORMS = [
   '봄툰',
   '탑툰',
   '무툰',
+  '큐툰',
 ] as const;
