@@ -53,7 +53,7 @@ export const crawlingWebtoons = async (
     const pageWebtoons = pageResponse.itemList
       .filter(
         (item) =>
-          item.ageGradCdNm !== '19세 이상' || item.ageGradCdNm !== '18세 이상',
+          item.ageGradCdNm !== '19세 이상' && item.ageGradCdNm !== '18세 이상',
       )
       .map(transformWebtoonData);
     allWebtoons.push(...pageWebtoons);
