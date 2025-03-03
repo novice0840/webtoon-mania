@@ -1,9 +1,23 @@
-import { useGetWebtoons } from "@/app/utils/api";
+import { useGetWebtoons } from "@/app/hooks/useGetWebtoons";
 import { useEffect } from "react";
 
-export const useInfiniteWebtoons = () => {
+interface UseInfiniteWebtoonsPrarams {
+  platform?: string;
+  illustrator?: string;
+  writer?: string;
+}
+
+export const useInfiniteWebtoons = ({
+  platform,
+  illustrator,
+  writer,
+}: UseInfiniteWebtoonsPrarams = {}) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetWebtoons();
+    useGetWebtoons({
+      platform,
+      illustrator,
+      writer,
+    });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,5 +34,7 @@ export const useInfiniteWebtoons = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [fetchNextPage, hasNextPage]);
 
-  return { data, isFetchingNextPage };
+  const flattenedData = data?.pages.flatMap((page) => page.data) || [];
+
+  return { data: flattenedData, isFetchingNextPage };
 };

@@ -1,3 +1,5 @@
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 class Fetch {
   static async get(url: string, params = {}, options: any = {}) {
     return await this.request(url, params, { ...options, method: "GET" });
@@ -28,8 +30,9 @@ class Fetch {
       );
 
       const queryString = new URLSearchParams(filteredParams).toString();
-      const url = queryString ? `${baseUrl}?${queryString}` : baseUrl;
-
+      const url =
+        BASE_URL + "/" + (queryString ? `${baseUrl}?${queryString}` : baseUrl);
+      console.log(BASE_URL, url);
       const response = await fetch(url, options);
       const data = await response.json();
       return data;
