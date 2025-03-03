@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import Fetch from "./fetch";
+import Fetch from "@/app/utils/fetch";
 
 export const useGetGenres = () => {
   return useQuery<string[]>({

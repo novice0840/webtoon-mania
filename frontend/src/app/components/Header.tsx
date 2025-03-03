@@ -9,7 +9,7 @@ const Header = () => {
     <header className="flex h-24 min-w-96 items-center justify-between gap-4">
       <div className="hidden flex-shrink-0 sm:block">
         <Link href="/">
-          <Image src="/logo.svg" alt="logo" width={96} height={96} />
+          <Image priority src="/logo.svg" alt="logo" width={96} height={96} />
         </Link>
       </div>
       <div className="basis-144">

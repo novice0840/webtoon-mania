@@ -18,6 +18,7 @@ const WebtoonList = ({ platform }: { platform: string }) => {
                 alt={`${title} 썸네일`}
                 width={150}
                 height={150}
+                className="h-auto w-auto object-contain"
               />
             )}
             <div className="text-sm">{title}</div>
