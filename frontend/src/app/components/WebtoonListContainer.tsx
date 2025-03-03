@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import WebtoonList from "@/app/components/WebtoonList";
 import PlatformSelector from "@/app/components/PlatformSelector";
 import GenreSelector from "@/app/components/GenreSelector";

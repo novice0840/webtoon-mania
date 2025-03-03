@@ -1,7 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
-
 interface GenreSelectorProps {
   genres: string[];
   curGenre: string;

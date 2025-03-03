@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 interface PlatformSelectorProps {
   platforms: string[];
   changePlatform: (platform: string) => void;
