@@ -55,22 +55,3 @@ export const useGetWebtoons = ({
     },
   });
 };
-
-// export const useGetWebtoons = ({
-//   platform,
-//   illustrator,
-//   writer,
-//   page,
-// }: UseGetWebtoonsParams = {}) => {
-
-//   return useQuery<WebtoonsResponse>({
-//     queryKey: ["useGetWebtoon", platform, illustrator, writer, page],
-//     queryFn: async () =>
-//       Fetch.get(`${BASE_URL}/webtoons`, {
-//         platform: platform === "all" ? undefined : platform,
-//         illustrator,
-//         writer,
-//         page,
-//       }),
-//   });
-// };
