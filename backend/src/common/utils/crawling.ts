@@ -24,7 +24,7 @@ const transformWebtoonData = (item) => ({
   platform: item.pltfomCdNm,
   thumbnailURL: item.imageDownloadUrl,
   synopsis: item.outline
-    .replaceAll('\r', '')
+    ?.replaceAll('\r', '')
     .replaceAll('\n', '')
     .replaceAll('\t', ''),
 });
