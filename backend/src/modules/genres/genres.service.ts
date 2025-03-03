@@ -3,19 +3,22 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GenresService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   public async getGenres() {
-    const genres = await this.prisma.webtoon.findMany({
-      select: {
+    const genres = await this.prismaService.webtoon.groupBy({
+      by: ['genre'],
+      where: {
+        genre: { not: null },
+      },
+      _count: {
         genre: true,
       },
-      where: {
-        genre: {
-          not: null,
+      orderBy: {
+        _count: {
+          genre: 'desc',
         },
       },
-      distinct: ['genre'],
     });
 
     return genres.map((g) => g.genre);
