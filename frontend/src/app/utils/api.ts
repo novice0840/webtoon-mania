@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import Fetch from "./fetch";
 
 type UseGetWebtoonsParams = {
@@ -37,16 +37,40 @@ export const useGetWebtoons = ({
   platform,
   illustrator,
   writer,
-  page,
 }: UseGetWebtoonsParams = {}) => {
-  return useQuery<WebtoonsResponse>({
-    queryKey: ["useGetWebtoon", platform, illustrator, writer, page],
-    queryFn: async () =>
+  return useInfiniteQuery<WebtoonsResponse>({
+    queryKey: ["useGetWebtoons", platform, illustrator, writer],
+    queryFn: async ({ pageParam = 1 }) =>
       Fetch.get(`${BASE_URL}/webtoons`, {
-        platform,
+        platform: platform === "all" ? undefined : platform,
         illustrator,
         writer,
-        page,
+        page: pageParam,
       }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      return lastPage.curPage < lastPage.totalPage
+        ? lastPage.curPage + 1
+        : undefined;
+    },
   });
 };
+
+// export const useGetWebtoons = ({
+//   platform,
+//   illustrator,
+//   writer,
+//   page,
+// }: UseGetWebtoonsParams = {}) => {
+
+//   return useQuery<WebtoonsResponse>({
+//     queryKey: ["useGetWebtoon", platform, illustrator, writer, page],
+//     queryFn: async () =>
+//       Fetch.get(`${BASE_URL}/webtoons`, {
+//         platform: platform === "all" ? undefined : platform,
+//         illustrator,
+//         writer,
+//         page,
+//       }),
+//   });
+// };
