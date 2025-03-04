@@ -20,6 +20,7 @@ type Webtoon = {
 
 type WebtoonsResponse = {
   totalPage: number;
+  totalCount: number;
   curPage: number;
   data: Webtoon[];
 };

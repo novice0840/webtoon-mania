@@ -75,6 +75,7 @@ export class WebtoonsService {
     });
     return {
       totalPage,
+      totalCount,
       curPage: page,
       data: webtoons,
     };

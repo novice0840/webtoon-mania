@@ -22,12 +22,15 @@ export const useInfiniteWebtoons = ({
       genre,
     });
 
+  console.log(data);
+
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + window.scrollY >=
           document.body.offsetHeight - 100 &&
-        hasNextPage
+        hasNextPage &&
+        !isFetchingNextPage
       ) {
         fetchNextPage();
       }
@@ -39,5 +42,9 @@ export const useInfiniteWebtoons = ({
 
   const flattenedData = data?.pages.flatMap((page) => page.data) || [];
 
-  return { data: flattenedData, isFetchingNextPage };
+  return {
+    data: flattenedData,
+    isFetchingNextPage,
+    totalCount: data?.pages[0].totalCount,
+  };
 };

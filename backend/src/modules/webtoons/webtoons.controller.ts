@@ -57,6 +57,7 @@ export class WebtoonsController {
     schema: {
       example: {
         totalPage: 128,
+        totalCount: 12730,
         curPage: 1,
         data: [
           {
