@@ -1,25 +1,52 @@
 import React from "react";
 import Image from "next/image";
 
-const WebtoonDetail = () => {
+interface WebtoonDetailProps {
+  webtoon: {
+    id: string;
+    title: string;
+    writer: string;
+    illustrator: string;
+    genre: string;
+    synopsis: string;
+    thumbnailURL: string;
+    platforms: string[];
+  };
+}
+
+const WebtoonDetail = ({
+  webtoon: {
+    id,
+    title,
+    writer,
+    illustrator,
+    genre,
+    synopsis,
+    thumbnailURL,
+    platforms,
+  },
+}: WebtoonDetailProps) => {
   return (
     <div className="flex gap-2">
-      <Image src="/logo.svg" alt="webtoon" width={150} height={150} />
+      <div className="relative h-[200px] w-full">
+        <Image
+          src={thumbnailURL}
+          alt="webtoon"
+          fill
+          className="object-contain"
+        />
+      </div>
+
       <div className="flex flex-col gap-1">
-        <h1>웹툰 제목</h1>
-        <div className="text-sm">작가명</div>
-        <div className="text-sm">네이버</div>
-        <div className="flex gap-2">
-          <span className="text-xs">장르1</span>
-          <span className="text-xs">장르2</span>
-          <span className="text-xs">장르3</span>
+        <h1>{title}</h1>
+        <div className="text-sm">
+          {illustrator} {writer}
         </div>
-        <p className="text-xs">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maxime optio
-          sapiente laborum quas nemo dolorum, nam, nobis atque tempora cum
-          similique ratione vel voluptate ipsa vero! Modi tempora nobis
-          recusandae?
-        </p>
+        <div className="text-sm">{platforms}</div>
+        <div className="flex gap-2">
+          <span className="text-xs">{genre}</span>
+        </div>
+        <p className="text-xs">{synopsis}</p>
       </div>
     </div>
   );

@@ -22,8 +22,6 @@ export const useInfiniteWebtoons = ({
       genre,
     });
 
-  console.log(data);
-
   useEffect(() => {
     const handleScroll = () => {
       if (

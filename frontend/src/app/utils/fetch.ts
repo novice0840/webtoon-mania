@@ -32,7 +32,6 @@ class Fetch {
       const queryString = new URLSearchParams(filteredParams).toString();
       const url =
         BASE_URL + "/" + (queryString ? `${baseUrl}?${queryString}` : baseUrl);
-      console.log(BASE_URL, url);
       const response = await fetch(url, options);
       const data = await response.json();
       return data;
