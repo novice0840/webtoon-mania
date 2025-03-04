@@ -5,18 +5,21 @@ interface UseInfiniteWebtoonsPrarams {
   platform?: string;
   illustrator?: string;
   writer?: string;
+  genre?: string;
 }
 
 export const useInfiniteWebtoons = ({
   platform,
   illustrator,
   writer,
+  genre,
 }: UseInfiniteWebtoonsPrarams = {}) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetWebtoons({
       platform,
       illustrator,
       writer,
+      genre,
     });
 
   useEffect(() => {

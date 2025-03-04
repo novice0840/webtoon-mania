@@ -5,6 +5,7 @@ type UseGetWebtoonsParams = {
   platform?: string;
   illustrator?: string;
   writer?: string;
+  genre?: string;
 };
 
 type Webtoon = {
@@ -27,12 +28,14 @@ export const useGetWebtoons = ({
   platform,
   illustrator,
   writer,
+  genre,
 }: UseGetWebtoonsParams = {}) => {
   return useInfiniteQuery<WebtoonsResponse>({
-    queryKey: ["useGetWebtoons", platform, illustrator, writer],
+    queryKey: ["useGetWebtoons", platform, illustrator, writer, genre],
     queryFn: async ({ pageParam = 1 }) =>
       Fetch.get("webtoons", {
         platform: platform === "all" ? undefined : platform,
+        genre: genre === "all" ? undefined : genre,
         illustrator,
         writer,
         page: pageParam,
