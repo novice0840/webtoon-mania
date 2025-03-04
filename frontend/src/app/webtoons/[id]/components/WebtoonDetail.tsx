@@ -40,8 +40,9 @@ const WebtoonDetail = ({
 
       <div className="flex flex-col gap-1">
         <h1>{title}</h1>
-        <div className="text-sm">
-          {illustrator} {writer}
+        <div className="flex flex-col text-sm">
+          <span>그림 작가: {illustrator}</span>
+          <span>글 작가: {writer}</span>
         </div>
         <div className="text-sm">{platforms}</div>
         <div className="flex gap-2">
