@@ -10,7 +10,13 @@ interface WebtoonMiniProps {
 const WebtoonMini = ({ title, thumbnailURL, genre }: WebtoonMiniProps) => {
   return (
     <div className="flex items-center gap-1">
-      <Image src={thumbnailURL} alt="webtoon" width={60} height={60} />
+      <Image
+        src={thumbnailURL}
+        alt="webtoon"
+        width={60}
+        height={60}
+        className="h-auto w-auto"
+      />
       <div>
         <div className="text-xs">{title}</div>
         <div className="text-xs">{genre}</div>

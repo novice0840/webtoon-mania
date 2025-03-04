@@ -33,6 +33,7 @@ const WebtoonDetail = ({
           src={thumbnailURL}
           alt="webtoon"
           fill
+          sizes="100%"
           className="object-contain"
         />
       </div>

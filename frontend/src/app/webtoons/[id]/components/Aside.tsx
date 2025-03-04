@@ -20,18 +20,34 @@ const Aside = ({ writer, illustrator }: AsideProps) => {
 
   return (
     <aside className="hidden w-64 md:block">
-      <div>이 작가의 또 다른 작품 </div>
-      <ul>
-        {webtoonsByIllustrator.map(({ title, thumbnailURL, genre }) => (
-          <li>
-            <WebtoonMini
-              title={title}
-              thumbnailURL={thumbnailURL}
-              genre={genre}
-            />
-          </li>
-        ))}
-      </ul>
+      <div className="mb-16">
+        <div>이 글 작가의 또 다른 작품 </div>
+        <ul className="flex flex-col gap-2">
+          {webtoonsByWriter.map(({ title, thumbnailURL, genre, id }) => (
+            <li key={id}>
+              <WebtoonMini
+                title={title}
+                thumbnailURL={thumbnailURL}
+                genre={genre}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <div>이 그림 작가의 또 다른 작품 </div>
+        <ul className="flex flex-col gap-2">
+          {webtoonsByIllustrator.map(({ title, thumbnailURL, genre, id }) => (
+            <li key={id}>
+              <WebtoonMini
+                title={title}
+                thumbnailURL={thumbnailURL}
+                genre={genre}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
     </aside>
   );
 };
