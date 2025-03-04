@@ -7,8 +7,10 @@ import { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { Cron } from '@nestjs/schedule';
+import type { WebtoonFilter } from 'src/types/webtoon';
 
 const WEBTOONS_PER_PAGE = 100;
+
 @Injectable()
 export class WebtoonsService {
   constructor(
@@ -55,23 +57,21 @@ export class WebtoonsService {
     platform,
     illustrator,
     writer,
-  }: {
-    page: number;
-    platform?: string;
-    illustrator?: string;
-    writer?: string;
-  }) {
-    const totalCount = await this.getWebtoonCount(
+    genre,
+  }: WebtoonFilter & { page: number }) {
+    const totalCount = await this.getWebtoonCount({
       platform,
       illustrator,
       writer,
-    );
+      genre,
+    });
     const totalPage = Math.ceil(totalCount / WEBTOONS_PER_PAGE);
     const webtoons = await this.fetchWebtoons({
       page,
       platform,
       illustrator,
       writer,
+      genre,
     });
     return {
       totalPage,
@@ -210,11 +210,17 @@ export class WebtoonsService {
     });
   }
 
-  private getWebtoonCount(platform, illustrator, writer) {
+  private getWebtoonCount({
+    platform,
+    illustrator,
+    writer,
+    genre,
+  }: WebtoonFilter) {
     return this.prisma.webtoon.count({
       where: {
         illustrator,
         writer,
+        genre,
         platforms: {
           some: {
             platform: { name: platform },
@@ -224,12 +230,19 @@ export class WebtoonsService {
     });
   }
 
-  private async fetchWebtoons({ page, platform, illustrator, writer }) {
+  private async fetchWebtoons({
+    page,
+    platform,
+    illustrator,
+    writer,
+    genre,
+  }: WebtoonFilter & { page: number }) {
     const skip = (page - 1) * WEBTOONS_PER_PAGE;
     return await this.prisma.webtoon.findMany({
       where: {
         illustrator,
         writer,
+        genre,
         platforms: {
           some: {
             platform: { name: platform },

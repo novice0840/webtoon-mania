@@ -45,6 +45,12 @@ export class WebtoonsController {
     example: '유',
     description: '글 작가',
   })
+  @ApiQuery({
+    name: 'genre',
+    required: false,
+    example: '로맨스',
+    description: '장르',
+  })
   @ApiResponse({
     status: 200,
     description: '성공',
@@ -106,6 +112,7 @@ export class WebtoonsController {
     @Query('platform') platform?: string,
     @Query('illustrator') illustrator?: string,
     @Query('writer') writer?: string,
+    @Query('genre') genre?: string,
   ) {
     const pageNumber = parseInt(page, 10);
     return await this.webtoonsService.getWebtoons({
@@ -113,6 +120,7 @@ export class WebtoonsController {
       platform,
       illustrator,
       writer,
+      genre,
     });
   }
 
