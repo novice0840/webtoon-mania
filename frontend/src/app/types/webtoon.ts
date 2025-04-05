@@ -5,6 +5,6 @@ export interface Webtoon {
   illustrator: string;
   genre: string;
   synopsis: string;
-  thumbnailURL: string;
+  thumbnailURL?: string;
   platforms: string[];
 }

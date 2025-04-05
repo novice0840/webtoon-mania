@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { NO_THUMBNAIL_URL } from "@/app/constant/webtoon";
 
 interface WebtoonDetailProps {
   webtoon: {
@@ -9,7 +10,7 @@ interface WebtoonDetailProps {
     illustrator: string;
     genre: string;
     synopsis: string;
-    thumbnailURL: string;
+    thumbnailURL?: string;
     platforms: string[];
   };
 }
@@ -28,9 +29,9 @@ const WebtoonDetail = ({
 }: WebtoonDetailProps) => {
   return (
     <div className="flex gap-2">
-      <div className="relative h-[200px] w-full">
+      <div className="relative h-[200px] w-1/2">
         <Image
-          src={thumbnailURL}
+          src={thumbnailURL ?? NO_THUMBNAIL_URL}
           alt="webtoon"
           fill
           sizes="100%"

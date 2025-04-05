@@ -3,6 +3,7 @@
 import React from "react";
 import WebtoonMini from "./WebtoonMini";
 import { useInfiniteWebtoons } from "@/app/hooks/useInfiniteWebtoons";
+import { NO_THUMBNAIL_URL } from "@/app/constant/webtoon";
 
 interface AsideProps {
   writer?: string;
@@ -27,7 +28,7 @@ const Aside = ({ writer, illustrator }: AsideProps) => {
             <li key={id}>
               <WebtoonMini
                 title={title}
-                thumbnailURL={thumbnailURL}
+                thumbnailURL={thumbnailURL ? thumbnailURL : NO_THUMBNAIL_URL}
                 genre={genre}
               />
             </li>
@@ -41,7 +42,7 @@ const Aside = ({ writer, illustrator }: AsideProps) => {
             <li key={id}>
               <WebtoonMini
                 title={title}
-                thumbnailURL={thumbnailURL}
+                thumbnailURL={thumbnailURL ? thumbnailURL : NO_THUMBNAIL_URL}
                 genre={genre}
               />
             </li>

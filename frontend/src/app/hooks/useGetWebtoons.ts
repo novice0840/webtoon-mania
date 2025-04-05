@@ -15,7 +15,7 @@ type Webtoon = {
   illustrator: string;
   genre: string;
   synopsis: string;
-  thumbnailURL: string;
+  thumbnailURL?: string;
 };
 
 type WebtoonsResponse = {
