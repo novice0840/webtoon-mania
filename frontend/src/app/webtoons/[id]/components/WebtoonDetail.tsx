@@ -1,23 +1,14 @@
 import React from "react";
 import Image from "next/image";
 import { NO_THUMBNAIL_URL } from "@/app/constant/webtoon";
+import { Webtoon } from "@/app/types/webtoon";
 
 interface WebtoonDetailProps {
-  webtoon: {
-    id: string;
-    title: string;
-    writer: string;
-    illustrator: string;
-    genre: string;
-    synopsis: string;
-    thumbnailURL?: string;
-    platforms: string[];
-  };
+  webtoon: Webtoon;
 }
 
 const WebtoonDetail = ({
   webtoon: {
-    id,
     title,
     writer,
     illustrator,
