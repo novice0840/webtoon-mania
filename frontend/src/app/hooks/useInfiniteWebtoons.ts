@@ -14,7 +14,7 @@ export const useInfiniteWebtoons = ({
   writer,
   genre,
 }: UseInfiniteWebtoonsPrarams = {}) => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useGetWebtoons({
       platform,
       illustrator,
@@ -44,5 +44,6 @@ export const useInfiniteWebtoons = ({
     data: flattenedData,
     isFetchingNextPage,
     totalCount: data?.pages[0].totalCount,
+    isLoading,
   };
 };
