@@ -1,18 +1,31 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiOperation,
+  ApiResponse,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { CommonResponseDTO } from 'src/common/DTO/commonResponse.DTO';
+import { GetGenresResponseDTO } from 'src/modules/genres/dto/GetGenres.response.dto';
 
 export function GetGenresSwagger() {
   return applyDecorators(
     ApiOperation({
       summary: '장르 목록 조회',
     }),
+    ApiExtraModels(CommonResponseDTO, GetGenresResponseDTO),
     ApiResponse({
       status: 200,
-      description: '성공',
+      description: '장르 목록 조회 성공',
       schema: {
-        type: 'array',
-        items: { type: 'string', example: '로맨스' },
-        example: ['로맨스', '판타지', '드라마', '스릴러', '액션', '코미디'],
+        allOf: [
+          { $ref: getSchemaPath(CommonResponseDTO) },
+          {
+            properties: {
+              data: { $ref: getSchemaPath(GetGenresResponseDTO) },
+            },
+          },
+        ],
       },
     }),
   );
