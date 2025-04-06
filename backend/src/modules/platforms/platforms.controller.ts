@@ -9,6 +9,11 @@ export class PlatformsController {
   @Get()
   @GetPlatformsSwagger()
   async getPlatforms() {
-    return await this.platformService.getPlatforms();
+    const platforms = await this.platformService.getPlatforms();
+    return {
+      success: true,
+      message: '플랫폼 목록 응답 성공',
+      data: { platforms },
+    };
   }
 }
