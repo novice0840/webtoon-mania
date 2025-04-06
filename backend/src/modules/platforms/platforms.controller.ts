@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { PlatformsService } from './platforms.service';
-import { GetPlatformsSwagger } from 'src/common/decorators/swagger/getPlatforms.decorator';
+import { GetPlatformsSwagger } from './decorators/getPlatformsSwagger.decorator';
 
 @Controller('platforms')
 export class PlatformsController {

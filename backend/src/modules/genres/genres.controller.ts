@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { GenresService } from './genres.service';
-import { GetGenresSwagger } from 'src/common/decorators/swagger/getGenres.decorator';
+import { GetGenresSwagger } from './decorators/getGenresSwagger.decorator';
 
 @Controller('genres')
 export class GenresController {

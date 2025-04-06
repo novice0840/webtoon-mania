@@ -1,16 +1,17 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { WebtoonsService } from './webtoons.service';
-import { GetWebtoonsSwagger } from 'src/common/decorators/swagger/getWebtoons.decorator';
-import { GetWebtoonSwagger } from 'src/common/decorators/swagger/getWebtoon.decorator';
+import { GetWebtoonsSwagger } from './decorators/getWebtoonsSwagger.decorator';
+import { GetWebtoonSwagger } from './decorators/getWebtoonSwagger.decorator';
 
 @Controller('webtoons')
 export class WebtoonsController {
   constructor(private readonly webtoonsService: WebtoonsService) {}
 
-  @Get('store')
-  async storeAllWebtoons() {
-    return await this.webtoonsService.storeAllWebtoons();
-  }
+  // 초기 웹툰 데이터 크롤링용 엔드포인트 웹툰 데이터가 이미 있는 상태에서는 사용할 필요 없음
+  // @Get('store')
+  // async storeAllWebtoons() {
+  //   return await this.webtoonsService.storeAllWebtoons();
+  // }
 
   @Get()
   @GetWebtoonsSwagger()
