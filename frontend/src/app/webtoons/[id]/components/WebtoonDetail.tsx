@@ -29,7 +29,7 @@ const WebtoonDetail = ({
   );
   return (
     <div className="flex gap-2">
-      <div className="relative h-[200px] w-1/2">
+      <div className="relative w-1/2">
         <Image
           src={thumbnailURL ?? NO_THUMBNAIL_URL}
           alt="webtoon"
