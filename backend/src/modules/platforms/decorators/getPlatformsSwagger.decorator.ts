@@ -6,14 +6,14 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { CommonResponseDTO } from 'src/common/DTO/commonResponse.DTO';
-import { GetPlatformsResponseDTO } from 'src/modules/platforms/DTO/GetPlatforms.response.DTO';
+import { GetPlatformsDTO } from 'src/modules/platforms/dto/GetPlatforms.dto';
 
 export function GetPlatformsSwagger() {
   return applyDecorators(
     ApiOperation({
       summary: '플랫폼 목록 조회',
     }),
-    ApiExtraModels(CommonResponseDTO, GetPlatformsResponseDTO),
+    ApiExtraModels(CommonResponseDTO, GetPlatformsDTO),
     ApiOkResponse({
       description: '플랫폼 목록 조회 성공',
       schema: {
@@ -21,7 +21,7 @@ export function GetPlatformsSwagger() {
           { $ref: getSchemaPath(CommonResponseDTO) },
           {
             properties: {
-              data: { $ref: getSchemaPath(GetPlatformsResponseDTO) },
+              data: { $ref: getSchemaPath(GetPlatformsDTO) },
             },
           },
         ],

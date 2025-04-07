@@ -22,19 +22,28 @@ export class WebtoonsController {
     @Query('writer') writer?: string,
     @Query('genre') genre?: string,
   ) {
-    const pageNumber = parseInt(page, 10);
-    return await this.webtoonsService.getWebtoons({
-      page: pageNumber,
+    const webtoons = await this.webtoonsService.getWebtoons({
+      page: parseInt(page, 10),
       platform,
       illustrator,
       writer,
       genre,
     });
+    return {
+      success: true,
+      message: '웹툰 목록 응답 성공',
+      data: webtoons,
+    };
   }
 
   @Get('webtoon/:id')
   @GetWebtoonSwagger()
   async getWebtoon(@Param('id') id: string) {
-    return await this.webtoonsService.getWebtoon(id);
+    const webtoon = await this.webtoonsService.getWebtoon(id);
+    return {
+      success: true,
+      message: '단일 웹툰 응답 성공',
+      data: { webtoon },
+    };
   }
 }

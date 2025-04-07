@@ -6,14 +6,14 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { CommonResponseDTO } from 'src/common/DTO/commonResponse.DTO';
-import { GetGenresResponseDTO } from 'src/modules/genres/dto/GetGenres.response.dto';
+import { GetGenresDTO } from 'src/modules/genres/dto/GetGenres.dto';
 
 export function GetGenresSwagger() {
   return applyDecorators(
     ApiOperation({
       summary: '장르 목록 조회',
     }),
-    ApiExtraModels(CommonResponseDTO, GetGenresResponseDTO),
+    ApiExtraModels(CommonResponseDTO, GetGenresDTO),
     ApiResponse({
       status: 200,
       description: '장르 목록 조회 성공',
@@ -22,7 +22,7 @@ export function GetGenresSwagger() {
           { $ref: getSchemaPath(CommonResponseDTO) },
           {
             properties: {
-              data: { $ref: getSchemaPath(GetGenresResponseDTO) },
+              data: { $ref: getSchemaPath(GetGenresDTO) },
             },
           },
         ],
