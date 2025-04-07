@@ -18,6 +18,15 @@ const WebtoonDetail = ({
     platforms,
   },
 }: WebtoonDetailProps) => {
+  console.log(
+    title,
+    writer,
+    illustrator,
+    genre,
+    synopsis,
+    thumbnailURL,
+    platforms,
+  );
   return (
     <div className="flex gap-2">
       <div className="relative h-[200px] w-1/2">

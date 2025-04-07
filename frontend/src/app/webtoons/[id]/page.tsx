@@ -4,6 +4,7 @@ import WebtoonPostList from "./components/PostList";
 import PostForm from "./components/PostForm";
 import Fetch from "@/app/utils/fetch";
 import type { Webtoon } from "@/app/types/webtoon";
+import type { CommonResponseDTO } from "@/app/types/api";
 
 export default async function WebtoonPage({
   params,
@@ -11,7 +12,10 @@ export default async function WebtoonPage({
   params: { id: string };
 }) {
   const { id } = await params;
-  const webtoon: Webtoon = await Fetch.get(`webtoons/webtoon/${id}`);
+  const response = await Fetch.get<CommonResponseDTO<{ webtoon: Webtoon }>>(
+    `webtoons/webtoon/${id}`,
+  );
+  const webtoon = response.data.webtoon;
 
   return (
     <div className="mx-auto flex max-w-4xl justify-between gap-4">

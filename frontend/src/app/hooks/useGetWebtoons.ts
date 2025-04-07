@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Fetch from "@/app/utils/fetch";
 import { CommonResponseDTO } from "@/app/types/api";
+import { Webtoon } from "@/app/types/webtoon";
 
 type UseGetWebtoonsParams = {
   platform?: string;
@@ -9,21 +10,11 @@ type UseGetWebtoonsParams = {
   genre?: string;
 };
 
-type Webtoon = {
-  id: string;
-  title: string;
-  writer: string;
-  illustrator: string;
-  genre: string;
-  synopsis: string;
-  thumbnailURL?: string;
-};
-
 type WebtoonsResponse = {
   totalPage: number;
   totalCount: number;
   curPage: number;
-  webtoons: Webtoon[];
+  webtoons: Omit<Webtoon, "platforms">[];
 };
 
 export const useGetWebtoons = ({
