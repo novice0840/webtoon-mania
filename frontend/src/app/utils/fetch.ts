@@ -1,27 +1,43 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 class Fetch {
-  static async get(url: string, params = {}, options: any = {}) {
-    return await this.request(url, params, { ...options, method: "GET" });
+  static async get<T>(
+    url: string,
+    params: Record<string, any> = {},
+    options: RequestInit = {},
+  ): Promise<T> {
+    return await this.request<T>(url, params, { ...options, method: "GET" });
   }
 
-  static async post(url: string, params = {}, options: any = {}) {
-    return await this.request(url, params, { ...options, method: "POST" });
+  static async post<T>(
+    url: string,
+    params: Record<string, any> = {},
+    options: RequestInit = {},
+  ): Promise<T> {
+    return await this.request<T>(url, params, { ...options, method: "POST" });
   }
 
-  static async put(url: string, params = {}, options: any = {}) {
-    return await this.request(url, params, { ...options, method: "PUT" });
+  static async put<T>(
+    url: string,
+    params: Record<string, any> = {},
+    options: RequestInit = {},
+  ): Promise<T> {
+    return await this.request<T>(url, params, { ...options, method: "PUT" });
   }
 
-  static async delete(url: string, params = {}, options: any = {}) {
-    return await this.request(url, params, { ...options, method: "DELETE" });
+  static async delete<T>(
+    url: string,
+    params: Record<string, any> = {},
+    options: RequestInit = {},
+  ): Promise<T> {
+    return await this.request<T>(url, params, { ...options, method: "DELETE" });
   }
 
-  static async request(
+  static async request<T>(
     baseUrl: string,
     params: Record<string, any> = {},
-    options: any = {},
-  ) {
+    options: RequestInit = {},
+  ): Promise<T> {
     try {
       const filteredParams: Record<string, string> = Object.fromEntries(
         Object.entries(params)
@@ -32,11 +48,13 @@ class Fetch {
       const queryString = new URLSearchParams(filteredParams).toString();
       const url =
         BASE_URL + "/" + (queryString ? `${baseUrl}?${queryString}` : baseUrl);
+
       const response = await fetch(url, options);
-      const data = await response.json();
+      const data: T = await response.json();
       return data;
     } catch (error) {
       console.error(error);
+      throw error; // 에러는 호출자가 처리할 수 있게 throw 해주는 것이 좋음
     }
   }
 }

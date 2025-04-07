@@ -8,7 +8,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { CommonResponseDTO } from 'src/common/DTO/commonResponse.DTO';
-import { GetWebtoonsDTO } from '../dto/GetWebtoons.response.dto';
+import { GetWebtoonsDTO } from '../dto/GetWebtoons.dto';
 
 export function GetWebtoonsSwagger() {
   return applyDecorators(

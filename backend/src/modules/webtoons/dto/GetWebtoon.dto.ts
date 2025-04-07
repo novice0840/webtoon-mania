@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetWebtoonsDTO {
+export class GetWebtoonDTO {
   @ApiProperty({ example: '00031c1a-e23a-47a6-b0cc-8fed4ad8f351' })
   id: string;
 

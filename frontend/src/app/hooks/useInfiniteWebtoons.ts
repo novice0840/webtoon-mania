@@ -38,7 +38,7 @@ export const useInfiniteWebtoons = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [fetchNextPage, hasNextPage]);
 
-  const flattenedData = data?.pages.flatMap((page) => page.data) || [];
+  const flattenedData = data?.pages.flatMap((page) => page.webtoons) || [];
 
   return {
     data: flattenedData,

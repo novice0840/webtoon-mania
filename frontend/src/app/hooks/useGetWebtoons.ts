@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Fetch from "@/app/utils/fetch";
+import { CommonResponseDTO } from "@/app/types/api";
 
 type UseGetWebtoonsParams = {
   platform?: string;
@@ -22,7 +23,7 @@ type WebtoonsResponse = {
   totalPage: number;
   totalCount: number;
   curPage: number;
-  data: Webtoon[];
+  webtoons: Webtoon[];
 };
 
 export const useGetWebtoons = ({
@@ -31,16 +32,21 @@ export const useGetWebtoons = ({
   writer,
   genre,
 }: UseGetWebtoonsParams = {}) => {
-  return useInfiniteQuery<WebtoonsResponse>({
+  return useInfiniteQuery({
     queryKey: ["useGetWebtoons", platform, illustrator, writer, genre],
-    queryFn: async ({ pageParam = 1 }) =>
-      Fetch.get("webtoons", {
-        platform: platform === "all" ? undefined : platform,
-        genre: genre === "all" ? undefined : genre,
-        illustrator,
-        writer,
-        page: pageParam,
-      }),
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await Fetch.get<CommonResponseDTO<WebtoonsResponse>>(
+        "webtoons",
+        {
+          platform: platform === "all" ? undefined : platform,
+          genre: genre === "all" ? undefined : genre,
+          illustrator,
+          writer,
+          page: pageParam,
+        },
+      );
+      return response.data;
+    },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.curPage < lastPage.totalPage
