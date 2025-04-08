@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useInfiniteWebtoons } from "@/app/hooks/useInfiniteWebtoons";
-import { NO_THUMBNAIL_URL } from "@/app/constant/webtoon";
+import { useInfiniteWebtoons } from "@/hooks/useInfiniteWebtoons";
+import { NO_THUMBNAIL_URL } from "@/constant/webtoon";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface WebtoonListProps {

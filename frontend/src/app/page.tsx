@@ -1,6 +1,6 @@
-import Fetch from "@/app/utils/fetch";
-import WebtoonListContainer from "@/app/components/WebtoonListContainer";
-import { CommonResponseDTO } from "./types/api";
+import Fetch from "@/utils/fetch";
+import WebtoonListContainer from "@/components/WebtoonListContainer";
+import { CommonResponseDTO } from "../types/api";
 
 export default async function Home() {
   const platforms: string[] = (

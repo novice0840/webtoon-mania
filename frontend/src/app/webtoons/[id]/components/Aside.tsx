@@ -2,8 +2,8 @@
 
 import React from "react";
 import WebtoonMini from "./WebtoonMini";
-import { useInfiniteWebtoons } from "@/app/hooks/useInfiniteWebtoons";
-import { NO_THUMBNAIL_URL } from "@/app/constant/webtoon";
+import { useInfiniteWebtoons } from "@/hooks/useInfiniteWebtoons";
+import { NO_THUMBNAIL_URL } from "@/constant/webtoon";
 
 interface AsideProps {
   writer?: string;

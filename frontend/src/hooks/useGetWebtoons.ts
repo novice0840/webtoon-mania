@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import Fetch from "@/app/utils/fetch";
-import { CommonResponseDTO } from "@/app/types/api";
-import { Webtoon } from "@/app/types/webtoon";
+import Fetch from "@/utils/fetch";
+import { CommonResponseDTO } from "@/types/api";
+import { Webtoon } from "@/types/webtoon";
 
 type UseGetWebtoonsParams = {
   platform?: string;

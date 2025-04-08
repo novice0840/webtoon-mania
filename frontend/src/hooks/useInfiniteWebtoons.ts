@@ -1,4 +1,4 @@
-import { useGetWebtoons } from "@/app/hooks/useGetWebtoons";
+import { useGetWebtoons } from "@/hooks/useGetWebtoons";
 import { useEffect } from "react";
 
 interface UseInfiniteWebtoonsPrarams {

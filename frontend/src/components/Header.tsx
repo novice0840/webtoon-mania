@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import SearchForm from "./SearchForm";
+import SearchForm from "@/components/SearchForm";
 import Link from "next/link";
 
 const Header = () => {

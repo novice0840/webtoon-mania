@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { NO_THUMBNAIL_URL } from "@/app/constant/webtoon";
-import { Webtoon } from "@/app/types/webtoon";
+import { NO_THUMBNAIL_URL } from "@/constant/webtoon";
+import { Webtoon } from "@/types/webtoon";
 
 interface WebtoonDetailProps {
   webtoon: Webtoon;
@@ -18,15 +18,6 @@ const WebtoonDetail = ({
     platforms,
   },
 }: WebtoonDetailProps) => {
-  console.log(
-    title,
-    writer,
-    illustrator,
-    genre,
-    synopsis,
-    thumbnailURL,
-    platforms,
-  );
   return (
     <div className="flex gap-2">
       <div className="relative w-1/2">

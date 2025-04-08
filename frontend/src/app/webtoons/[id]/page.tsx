@@ -2,9 +2,9 @@ import WebtoonDetail from "./components/WebtoonDetail";
 import Aside from "./components/Aside";
 import WebtoonPostList from "./components/PostList";
 import PostForm from "./components/PostForm";
-import Fetch from "@/app/utils/fetch";
-import type { Webtoon } from "@/app/types/webtoon";
-import type { CommonResponseDTO } from "@/app/types/api";
+import Fetch from "@/utils/fetch";
+import type { Webtoon } from "@/types/webtoon";
+import type { CommonResponseDTO } from "@/types/api";
 
 export default async function WebtoonPage({
   params,

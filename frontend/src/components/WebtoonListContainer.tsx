@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import WebtoonList from "@/app/components/WebtoonList";
-import PlatformSelector from "@/app/components/PlatformSelector";
-import GenreSelector from "@/app/components/GenreSelector";
+import WebtoonList from "@/components/WebtoonList";
+import PlatformSelector from "./PlatformSelector";
+import GenreSelector from "./GenreSelector";
 
 interface WebtoonListContainerProps {
   platforms: string[];

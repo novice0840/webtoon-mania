@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import PostItem from "@/app/components/PostItem";
+import PostItem from "@/components/PostItem";
 
 const PostList = () => {
   return (
