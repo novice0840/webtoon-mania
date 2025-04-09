@@ -1,23 +1,37 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { NO_THUMBNAIL_URL } from "@/constant/webtoon";
 import { Webtoon } from "@/types/webtoon";
+import { useQuery } from "@tanstack/react-query";
+import { getWebtoon } from "../utils/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface WebtoonDetailProps {
-  webtoon: Webtoon;
+  id: string;
 }
 
-const WebtoonDetail = ({
-  webtoon: {
+const WebtoonDetail = ({ id }: WebtoonDetailProps) => {
+  const { data } = useQuery({
+    queryKey: ["webtoon", id],
+    queryFn: () => getWebtoon(id),
+  });
+
+  if (!data) {
+    return <Skeleton />;
+  }
+
+  const {
     title,
-    writer,
+    thumbnailURL,
     illustrator,
+    writer,
+    platforms,
     genre,
     synopsis,
-    thumbnailURL,
-    platforms,
-  },
-}: WebtoonDetailProps) => {
+  } = data;
+
   return (
     <div className="flex gap-2">
       <div className="relative w-1/2">
