@@ -54,7 +54,7 @@ class Fetch {
       return data;
     } catch (error) {
       console.error(error);
-      throw error; // 에러는 호출자가 처리할 수 있게 throw 해주는 것이 좋음
+      throw error;
     }
   }
 }
