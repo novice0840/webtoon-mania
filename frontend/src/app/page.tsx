@@ -4,7 +4,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { getGenres, getPlatforms } from "./utils/api";
+import { getGenres, getPlatforms } from "@/utils/api";
 
 export default async function Home() {
   const queryClient = new QueryClient();
