@@ -18,7 +18,7 @@ export default async function WebtoonPage({ params }: WebtoonPageProps) {
   const { id } = await params;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["webtoon", id],
+    queryKey: ["getWebtoon", id],
     queryFn: () => getWebtoon(id),
   });
   const webtoon = await queryClient.getQueryData<Webtoon>(["webtoon", id]);

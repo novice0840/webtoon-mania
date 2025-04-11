@@ -14,7 +14,7 @@ interface WebtoonDetailProps {
 
 const WebtoonDetail = ({ id }: WebtoonDetailProps) => {
   const { data } = useQuery({
-    queryKey: ["webtoon", id],
+    queryKey: ["getWebtoon", id],
     queryFn: () => getWebtoon(id),
   });
 

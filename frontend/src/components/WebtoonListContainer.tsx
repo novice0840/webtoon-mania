@@ -4,6 +4,7 @@ import { useState } from "react";
 import WebtoonList from "@/components/WebtoonList";
 import PlatformSelector from "./PlatformSelector";
 import GenreSelector from "./GenreSelector";
+import { useQuery } from "@tanstack/react-query";
 
 interface WebtoonListContainerProps {
   platforms: string[];

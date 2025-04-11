@@ -1,18 +1,33 @@
-import Fetch from "@/utils/fetch";
 import WebtoonListContainer from "@/components/WebtoonListContainer";
-import { CommonResponseDTO } from "../types/api";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { getGenres, getPlatforms } from "@/utils/api";
 
 export default async function Home() {
-  const platforms: string[] = (
-    await Fetch.get<CommonResponseDTO<{ platforms: string[] }>>(`platforms`)
-  ).data.platforms;
-  const genres: string[] = (
-    await Fetch.get<CommonResponseDTO<{ genres: string[] }>>(`genres`)
-  ).data.genres;
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["getGenres"],
+    queryFn: () => getPlatforms(),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["getPlatforms"],
+    queryFn: () => getGenres(),
+  });
+
+  const platforms =
+    (await queryClient.getQueryData<string[]>(["getPlatforms"])) || [];
+  const genres =
+    (await queryClient.getQueryData<string[]>(["getGenres"])) || [];
+
+  const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div>
+    <HydrationBoundary state={dehydratedState}>
       <WebtoonListContainer platforms={platforms} genres={genres} />
-    </div>
+    </HydrationBoundary>
   );
 }
