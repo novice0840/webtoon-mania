@@ -10,12 +10,12 @@ export default async function Home() {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["getGenres"],
-    queryFn: () => getPlatforms(),
+    queryFn: () => getGenres(),
   });
 
   await queryClient.prefetchQuery({
     queryKey: ["getPlatforms"],
-    queryFn: () => getGenres(),
+    queryFn: () => getPlatforms(),
   });
 
   const platforms =
