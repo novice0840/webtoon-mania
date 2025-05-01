@@ -6,9 +6,11 @@ import { WebtoonsModule } from './modules/webtoons/webtoons.module';
 import { GenresModule } from './modules/genres/genres.module';
 import { PlatformsModule } from './modules/platforms/platforms.module';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UsersModule,
     GenresModule,
     WebtoonsModule,
