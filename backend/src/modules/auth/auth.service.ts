@@ -8,7 +8,7 @@ import { User } from '@prisma/client';
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createUser(dto: SignupDTO): Promise<User> {
+  async createUser(dto: SignupDTO) {
     const existing = await this.prismaService.user.findUnique({
       where: { email: dto.email },
     });
@@ -17,8 +17,7 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-    return this.prismaService.user.create({
+    this.prismaService.user.create({
       data: {
         email: dto.email,
         password: hashedPassword,

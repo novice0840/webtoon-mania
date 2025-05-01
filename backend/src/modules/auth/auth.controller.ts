@@ -9,11 +9,11 @@ export class AuthController {
   @Post('/signup')
   @HttpCode(201)
   async getUser(@Body() signupDTO: SignupDTO) {
-    const user = await this.authService.createUser(signupDTO);
+    await this.authService.createUser(signupDTO);
     return {
       success: true,
       message: '유저 회원가입 성공',
-      data: { user },
+      data: null,
     };
   }
 }
