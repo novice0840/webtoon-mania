@@ -8,7 +8,7 @@ import {
 import { Response } from 'express';
 
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
+export class GlobalHttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
@@ -26,7 +26,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     res.status(status).json({
       success: false,
       message: typeof message === 'string' ? message : (message as any).message,
-      error: exception instanceof Error ? exception.name : 'UnknownError',
       data: null,
     });
   }
