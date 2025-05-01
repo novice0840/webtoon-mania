@@ -18,13 +18,11 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prismaService.user.create({
+    return this.prismaService.user.create({
       data: {
         email: dto.email,
         password: hashedPassword,
       },
     });
-
-    return user;
   }
 }
