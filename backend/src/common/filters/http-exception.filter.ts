@@ -23,10 +23,11 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         ? exception.getResponse()
         : '예상치 못한 서버 오류가 발생했습니다.';
 
-    res.status(status).json({
+    const response = {
       success: false,
       message: typeof message === 'string' ? message : (message as any).message,
-      data: null,
-    });
+    };
+
+    res.status(status).json(response);
   }
 }

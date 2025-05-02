@@ -1,7 +1,17 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CommonResponseDTO } from 'src/common/DTO/commonResponse.DTO';
+import {
+  CommonResponseDTO,
+  ApiResponseType,
+} from 'src/common/dto/commonResponse.dto';
 import { SignupDTO } from '../dto/signup.dto';
+
+export type SignupResponse = ApiResponseType<null>;
+
+const signupResponseExample: SignupResponse = {
+  success: true,
+  message: '회원가입 성공',
+};
 
 export function SignupSwagger() {
   return applyDecorators(
@@ -17,11 +27,7 @@ export function SignupSwagger() {
       status: 201,
       description: '회원가입 성공',
       type: CommonResponseDTO,
-      example: {
-        success: true,
-        message: '유저 회원가입 성공',
-        data: null,
-      },
+      example: signupResponseExample,
     }),
   );
 }
