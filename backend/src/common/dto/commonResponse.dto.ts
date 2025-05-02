@@ -11,8 +11,8 @@ export class CommonResponseDTO<T = null> {
   data: T;
 }
 
-export type ApiResponseType<T> = {
-  success: true;
+export type CommonResponseType<T = null> = {
+  success: boolean;
   message: string;
   data?: T;
 };
