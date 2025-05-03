@@ -9,15 +9,17 @@ import { SignupDTO } from './dto/signup.dto';
 import { LoginDTO } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
-  async createUser(dto: SignupDTO) {
+  async signup(dto: SignupDTO) {
     const existing = await this.prismaService.user.findUnique({
       where: { email: dto.email },
     });
@@ -26,7 +28,7 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    this.prismaService.user.create({
+    await this.prismaService.user.create({
       data: {
         email: dto.email,
         password: hashedPassword,
@@ -34,7 +36,9 @@ export class AuthService {
     });
   }
 
-  async login(dto: LoginDTO): Promise<{ accessToken: string }> {
+  async login(
+    dto: LoginDTO,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.prismaService.user.findUnique({
       where: { email: dto.email },
     });
@@ -53,8 +57,45 @@ export class AuthService {
     }
 
     const payload = { sub: user.id, email: user.email };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
+        expiresIn: '7d',
+      }),
+    ]);
+
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+
     return {
-      accessToken: await this.jwtService.signAsync(payload),
+      accessToken,
+      refreshToken,
     };
+  }
+
+  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY'),
+      });
+
+      const user = await this.prismaService.user.findUnique({
+        where: { id: payload.sub },
+      });
+
+      if (!user || user.refreshToken !== refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const newPayload = { sub: user.id, email: user.email };
+      return {
+        accessToken: await this.jwtService.signAsync(newPayload),
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 }
