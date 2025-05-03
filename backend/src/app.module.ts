@@ -7,6 +7,7 @@ import { GenresModule } from './modules/genres/genres.module';
 import { PlatformsModule } from './modules/platforms/platforms.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
@@ -19,5 +20,6 @@ import { AuthModule } from './modules/auth/auth.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PlatformsModule,
   ],
+  providers: [PrismaService],
 })
 export class AppModule {}
