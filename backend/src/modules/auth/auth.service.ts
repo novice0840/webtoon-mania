@@ -76,10 +76,12 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+  async refreshToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY'),
+        secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
       });
 
       const user = await this.prismaService.user.findUnique({
@@ -91,10 +93,32 @@ export class AuthService {
       }
 
       const newPayload = { sub: user.id, email: user.email };
+      const [newAccessToken, newRefreshToken] = await Promise.all([
+        this.jwtService.signAsync(newPayload),
+        this.jwtService.signAsync(newPayload, {
+          secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
+          expiresIn: '7d',
+        }),
+      ]);
+
+      await this.prismaService.user.update({
+        where: { id: user.id },
+        data: { refreshToken: newRefreshToken },
+      });
+
       return {
-        accessToken: await this.jwtService.signAsync(newPayload),
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       };
     } catch (error) {
+      console.error('Token verification error:', error);
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Refresh token has expired');
+      } else if (error.name === 'JsonWebTokenError') {
+        throw new UnauthorizedException(
+          'Invalid refresh token format or signature',
+        );
+      }
       throw new UnauthorizedException('Invalid refresh token');
     }
   }

@@ -44,7 +44,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshToken(
     @Body('refreshToken') refreshToken: string,
-  ): Promise<CommonResponseType<{ accessToken: string }>> {
+  ): Promise<
+    CommonResponseType<{ accessToken: string; refreshToken: string }>
+  > {
     return {
       success: true,
       message: '토큰이 갱신되었습니다',
