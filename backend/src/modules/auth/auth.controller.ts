@@ -8,6 +8,7 @@ import {
   SignupResponse,
 } from './decorators/signupSwagger.decorator';
 import { LoginSwagger } from './decorators/loginSwagger.decorator';
+import { RefreshSwagger } from './decorators/refreshSwagger.decorator';
 import { CommonResponseType } from 'src/common/dto/commonResponse.dto';
 
 @Controller('auth')
@@ -42,6 +43,7 @@ export class AuthController {
 
   @Post('/refresh')
   @HttpCode(HttpStatus.OK)
+  @RefreshSwagger()
   async refreshToken(
     @Body('refreshToken') refreshToken: string,
   ): Promise<
